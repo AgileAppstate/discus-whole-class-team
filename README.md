@@ -1,7 +1,5 @@
-# discus-whole-class-team
-discus-whole-class-team created by GitHub Classroom
-
-DiSCuS - Digital Signage Control System
+DiSCuS
+Digital Signage Control System
 Managing a Raspberry Pi controlled digital signage display panel.
 
 A web-accessible and/or command line interface application will provide use cases. 
