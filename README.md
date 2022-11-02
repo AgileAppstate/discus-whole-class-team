@@ -11,3 +11,6 @@ Web team: Derek, Alcinder, Logan, Luke, Katherine
 CLI team: Christine, Phillip, Jacob, Thom, Tyler
 
 Utility team: Alex, Eli, Vidhi, Olivia, Sami
+
+Project Discord link:
+https://discord.gg/Q5qzncEnmD
