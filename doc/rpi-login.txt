@@ -1,0 +1,8 @@
+
+We have a user login for the Raspberry Pi device:
+
+discus
+
+and the password is (capital T, capital M, and the digit 1 in the mix:
+
+TrailM1x
