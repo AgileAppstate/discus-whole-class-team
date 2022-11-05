@@ -16,4 +16,4 @@ Utility team: Alex, Eli, Vidhi, Olivia, Sami
 
 Uses Node.js and React. In the discus-web directory, run the application locally with:
 
-```npm start```
+```npm run dev```
