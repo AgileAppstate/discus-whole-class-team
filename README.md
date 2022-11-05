@@ -11,3 +11,9 @@ Web team: Derek, Alcinder, Logan, Luke, Katherine
 CLI team: Christine, Phillip, Jacob, Thom, Tyler
 
 Utility team: Alex, Eli, Vidhi, Olivia, Sami
+
+## Web Application
+
+Uses Node.js and React. In the discus-web directory, run the application locally with:
+
+```npm start```
