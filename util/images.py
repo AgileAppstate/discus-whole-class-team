@@ -1,5 +1,9 @@
-import re           # For string parsing.
+import cfg
+import re
 import datetime
+import io
+from PIL import ImageTk, Image
+
 
 '''
     Version: 1.0
@@ -31,18 +35,28 @@ def image(db, scheduled, start, end, priority, playlist, duration, uuid):
     return post_id
 
 
+# Given an image document from the database, get the image from GridFS and
+# prepare it to be used with TK.
+def prep_img(db_img):
+  # Open the image.
+  img = Image.open(io.BytesIO(cfg.fs.get(db_img["file_id"]).read()))
+
+  # Scale it to fit the screen.
+  img_width, img_height = img.size
+  scale = min(
+    (cfg.screen_width - (2 * cfg.default_border)) / img_width,
+    (cfg.screen_height - (2 * cfg.default_border)) / img_height
+  )
+  img_resize = img.resize((int(img_width * scale), int(img_height * scale)))
+
+  # Convert it for TK and return.
+  return ImageTk.PhotoImage(img_resize)
 
 
-
-# --- SETTINGS --- #
-
-default_duration = 30
-
-# --- IMAGE INSERT --- #
-
-def insert_image(db, fs, path, schedule, duration=default_duration):
+# Insert a new image into the database.
+def insert_img(path, schedule, duration=0):
   # Get the correct collection.
-  col = db["images"]
+  col = cfg.db["images"]
 
   # Parse the file name.
   filename = re.search("[^/]*$", path)[0]
@@ -50,7 +64,7 @@ def insert_image(db, fs, path, schedule, duration=default_duration):
   # Insert the image file into GridFS.
   with open(path, 'rb') as f:
     contents = f.read()
-  img_fsid = fs.put(contents, filename=filename)
+  img_fsid = cfg.fs.put(contents, filename=filename)
 
   # Define what the image document will look like.
   img = {
