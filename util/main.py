@@ -12,6 +12,7 @@ import gridfs
 import time         # For delay handeling.
 
 from images import *
+from playlists import *
 
 # --- DISPLAY SETUP --- #
 
