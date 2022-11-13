@@ -59,7 +59,7 @@ def insert_img(path, schedule, duration=0):
   col = cfg.db["images"]
 
   # Parse the file name.
-  filename = re.search("[^/]*$", path)[0]
+  filename = re.search("[^/\\]*$", path)[0]
 
   # Insert the image file into GridFS.
   with open(path, 'rb') as f:
