@@ -50,11 +50,19 @@ db_gridfs = client["gridfs"]
 cfg.fs = gridfs.GridFS(db_gridfs)
 
 
+# --- DATABASE QUERY --- #
+
+# Create an array of all of the images that should be displayed.
+def get_live_images():
+  # TODO - upgrade this "find" to actually filter stuff.
+  return cfg.db["images"].find()
+
+
 # --- DISPLAY LOOP --- #
 
+# Display the images.
 while 1:
-  # TODO - upgrade this "find" to actually filter stuff.
-  for img in cfg.db["images"].find():
+  for img in get_live_images():
     # Read the file from GridFS.
     img_file = prep_img(img)
 
