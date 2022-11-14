@@ -6,3 +6,9 @@ discus
 and the password is (capital T, capital M, and the digit 1 in the mix:
 
 TrailM1x
+
+Raspberry Pi IP:
+
+152.10.212.58
+
+but you have to be connected to the asu network to access it
