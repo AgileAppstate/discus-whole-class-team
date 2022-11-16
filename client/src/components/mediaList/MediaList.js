@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 //import axios from 'axios';
-import tempMedia from './tempMedia'
+import tempMedia from './tempMedia';
 
 class MediaList extends Component {
-  
   state = {
     media: []
-  }
+  };
 
   componentDidMount() {
     // Implement after we have the MangoDB API endpoint
@@ -18,20 +17,21 @@ class MediaList extends Component {
     // Dummy data
     console.log(tempMedia);
     const media = tempMedia;
-    this.setState({ media })
+    this.setState({ media });
   }
 
   render() {
     return (
       <ul>
-        {
-          this.state.media
-            .map(media =>
-              <li key={media.id}>Name: {media.name} <br/> Start Date: {media.start_date} <br/> End Date: {media.end_date} <br/><br/></li>
-            )
-        }
+        {this.state.media.map((media) => (
+          <li key={media.id}>
+            Name: {media.name} <br /> Start Date: {media.start_date} <br /> End Date:{' '}
+            {media.end_date} <br />
+            <br />
+          </li>
+        ))}
       </ul>
-    )
+    );
   }
 }
 
