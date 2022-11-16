@@ -1,0 +1,3 @@
+# The Shell/CLI Team Folder
+
+This is our folder. Stay tuned for more...
