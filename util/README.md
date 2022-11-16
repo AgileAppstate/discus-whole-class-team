@@ -12,9 +12,6 @@ CLI team: Christine, Phillip, Jacob, Thom, Tyler
 
 Utility team: Alex, Eli, Vidhi, Olivia, Sami
 
-Project Discord link:
-https://discord.gg/Q5qzncEnmD
+## Utility/Manager
 
-## Web Application
-Uses Node.js and React. In the discus-web directory, run the application locally with:
-```npm run dev```
+Uses MongoDB and Python 3.9. In the util directory, run the application locally with.
