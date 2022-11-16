@@ -1,5 +1,5 @@
 import datetime
-import cfg
+from util import cfg
 
 # creates a new playlist
 def create_playlist(playlistname):

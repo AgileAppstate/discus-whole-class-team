@@ -1,1 +1,2 @@
-from discus.util import *
+__all__ = ["run"]
+print(dir())

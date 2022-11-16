@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import json
 
-print(dir())
+#print(dir())
 
 app = Flask(__name__)
 
@@ -20,5 +20,5 @@ def get_image():
     pass
     #return jsonify({'uploaded':False})
 
-if __name__ == "__main__":
+def start_api():
     app.run(debug=True, port=8080)

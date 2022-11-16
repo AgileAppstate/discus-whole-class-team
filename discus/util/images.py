@@ -1,4 +1,4 @@
-import cfg
+from util import cfg
 import re
 import datetime
 import io
