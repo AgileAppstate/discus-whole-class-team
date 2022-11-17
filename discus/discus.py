@@ -1,4 +1,4 @@
-
+import discus
 def main():
     print(dir())
 
