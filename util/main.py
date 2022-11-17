@@ -13,6 +13,7 @@ import time         # For delay handeling.
 
 from images import *
 from playlists import *
+from channels import *
 
 # --- DISPLAY SETUP --- #
 
