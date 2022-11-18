@@ -1,10 +1,8 @@
 import datetime
-import cfg
+import db
 
 # creates a new channel
 def create_channel(chanName, playlistID=None):
-    col = cfg.db["channels"] # get collection
-
     # Define what the channel document will look like.
     chan = {
         "name" : chanName,
@@ -14,15 +12,13 @@ def create_channel(chanName, playlistID=None):
     }
     
     # Push the channel document to the channels collection.
-    post_id = col.insert_one(chan)
+    post_id = db.channels.insert_one(chan)
     return post_id.inserted_id
 
 
 def get_channel_by_name(chanName):
-    col = cfg.db["channels"] # get collection
-    return col.find_one({"name" : chanName})["_id"]
+    return db.channels.find_one({"name" : chanName})["_id"]
 
 
 def set_channel_playlist(chanID, playlistID):
-    col = cfg.db["channels"] # get collection
-    col.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
+    db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel

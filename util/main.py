@@ -4,16 +4,13 @@ import cfg
 # Image processing and display.
 from tkinter import *
 
-# Database management.
-import pymongo
-import gridfs
-
 # Misc.
 import time         # For delay handeling.
 
 from images import *
 from playlists import *
 from channels import *
+import db
 
 # --- DISPLAY SETUP --- #
 
@@ -29,26 +26,9 @@ canvas.configure(highlightthickness=0)
 canvas.configure(background='black')
 canvas.pack()
 
-
 # --- DATABASE CONNECTION --- #
 
-# Attempt to connect to the database.
-try:
-  print("connnecting to database...")
-  client = pymongo.MongoClient("mongodb+srv://" + cfg.db_username + ":" \
-    + cfg.db_password + "@" + cfg.db_host + "/")
-  client.server_info()
-  print("connected!")
-except pymongo.errors.ServerSelectionTimeoutError as err:
-  print("failed to connect")
-  print(err)
-
-# Set up main database.
-cfg.db = client['DiSCuS']
-
-# Set up GridFS database.
-db_gridfs = client["gridfs"]
-cfg.fs = gridfs.GridFS(db_gridfs)
+db.setup()
 
 
 # --- DATABASE QUERY --- #
@@ -56,7 +36,7 @@ cfg.fs = gridfs.GridFS(db_gridfs)
 # Create an array of all of the images that should be displayed.
 def get_live_images():
   # TODO - upgrade this "find" to actually filter stuff.
-  return cfg.db["images"].find()
+  return db.images.find()
 
 
 # --- DISPLAY LOOP --- #

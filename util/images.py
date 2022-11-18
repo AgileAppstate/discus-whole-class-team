@@ -2,6 +2,7 @@ import cfg
 import re
 import datetime
 import io
+import db
 from PIL import ImageTk, Image
 
 
@@ -12,7 +13,7 @@ from PIL import ImageTk, Image
 # db_img  - An image document fetched from MongoDB.
 def prep_img(db_img):
   # Open the image.
-  img = Image.open(io.BytesIO(cfg.fs.get(db_img["file_id"]).read()))
+  img = Image.open(io.BytesIO(db.fs.get(db_img["file_id"]).read()))
 
   # Scale it to fit the screen.
   img_width, img_height = img.size
@@ -35,16 +36,13 @@ def prep_img(db_img):
 # start_date  - A datetime object of when to start connsidering the image.
 # end_date    - A datetime object of when to stop connsidering the image.
 def insert_img(path, duration=0, start_date=None, end_date=None):
-  # Get the correct collection.
-  col = cfg.db["images"]
-
   # Parse the file name.
   filename = re.search("[^/\\]*$", path)[0]
 
   # Insert the image file into GridFS.
   with open(path, 'rb') as f:
     contents = f.read()
-  img_fsid = cfg.fs.put(contents, filename=filename)
+  img_fsid = db.fs.put(contents, filename=filename)
 
   # Define what the image document will look like.
   img = {
@@ -58,13 +56,10 @@ def insert_img(path, duration=0, start_date=None, end_date=None):
   }
 
   # Push the image document to the images collection.
-  post_id = col.insert_one(img)
+  post_id = db.images.insert_one(img)
   return post_id.inserted_id
 
   
 def get_image_by_name(name):
-  # Get the collection.
-  col = cfg.db["images"]
-
   # Find the image with the given name.
-  return col.find_one({"filename" : name})["_id"]
+  return db.images.find_one({"filename" : name})["_id"]
