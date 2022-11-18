@@ -2,12 +2,13 @@ import datetime
 import db
 
 # creates a new playlist
-def create_playlist(playlistname):
+def create_playlist(playlistname, shuffle=False):
 
     # Define what the playlist document will look like.
     plst = {
         "name" : playlistname,
         "items" : [],
+        "shuffle" : shuffle,
         "date_created" : datetime.datetime.utcnow()
     }
     
