@@ -59,7 +59,7 @@ def insert_img(path, duration=0, start_date=None, end_date=None):
 
   # Push the image document to the images collection.
   post_id = col.insert_one(img)
-  return post_id
+  return post_id.inserted_id
 
   
 def get_image_by_name(name):
@@ -67,4 +67,4 @@ def get_image_by_name(name):
   col = cfg.db["images"]
 
   # Find the image with the given name.
-  return col.find_one({"filename" : name})
+  return col.find_one({"filename" : name})["_id"]

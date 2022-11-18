@@ -14,11 +14,11 @@ def create_playlist(playlistname):
     
     # Push the playlist document to the playlists collection.
     post_id = col.insert_one(plst)
-    return post_id
+    return post_id.inserted_id
 
 def get_playlist_by_name(playlistname):
     col = cfg.db["playlists"] # get collection
-    return col.find_one({"name" : playlistname})
+    return col.find_one({"name" : playlistname})["_id"]
 
 # adds image or playlist to playlist
 def insert_item_to_playlist(playlistID, itemID, itemType):

@@ -15,12 +15,12 @@ def create_channel(chanName, playlistID=None):
     
     # Push the channel document to the channels collection.
     post_id = col.insert_one(chan)
-    return post_id
+    return post_id.inserted_id
 
 
 def get_channel_by_name(chanName):
     col = cfg.db["channels"] # get collection
-    return col.find_one({"name" : chanName})
+    return col.find_one({"name" : chanName})["_id"]
 
 
 def set_channel_playlist(chanID, playlistID):
