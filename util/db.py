@@ -1,11 +1,17 @@
+# --- IMPORTS --- #
+
 import pymongo
 import gridfs
 
-# settings
+# --- SETTINGS --- #
+
 # TODO - move these to env variables.
 db_username = "test_user"
 db_password = "password1234"
 db_host = "cluster0.5v8p9am.mongodb.net"
+
+
+# --- FUNCTIONS --- #
 
 def setup():
   # Attempt to connect to the database.

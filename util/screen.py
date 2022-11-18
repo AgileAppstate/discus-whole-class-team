@@ -1,11 +1,16 @@
-from tkinter import *
+# --- IMPORTS --- #
+
 import io
+import time
+from tkinter import *
 from PIL import ImageTk, Image
-import time         # For delay handeling.
 
 # --- SETTINGS --- #
+
 default_border = 10
 default_duration = 30
+
+# --- FUNCTIONS --- #
 
 def setup():
   global width, height, canvas, root

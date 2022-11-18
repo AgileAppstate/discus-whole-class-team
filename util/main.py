@@ -1,20 +1,15 @@
 # --- IMPORTS --- #
-# Image processing and display.
 
-# Misc.
+import db
+import screen
 
 from images import *
 from playlists import *
 from channels import *
-import db
-import screen
 
-# --- DISPLAY SETUP --- #
+# --- SETUP --- #
 
 screen.setup()
-
-# --- DATABASE CONNECTION --- #
-
 db.setup()
 
 

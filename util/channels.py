@@ -1,8 +1,12 @@
+# --- IMPORTS --- #
+
 import datetime
 import db
 
+# --- FUNCTIONS --- #
+
 # creates a new channel
-def create_channel(chanName, playlistID=None):
+def channel_insert(chanName, playlistID=None):
     # Define what the channel document will look like.
     chan = {
         "name" : chanName,
@@ -16,9 +20,9 @@ def create_channel(chanName, playlistID=None):
     return post_id.inserted_id
 
 
-def get_channel_by_name(chanName):
+def channel_get_by_name(chanName):
     return db.channels.find_one({"name" : chanName})["_id"]
 
 
-def set_channel_playlist(chanID, playlistID):
+def channel_set_playlist(chanID, playlistID):
     db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
