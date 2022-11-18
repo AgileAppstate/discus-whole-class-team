@@ -4,6 +4,8 @@ import re
 import datetime
 import db
 
+from playlists import *
+
 
 # --- FUNCTIONS --- #
 
@@ -44,6 +46,17 @@ def image_get_by_name(name):
   # Find the image with the given name.
   return db.images.find_one({"filename" : name})["_id"]
 
+# Return the file_id of the file associated with an image.
+def image_get_file_id(id):
+  return db.images.find_one({"_id" : id})["file_id"]
 
 def image_delete(id):
-  return None
+  # Delete the references to this image in any playlists.
+  for plst in db.playlists.find({"items": id}):
+    playlist_remove_item(id, plst["_id"])
+
+  # Delete the file from GridFS.
+  db.fs.delete(image_get_file_id(id))
+
+  # Delete the image document.
+  db.images.delete(id)
