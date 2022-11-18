@@ -1,5 +1,7 @@
 # --- IMPORTS --- #
 import cfg
+import channels
+import playlists
 
 # Image processing and display.
 from tkinter import *
@@ -54,16 +56,22 @@ cfg.fs = gridfs.GridFS(db_gridfs)
 # --- DATABASE QUERY --- #
 
 # Create an array of all of the images that should be displayed.
-def get_live_images():
+def get_live_images(chan_name):
+  # finds all of '' in the database cfg.db["channels"].find()
   # TODO - upgrade this "find" to actually filter stuff.
-  return cfg.db["images"].find()
+  cfg.db["channels"].find()
+  playlist = cfg.db({'_id': chan_name['playlist']})
+  
+  chan = get_channel_by_name(chan_name)
+
+  return chan
 
 
 # --- DISPLAY LOOP --- #
 
 # Display the images.
 while 1:
-  for img in get_live_images():
+  for img in get_live_images(chan_name=''):
     # Read the file from GridFS.
     img_file = prep_img(img)
 

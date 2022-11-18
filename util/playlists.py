@@ -23,7 +23,8 @@ def get_playlist_by_name(playlistname):
 # adds image or playlist to playlist
 def insert_item_to_playlist(playlistID, itemID, itemType):
     col = cfg.db["playlists"] # get collection
-    col.update_one({ "_id": playlistID }, { "$push": { "items": {"type" : itemType, "objectID" : itemID } } }) # add item to playlist
+    col.update_one({ "_id": playlistID }, { "$push": { 
+                    "items": {"type" : itemType, "objectID" : itemID } } }) # add item to playlist
 
 # removes image or playlist from playlist
 def remove_item_from_playlist(playlistID, itemID):
