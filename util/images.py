@@ -1,31 +1,6 @@
-import cfg
 import re
 import datetime
-import io
 import db
-from PIL import ImageTk, Image
-
-
-# Given an image document from the database, get the image from GridFS and
-# prepare it to be used with TK.
-#
-# Inputs:
-# db_img  - An image document fetched from MongoDB.
-def prep_img(db_img):
-  # Open the image.
-  img = Image.open(io.BytesIO(db.fs.get(db_img["file_id"]).read()))
-
-  # Scale it to fit the screen.
-  img_width, img_height = img.size
-  scale = min(
-    (cfg.screen_width - (2 * cfg.default_border)) / img_width,
-    (cfg.screen_height - (2 * cfg.default_border)) / img_height
-  )
-  img_resize = img.resize((int(img_width * scale), int(img_height * scale)))
-
-  # Convert it for TK and return.
-  return ImageTk.PhotoImage(img_resize)
-
 
 # Insert a new image into the database.
 #
@@ -59,7 +34,7 @@ def insert_img(path, duration=0, start_date=None, end_date=None):
   post_id = db.images.insert_one(img)
   return post_id.inserted_id
 
-  
+
 def get_image_by_name(name):
   # Find the image with the given name.
   return db.images.find_one({"filename" : name})["_id"]

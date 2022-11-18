@@ -19,14 +19,11 @@ def setup():
     print("failed to connect")
     print(err)
 
-  # Set up main database.
-  global discus, images, playlists, channels, fs
-
-  discus = client['DiSCuS']
-  images = discus["images"]
-  playlists = discus["playlists"]
-  channels = discus["channels"]
-
-  # Set up GridFS database.
+  # Set up databases and collections.
+  global images, playlists, channels, fs
+  db_discus = client['DiSCuS']
+  images = db_discus["images"]
+  playlists = db_discus["playlists"]
+  channels = db_discus["channels"]
   db_gridfs = client["gridfs"]
   fs = gridfs.GridFS(db_gridfs)
