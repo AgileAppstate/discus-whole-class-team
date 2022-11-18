@@ -5,38 +5,11 @@ import io
 from PIL import ImageTk, Image
 
 
-'''
-    Version: 1.0
-    Author: Utility Team
-    Date created: 11/10/2022
-    Date last modified: 11/10/2022
-    Description:
-        Creates the image tables for MonogDB
-'''
-
-'''
-    The image function takes in a db and required parameters and 
-    creates a post from them.
-    It then adds the post to the data base
-'''
-def image(db, scheduled, start, end, priority, playlist, duration, uuid):
-
-        #not finding an exact way to handle optional values. Figuring if no 
-        #value is passed in it will be treated as null and can update later
-    post = {"scheduled": scheduled,
-        "start_date": start,
-        "end_date": end,
-        "priority": priority, 
-        "playlist": playlist, 
-        "duration": duration, 
-        "uuid" : uuid}
-    posts = db.posts
-    post_id = posts.insert_one(post).inserted_id
-    return post_id
-
-
 # Given an image document from the database, get the image from GridFS and
 # prepare it to be used with TK.
+#
+# Inputs:
+# db_img  - An image document fetched from MongoDB.
 def prep_img(db_img):
   # Open the image.
   img = Image.open(io.BytesIO(cfg.fs.get(db_img["file_id"]).read()))
@@ -54,7 +27,14 @@ def prep_img(db_img):
 
 
 # Insert a new image into the database.
-def insert_img(path, schedule, duration=0):
+#
+# Inputs:
+# path        - string to the image file being uploaded.
+# duration    - An Integer representing the numbber of seconds to display the
+#               image. Setting to 0 will use whatever the current default is.
+# start_date  - A datetime object of when to start connsidering the image.
+# end_date    - A datetime object of when to stop connsidering the image.
+def insert_img(path, duration=0, start_date=None, end_date=None):
   # Get the correct collection.
   col = cfg.db["images"]
 
@@ -70,8 +50,10 @@ def insert_img(path, schedule, duration=0):
   img = {
     "filename" : filename,
     "file_type" : re.search("[^\.]*$", filename)[0],
-    "duration" : duration,
     "file_id" : img_fsid,
+    "duration" : duration,
+    "start_date" : start_date,
+    "end_date" : end_date,
     "date_added" : datetime.datetime.utcnow()
   }
 
