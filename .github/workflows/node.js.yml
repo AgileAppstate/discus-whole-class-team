@@ -9,11 +9,6 @@ on:
       - 'client/**'
       - '.github/workflows/**'
     branches: [ "main" ]
-  pull_request:
-    paths: 
-      - 'client/**'
-      - '.github/workflows/**'
-    branches: [ "main" ]
 
 jobs:
   build:
