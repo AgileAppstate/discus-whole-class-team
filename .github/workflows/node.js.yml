@@ -38,7 +38,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: client/package-lock.json
+        cache-dependency-path: '**/package-lock.json'
     - name: Makes the client folder the working directory to run npm
       run: cd client
       
