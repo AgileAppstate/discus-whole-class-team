@@ -5,9 +5,17 @@ name: CI/CD
 
 on:
   push:
+    paths: 
+      - 'client/**'
     branches: [ "main" ]
   pull_request:
+    paths: 
+      - 'client/**'
     branches: [ "main" ]
+
+defaults:
+  run:
+    working-directory: client
 
 jobs:
   build:
