@@ -12,7 +12,8 @@ class AddMedia extends React.Component {
             Add Media
           </button>
         }
-        position="right center">
+        position="right center"
+      >
         <div>Popup content here !!</div>
       </Popup>
     );
