@@ -36,17 +36,10 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
         
     - name: Does a clean install of dependencies
-      working-directory: client
       run: npm --prefix client ci
       
     - name: Runs any tests
-      working-directory: client
       run: npm --prefix client run test
       
-    - name: Builds out the application
-      working-directory: client
-      run: npm --prefix client run build --if-present
-      
-    - name: Deploys and serves application
-      working-directory: client
+    - name: Builds and deploys application
       run: npm --prefix client run deploy
