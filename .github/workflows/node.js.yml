@@ -42,16 +42,16 @@ jobs:
         
     - name: Does a clean install of dependencies
       working-directory: client
-      run: npm ci
+      run: npm --prefix client ci
       
     - name: Runs any tests
       working-directory: client
-      run: npm run test
+      run: npm --prefix client run test
       
     - name: Builds out the application
       working-directory: client
-      run: npm run build --if-present
+      run: npm --prefix client run build --if-present
       
     - name: Deploys and serves application
       working-directory: client
-      run: npm run deploy
+      run: npm --prefix client run deploy
