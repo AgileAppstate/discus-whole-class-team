@@ -36,7 +36,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        path: client
+        cache-dependency-path: client/package.json
     - name: Makes the client folder the working directory to run npm
       run: cd client
       working-directory: ./client
