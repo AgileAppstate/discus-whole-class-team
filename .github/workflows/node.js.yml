@@ -22,7 +22,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: './client/'
+        working-directory: client
     
     strategy:
       matrix:
@@ -38,23 +38,18 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: './client/package-lock.json'
+        cache-dependency-path: client/package-lock.json
     - name: Makes the client folder the working directory to run npm
       run: cd client
-      working-directory: ./client
       
     - name: Does a clean install of dependencies
       run: npm ci
-      working-directory: ./client
       
     - name: Runs any tests
       run: npm run test
-      working-directory: ./client
       
     - name: Builds out the application
       run: npm run build --if-present
-      working-directory: ./client
       
     - name: Deploys and serves application
       run: npm run deploy
-      working-directory: ./client
