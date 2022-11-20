@@ -24,7 +24,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint --fix",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-    "deploy": "npm run format && npm run build && npm run serve"
+    "deploy": "npm run format && npm run build"
   },
   "eslintConfig": {
     "extends": [
