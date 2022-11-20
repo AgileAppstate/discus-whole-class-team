@@ -37,7 +37,7 @@ jobs:
         
     - name: Does a clean install of dependencies
       working-directory: client
-      run: npm --prefix client ci
+      run: npm --prefix client i
       
     - name: Runs any tests
       working-directory: client
