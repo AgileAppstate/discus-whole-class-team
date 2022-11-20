@@ -13,21 +13,16 @@ class Navbar extends Component {
               <a href="/About" className="mr-5 hover:text-gray-900">
                 About
               </a>
-              <a href="/Mission" className="mr-5 hover:text-gray-900">
-                Mission
-              </a>
-              <a href="/Docs" className="mr-5 hover:text-gray-900">
-                Docs
-              </a>
               <a href="/Media" className="mr-5 hover:text-gray-900">
                 Media
               </a>
+              <a href="/Playlists" className="mr-5 hover:text-gray-900">
+                Playlists
+              </a>
+              <a href="/LiveFeed" className="mr-5 hover:text-gray-900">
+                Live Feed
+              </a>
             </nav>
-            <a href="/Login">
-              <button className="inline-flex items-center bg-black text-white border-0 py-1 px-3 focus:outline-none hover:bg-slate-600 rounded text-base mt-4 md:mt-0">
-                Login
-              </button>
-            </a>
           </div>
         </header>
       </div>
