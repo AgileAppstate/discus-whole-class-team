@@ -22,7 +22,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: client
+        working-directory: 'client'
     
     strategy:
       matrix:
@@ -41,17 +41,17 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
         
     - name: Does a clean install of dependencies
-      run: npm ci
       working-directory: client
+      run: npm ci
       
     - name: Runs any tests
-      run: npm run test
       working-directory: client
+      run: npm run test
       
     - name: Builds out the application
-      run: npm run build --if-present
       working-directory: client
+      run: npm run build --if-present
       
     - name: Deploys and serves application
-      run: npm run deploy
       working-directory: client
+      run: npm run deploy
