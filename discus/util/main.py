@@ -1,6 +1,6 @@
 # --- IMPORTS --- #
 
-import db
+from discus.util import db
 from discus.util import screen
 
 from discus.util.images import *
