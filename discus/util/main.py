@@ -1,11 +1,11 @@
 # --- IMPORTS --- #
 
 import db
-import screen
+from discus.util import screen
 
-from images import *
-from playlists import *
-from channels import *
+from discus.util.images import *
+from discus.util.playlists import *
+from discus.util.channels import *
 
 # --- SETUP --- #
 
