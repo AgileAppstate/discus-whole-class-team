@@ -53,7 +53,7 @@ def image_get_file_id(id):
 def image_delete(id):
   # Delete the references to this image in any playlists.
   for plst in db.playlists.find({"items": id}):
-    playlist_remove_item(id, plst["_id"])
+    playlist_remove_item(plst["_id"], id)
 
   # Delete the file from GridFS.
   db.fs.delete(image_get_file_id(id))
