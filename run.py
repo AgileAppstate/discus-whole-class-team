@@ -1,4 +1,5 @@
 import sys
+import pymongo
 
 if sys.argv[1] == "util":
     from discus.util import main
