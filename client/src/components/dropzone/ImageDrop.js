@@ -1,27 +1,45 @@
 import React from 'react';
-import {useDropzone} from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
+//import "./dropzone.css"
 
-function Basic(props) {
-  const {acceptedFiles, getRootProps, getInputProps} = useDropzone();
-  
-  const files = acceptedFiles.map(file => (
+function Dropzone({ onDrop, accept, open }) {
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
+    useDropzone({
+      accept,
+      onDrop,
+    });
+
+  const files = acceptedFiles.map((file) => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
   ));
 
   return (
-    <section className="container">
-      <div {...getRootProps({className: 'dropzone'})}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
+    <div>
+      <div {...getRootProps({ className: "dropzone" })}>
+        <input className="input-zone" {...getInputProps()} />
+        <div className="text-center">
+          {isDragActive ? (
+            <p className="dropzone-content">
+              Release to drop the files here
+            </p>
+          ) : (
+            <p className="dropzone-content">
+              Drag’ n’ drop some files here, or click to select files
+            </p>
+          )}
+          <button type="button" onClick={open} className="btn">
+            Click to select files
+          </button>
+        </div>
       </div>
+      re
       <aside>
-        <h4>Files</h4>
         <ul>{files}</ul>
       </aside>
-    </section>
+    </div>
   );
 }
 
-export default Basic
+export default Dropzone;
