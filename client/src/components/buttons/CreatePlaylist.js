@@ -12,7 +12,8 @@ class CreatePlaylist extends React.Component {
             Create Playlist
           </button>
         }
-        position="right center">
+        position="right center"
+      >
         <div>Popup content here !!</div>
       </Popup>
     );

@@ -7,20 +7,36 @@ import Login from './pages/public/login/Login';
 import Media from './pages/public/media/Media';
 import Playlists from './pages/public/playlists/Playlists';
 import LiveFeed from './pages/public/livefeed/LiveFeed';
+//import * as colors from '@mui/material/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    type: 'light',
+    primary: {
+      main: '#000000'
+    },
+    secondary: {
+      main: '#f50057'
+    }
+  }
+});
 
 function App() {
   return (
-    <Router>
-      <Navbars />
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/About" element={<About />}></Route>
-        <Route path="/Login" element={<Login />}></Route>
-        <Route path="/Media" element={<Media />}></Route>
-        <Route path="/Playlists" element={<Playlists />}></Route>
-        <Route path="/LiveFeed" element={<LiveFeed />}></Route>
-      </Routes>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Navbars />
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/About" element={<About />}></Route>
+          <Route path="/Login" element={<Login />}></Route>
+          <Route path="/Media" element={<Media />}></Route>
+          <Route path="/Playlists" element={<Playlists />}></Route>
+          <Route path="/LiveFeed" element={<LiveFeed />}></Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
