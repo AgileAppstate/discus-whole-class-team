@@ -1,7 +1,7 @@
 # --- IMPORTS --- #
 
 import datetime
-import db
+from discus.util import db
 
 # --- FUNCTIONS --- #
 
@@ -33,6 +33,7 @@ def playlist_insert_item(playlistID, itemID, itemType):
 # removes image or playlist from playlist
 def playlist_remove_item(playlistID, itemID):
     db.playlists.update_one({ "_id": playlistID }, { "$pull": { "items": {"objectID" : itemID } } }) # remove item from playlist
+
 
 # deletes the playlist
 def playlist_delete(id):

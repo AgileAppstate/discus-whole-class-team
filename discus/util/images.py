@@ -2,9 +2,9 @@
 
 import re
 import datetime
-import db
+from discus.util import db
 
-from playlists import *
+from discus.util.playlists import *
 
 
 # --- FUNCTIONS --- #
@@ -60,6 +60,7 @@ def image_delete(id):
 
   # Delete the image document.
   db.images.delete(id)
+
 
 # Set the duration for an image.
 def image_set_duration(id, duration):

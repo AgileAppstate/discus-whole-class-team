@@ -1,7 +1,7 @@
 # --- IMPORTS --- #
 
 import datetime
-import db
+from discus.util import db
 
 # --- FUNCTIONS --- #
 
@@ -34,6 +34,7 @@ def channel_delete(id):
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):
     db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
+
 
 # sets the mode for the channel
 def channel_set_mode(chanID, mode, recurringInfo=None):
