@@ -54,3 +54,7 @@ def channel_set_start_time(chanID, startTime):
 # sets the end time for the channel
 def channel_set_end_time(chanID, endTime):
     db.channels.update_one({ "_id": chanID }, { "$set": { "end_time": endTime } }) # set end time for channel
+
+def channel_next_swap():
+    # return datetime.utcnow() + timedelta(minutes=30)
+    return db.channels.find_one({"start_date" : {'$gte' : datetime.utcnow()}})["start_date"]
