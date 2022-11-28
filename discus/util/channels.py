@@ -26,6 +26,14 @@ def channel_insert(chanName, playlistID=None, mode="Single", recurringInfo=None,
 def channel_get_by_name(chanName):
     return db.channels.find_one({"name" : chanName})["_id"]
 
+# get channel by id
+def channel_get_by_id(id):
+    return db.channels.find_one({"_id" : id})
+
+# get all channels
+def channel_get_all():
+    return db.channels.find()
+
 # deletes the channel
 def channel_delete(id):
     # Delete the channel document.
@@ -34,7 +42,6 @@ def channel_delete(id):
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):
     db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
-
 
 # sets the mode for the channel
 def channel_set_mode(chanID, mode, recurringInfo=None):
