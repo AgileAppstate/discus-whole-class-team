@@ -1,6 +1,6 @@
 # --- IMPORTS --- #
 
-import datetime
+from datetime import datetime, timedelta
 from discus.util import db
 
 # --- FUNCTIONS --- #
@@ -15,7 +15,7 @@ def channel_insert(chanName, playlistID=None, mode="Single", recurringInfo=None,
         "recurring_info" : recurringInfo,
         "start_time" : startTime,
         "end_time" : endTime,
-        "date_created" : datetime.datetime.utcnow()
+        "date_created" : datetime.utcnow()
     }
     
     # Push the channel document to the channels collection.
