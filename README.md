@@ -14,3 +14,7 @@ Utility team: Alex, Eli, Vidhi, Olivia, Sami
 
 Project Discord link:
 https://discord.gg/Q5qzncEnmD
+
+## Web Application
+Uses Node.js and React. In the discus-web directory, run the application locally with:
+```npm run dev```

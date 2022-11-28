@@ -2,9 +2,9 @@
 
 import re
 import datetime
-import db
+from discus.util import db
 
-from playlists import *
+from discus.util.playlists import *
 
 
 # --- FUNCTIONS --- #
@@ -53,10 +53,23 @@ def image_get_file_id(id):
 def image_delete(id):
   # Delete the references to this image in any playlists.
   for plst in db.playlists.find({"items": id}):
-    playlist_remove_item(id, plst["_id"])
+    playlist_remove_item(plst["_id"], id)
 
   # Delete the file from GridFS.
   db.fs.delete(image_get_file_id(id))
 
   # Delete the image document.
   db.images.delete(id)
+
+
+# Set the duration for an image.
+def image_set_duration(id, duration):
+  db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
+
+# Set the start date for an image.
+def image_set_start_date(id, start_date):
+  db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date } }) # set start date for image
+
+# Set the end date for an image.
+def image_set_end_date(id, end_date):
+  db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date } }) # set end date for image
