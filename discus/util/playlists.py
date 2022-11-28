@@ -1,7 +1,7 @@
 # --- IMPORTS --- #
 
 import datetime
-import db
+from discus.util import db
 
 # --- FUNCTIONS --- #
 

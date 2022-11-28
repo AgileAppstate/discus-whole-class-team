@@ -2,9 +2,9 @@
 
 import re
 import datetime
-import db
+from discus.util import db
 
-from playlists import *
+from discus.util.playlists import *
 
 
 # --- FUNCTIONS --- #
