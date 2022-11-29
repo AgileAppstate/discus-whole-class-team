@@ -41,11 +41,6 @@ def image_insert(path, duration=0, start_date=None, end_date=None):
   post_id = db.images.insert_one(img)
   return post_id.inserted_id
 
-# get image by name
-def image_get_id_by_name(name):
-  # Find the image with the given name.
-  return db.images.find_one({"filename" : name})["_id"]
-
 # get image by id
 def image_get_by_id(id):
   return db.images.find_one({"_id" : id})

@@ -22,10 +22,6 @@ def channel_insert(chanName, playlistID=None, mode="Single", recurringInfo=None,
     post_id = db.channels.insert_one(chan)
     return post_id.inserted_id
 
-# get channel by name
-def channel_get_id_by_name(chanName):
-    return db.channels.find_one({"name" : chanName})["_id"]
-
 # get channel by id
 def channel_get_by_id(id):
     return db.channels.find_one({"_id" : id})
