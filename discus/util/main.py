@@ -15,10 +15,32 @@ db.setup()
 
 # --- DATABASE QUERY --- #
 
-# Create an array of all of the images that should be displayed.
-def get_live_images():
-  # TODO - upgrade this "find" to actually filter stuff.
-  return db.images.find()
+# Create a list of all of the images that should be displayed.
+def get_live_images(channelID):
+  chan = get_channel_by_ID(channelID) 
+  chan_playlist = get_playlist_by_ID(chan['playlist'])
+  nested_playlists = []
+  images = []
+  # looping through items in chanel playlist to find any item with item
+  # type playlist adding any other playlists to a list 
+  for i in chan_playlist.find_one({"items"}):
+    if i['type'] == 'playlist':
+      nested_playlists.append(i)
+    if i['type'] == 'image':
+      images.append(i)
+
+  # now we have a list of playlists, need to go through them and
+  # find all images in each playlist and return as a list
+  while len(nested_playlists) != 0:
+    for pl in nested_playlists:
+      for it in pl.find_one({"items"}):
+        if it['type'] == 'playlist':
+          nested_playlists.append(i)
+        if it['type'] == 'image':
+          images.append(i)
+    nested_playlists.remove(pl)
+  
+  return images
 
 
 # --- DISPLAY LOOP --- #
