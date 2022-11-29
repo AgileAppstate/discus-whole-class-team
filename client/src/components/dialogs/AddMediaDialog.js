@@ -14,8 +14,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import Dropzone from '../dropzone/ImageDrop';
-import ImageGrid from "../dropzone/ImageGrid";
-import cuid from "cuid";
+import ImageGrid from '../dropzone/ImageGrid';
+import cuid from 'cuid';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -40,29 +40,17 @@ export default function FormDialog() {
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
-
     acceptedFiles.map((file) => {
-
       const reader = new FileReader();
 
       reader.onload = function (e) {
-
-        setImages((prevState) => [
-
-          ...prevState,
-
-          { id: cuid(), src: e.target.result },
-
-        ]);
-
+        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result }]);
       };
 
       reader.readAsDataURL(file);
 
       return file;
-
     });
-
   }, []);
 
   return (
@@ -76,7 +64,7 @@ export default function FormDialog() {
           <DialogContentText>
             Any information submitted on this screen will apply to all media uploaded.
           </DialogContentText>
-          <Dropzone onDrop={onDrop} accept={"image/*"} />
+          <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
           <TextField id="name" label="Name" variant="outlined" margin="normal" />
           <TextareaAutosize
