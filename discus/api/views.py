@@ -10,7 +10,7 @@ def add_playlist():
     playlist = request.args.get('playlist')
     playlists.playlist_insert(playlist)
 
-@app.route('/playlists/insert', methods=["POST"]):
+@app.route('/playlists/insert', methods=["POST"])
 def insert_into_playlist():
     playlist = request.args.get('playlist')
     item_id = request.args.get('item_id')
