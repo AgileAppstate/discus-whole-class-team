@@ -3,11 +3,10 @@ import { useDropzone } from 'react-dropzone';
 //import "./dropzone.css"
 
 function Dropzone({ onDrop, accept, open }) {
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
-    useDropzone({
-      accept,
-      onDrop,
-    });
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+    accept,
+    onDrop
+  });
 
   const files = acceptedFiles.map((file) => (
     <li key={file.path}>
@@ -17,13 +16,11 @@ function Dropzone({ onDrop, accept, open }) {
 
   return (
     <div>
-      <div {...getRootProps({ className: "dropzone" })}>
+      <div {...getRootProps({ className: 'dropzone' })}>
         <input className="input-zone" {...getInputProps()} />
         <div className="text-center">
           {isDragActive ? (
-            <p className="dropzone-content">
-              Release to drop the files here
-            </p>
+            <p className="dropzone-content">Release to drop the files here</p>
           ) : (
             <p className="dropzone-content">
               Drag’ n’ drop some files here, or click to select files
