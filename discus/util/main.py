@@ -17,8 +17,8 @@ db.setup()
 
 # Create a list of all of the images that should be displayed.
 def get_live_images(channelID):
-  chan = get_channel_by_ID(channelID) 
-  chan_playlist = get_playlist_by_ID(chan['playlist'])
+  chan = channel_get_by_id(channelID) 
+  chan_playlist = playlist_get_by_id(chan['playlist'])
   nested_playlists = []
   images = []
   # looping through items in chanel playlist to find any item with item
@@ -41,7 +41,6 @@ def get_live_images(channelID):
     nested_playlists.remove(pl)
   
   return images
-
 
 # --- DISPLAY LOOP --- #
 
