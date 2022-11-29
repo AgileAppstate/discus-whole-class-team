@@ -56,9 +56,9 @@ cfg.fs = gridfs.GridFS(db_gridfs)
 # --- DATABASE QUERY --- #
 
 # Create a list of all of the images that should be displayed.
-def get_live_images(chan_name):
-  chan = get_channel_by_name(chan_name) 
-  chan_playlist = get_playlist_by_name(chan['playlist'])
+def get_live_images(channelID):
+  chan = get_channel_by_ID(channelID) 
+  chan_playlist = get_playlist_by_ID(chan['playlist'])
   nested_playlists = []
   images = []
   # looping through items in chanel playlist to find any item with item
