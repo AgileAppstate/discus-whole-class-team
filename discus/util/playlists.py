@@ -15,7 +15,6 @@ def playlist_insert(playlistname, shuffle=False):
         "shuffle" : shuffle,
         "date_created" : datetime.datetime.utcnow()
     }
-    
     # Push the playlist document to the playlists collection.
     post_id = db.playlists.insert_one(plst)
     return post_id.inserted_id
