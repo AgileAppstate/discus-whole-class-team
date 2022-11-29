@@ -62,4 +62,9 @@ def channel_remove_time_occurance(chanID, startTime, endTime):
 
 def channel_next_swap():
     # return datetime.utcnow() + timedelta(minutes=30)
-    return db.channels.find_one({"start_date" : {'$gte' : datetime.utcnow()}})["start_date"]
+
+    return db.channels.find({
+        "start_date" : {
+            '$gte' : datetime.utcnow()
+        }
+    })["start_date"]
