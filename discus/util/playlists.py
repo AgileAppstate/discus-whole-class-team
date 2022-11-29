@@ -33,7 +33,7 @@ def playlist_insert_item(playlistID, itemID, itemType):
     if itemID == playlistID:
         return
     # TODO: check if itemID is already in playlist
-    db.playlistts.update_one({ "_id": playlistID }, { "$push": { "items": {"type" : itemType, "objectID" : itemID } } }) # add item to playlist
+    db.playlists.update_one({ "_id": playlistID }, { "$push": { "items": {"type" : itemType, "objectID" : itemID } } }) # add item to playlist
 
 # removes image or playlist from playlist
 def playlist_remove_item(playlistID, itemID):
