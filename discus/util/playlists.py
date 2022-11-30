@@ -20,6 +20,10 @@ def playlist_insert(playlistname, shuffle=False, itemList=[]):
     post_id = db.playlists.insert_one(plst)
     return post_id.inserted_id
 
+# get playlist by name
+def playlist_get_id_by_name(playlistname):
+    return db.playlists.find_one({"name" : playlistname})["_id"]
+
 # get playlist by id
 def playlist_get_by_id(id):
     return db.playlists.find_one({"_id" : id})

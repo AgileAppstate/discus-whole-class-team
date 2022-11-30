@@ -1,5 +1,7 @@
 # --- IMPORTS --- #
 
+import random
+
 from discus.util import db
 from discus.util import screen
 
@@ -20,33 +22,34 @@ db.setup()
 def get_live_channel():
   return None
 
-# Create a list of all of the images that should be displayed.
-def get_live_images(channelID):
-  chan = get_channel_by_ID(channelID) 
-  chan_playlist = get_playlist_by_ID(chan['playlist'])
-  nested_playlists = []
-  images = []
+# get all images in a playlist
+def get_playlist_images(playlistID):
+  imgs = []
+
+  # get playlist
+  chan_playlist = playlist_get_by_id(playlistID)
+
+  # shuffle playlist if shuffle is enabled
+  if chan_playlist['shuffle']:
+    random.shuffle(chan_playlist['items'])
+
   # looping through items in chanel playlist to find any item with item
   # type playlist adding any other playlists to a list 
-  for i in chan_playlist.find_one({"items"}):
+  for i in chan_playlist['items']:
     if i['type'] == 'playlist':
-      nested_playlists.append(i)
-    if i['type'] == 'image':
-      images.append(i)
+      imgs.extend(get_playlist_images(i['objectID']))
+    elif i['type'] == 'image':
+      imgs.append(image_get_by_id(i['objectID']))
 
-  # now we have a list of playlists, need to go through them and
-  # find all images in each playlist and return as a list
-  while len(nested_playlists) != 0:
-    for pl in nested_playlists:
-      for it in pl.find_one({"items"}):
-        if it['type'] == 'playlist':
-          nested_playlists.append(i)
-        if it['type'] == 'image':
-          images.append(i)
-    nested_playlists.remove(pl)
+  return imgs
+
+# Create a list of all of the images that should be displayed.
+def get_live_images(channelID):
+  chan = channel_get_by_id(channelID) 
+
+  images = get_playlist_images(chan['playlist'])
   
   return images
-
 
 # --- DISPLAY LOOP --- #
 
@@ -57,8 +60,11 @@ while 1:
   prev_time = start_time
   next_swap = channel_next_swap()
 
+  # TODO: set CID to channel that is currently live
+  cid = channel_get_id_by_name('Party Time Channel')
+
   # Fetch the current channnel and then display all of the images in it.
-  for img in get_live_images():
+  for img in get_live_images(cid):
     curr_time = datetime.now()
     if (prev_time < next_swap and curr_time >= next_swap):
       break
