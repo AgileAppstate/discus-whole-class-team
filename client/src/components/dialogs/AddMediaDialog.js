@@ -97,6 +97,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={end_date}
+              disabled={start_date === "" ? true: false}
               onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
