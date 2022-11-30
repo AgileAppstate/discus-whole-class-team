@@ -21,6 +21,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
+  const [start_date, setStart_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs());
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -34,6 +36,7 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
+<<<<<<< HEAD
     // Sets values back to default
     setName("");
     setDescription("");
@@ -91,6 +94,18 @@ export default function FormDialog() {
     // Will return an empty array, but needs to be here to compile
     console.log(newMedia)
     handleClose();
+=======
+    handleStartChange();
+    handleEndChange();
+  };
+
+  const handleStartChange = (newDate) => {
+    setStart_Date(newDate);
+  };
+
+  const handleEndChange = (newDate) => {
+    setEnd_Date(newDate);
+>>>>>>> 108d011 (Seperated out start and end date values)
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -137,7 +152,11 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
+<<<<<<< HEAD
               onChange={handleStartDate}
+=======
+              onChange={handleStartChange}
+>>>>>>> 108d011 (Seperated out start and end date values)
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -147,7 +166,11 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={end_date}
+<<<<<<< HEAD
               onChange={handleEndDate}
+=======
+              onChange={handleEndChange}
+>>>>>>> 108d011 (Seperated out start and end date values)
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
