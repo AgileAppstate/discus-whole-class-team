@@ -1,6 +1,7 @@
 # --- IMPORTS --- #
 
 from datetime import datetime
+import random
 
 from discus.util import db
 
@@ -61,3 +62,26 @@ def playlist_set_shuffle(id, shuffle):
 # sets the name for the playlist
 def playlist_set_name(id, name):
     db.playlists.update_one({ "_id": id }, { "$set": { "name": name } }) # set name for playlist
+
+# get all images in a playlist
+def playlist_get_images(playlistID):
+    imgs = []
+
+    # get playlist
+    chan_playlist = playlist_get_by_id(playlistID)
+
+    # shuffle playlist if shuffle is enabled
+    if chan_playlist['shuffle']:
+        random.shuffle(chan_playlist['items'])
+
+    # looping through items in chanel playlist to find any item with item
+    # type playlist adding any other playlists to a list 
+    for i in chan_playlist['items']:
+        if i['type'] == 'playlist':
+            imgs.extend(playlist_get_images(i['objectID']))
+        elif i['type'] == 'image':
+            imgOBJ = db.images.find_one({"_id" : i['objectID']})
+            if imgOBJ["start_date"] < datetime.now() and imgOBJ["end_date"] > datetime.now():
+                imgs.append(imgOBJ)
+
+    return imgs

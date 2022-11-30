@@ -28,7 +28,6 @@ def setup():
     canvas.configure(highlightthickness=0)
     canvas.configure(background='black')
     canvas.pack()
-    root.update()
 
 def clear():
   canvas.delete("all")
