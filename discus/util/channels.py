@@ -11,14 +11,16 @@ from discus.util import db
 # Creates a new channel, inserts it into the database, and returns the inserted
 # channel's ID.
 def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
+    start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # Define what the channel document will look like.
     chan = {
         "name" : chanName,
         "playlist" : playlistID,
         "mode" : mode,
         "recurring_info" : recurringInfo,
-        "start_date" : startDate,
-        "end_date" : endDate,
+        "start_date" : start_date_only,
+        "end_date" : end_date_only,
         "time_occurances" : timeOccurances,
         "date_created" : datetime.now()
     }
@@ -54,28 +56,35 @@ def channel_set_mode(chanID, mode, recurringInfo=None):
 
 # sets the start time for the channel
 def channel_set_start_date(chanID, startDate):
-    db.channels.update_one({ "_id": chanID }, { "$set": { "start_date": startDate } }) # set start time for channel
+    start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    db.channels.update_one({ "_id": chanID }, { "$set": { "start_date": start_date_only } }) # set start time for channel
 
 # sets the end time for the channel
 def channel_set_end_date(chanID, endDate):
-    db.channels.update_one({ "_id": chanID }, { "$set": { "end_date": endDate } }) # set end time for channel
+    end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    db.channels.update_one({ "_id": chanID }, { "$set": { "end_date": end_date_only } }) # set end time for channel
 
 # adds a time occurances to the channel
 def channel_add_time_occurance(chanID, startTime, endTime):
-    db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : startTime, "end_time" : endTime } } }) # add time occurances to channel
+    start_int = startTime.hour * 60 + startTime.minute
+    end_int = endTime.hour * 60 + endTime.minute
+    db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # add time occurances to channel
 
 # removes a time occurances from the channel
 def channel_remove_time_occurance(chanID, startTime, endTime):
-    db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : startTime, "end_time" : endTime } } }) # remove time occurances from channel
+    start_int = startTime.hour * 60 + startTime.minute
+    end_int = endTime.hour * 60 + endTime.minute
+    db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # remove time occurances from channel
 
 # Get a channel that is valid to be played right now. If multiple are valid,
 # pick a random one.
 def channel_get_live():
     # Get the current date and time.
     dt_now = datetime.now()
+    dt_date = dt_now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Get the current time (minutes since 00:00).
-    t_now = (dt_now - dt_now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds() / 60
+    t_now = (dt_now - dt_date).total_seconds() / 60
 
     # Determine if today is the last day of the month.
     last_day = int((dt_now + timedelta(1)).strftime("%d")) == 1
@@ -83,8 +92,20 @@ def channel_get_live():
     # Find a valid channel.
     return db.channels.find_one({
         "$and": [
-            {"start_date" : {'$lte' : dt_now}},
-            {"end_date" : {'$gte' : dt_now}},
+            {"$or": [
+                {"$and": [
+                    {"start_date" : {'$lte' : dt_now}},
+                    {"end_date" : {'$gte' : dt_now}}
+                ]},
+                {"$and": [
+                    {"start_date" : {'$lte' : dt_now}},
+                    {"end_date" : None}
+                ]},
+                {"$and": [
+                    {"start_date" : None},
+                    {"end_date" : {'$eq' : dt_date}}
+                ]}
+            ]},
             {"time_occurances.start_time": {'$lte' : t_now}},
             {"time_occurances.end_time": {'$gte' : t_now}},
             {"$or": [
@@ -95,7 +116,10 @@ def channel_get_live():
                 ]},
                 {"$and": [
                     {"mode": "Monthly"},
-                    {"recurring_info": 32 if last_day else int(dt_now.strftime('%d'))}
+                    {"$or": [
+                        {"recurring_info": 32 if last_day else -1},
+                        {"recurring_info": int(dt_now.strftime('%d'))}
+                    ]},
                 ]}
             ]},
         ]
