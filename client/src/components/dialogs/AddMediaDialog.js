@@ -23,8 +23,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState(dayjs());
   const [images, setImages] = React.useState([]);
+  const [start_date, setStartDate] = React.useState(dayjs());
+  const [end_date, setEndDate] = React.useState(dayjs());
+  const [newItem, setNewItem] = React.useState({
+    name: "",
+    description: "",
+    start_date: "",
+    end_date: "",
+    images: [],
+  })
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -35,8 +43,23 @@ export default function FormDialog() {
     handleChange();
   };
 
-  const handleChange = (newDate) => {
-    setDate(newDate);
+  const handleChange = (event) => {
+    console.log(event)
+    setNewItem({ ...newItem, [event.target.id]: event.target.value });
+  };
+
+  const handleStartDate = (date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDate = (date) => {
+    setEndDate(date);
+  };
+
+  const handleSave = () => {
+    event.preventDefault();
+    console.log(newItem);
+    handleClose();
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -66,13 +89,15 @@ export default function FormDialog() {
           </DialogContentText>
           <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
-          <TextField id="name" label="Name" variant="outlined" margin="normal" />
+          <TextField id="name" label="Name" variant="outlined" margin="normal" value={newItem.name} onChange={handleChange} />
           <TextareaAutosize
             id="description"
             minRows={4}
             placeholder="Description"
             style={{ width: 200 }}
             margin="normal"
+            value={newItem.description}
+            onChange={handleChange}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -80,7 +105,7 @@ export default function FormDialog() {
               label="Start Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
+              value={newItem.start_date}
               onChange={handleChange}
               renderInput={(params) => <TextField {...params} />}
             />
@@ -89,7 +114,7 @@ export default function FormDialog() {
               label="End Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
+              value={newItem.end_date}
               onChange={handleChange}
               renderInput={(params) => <TextField {...params} />}
             />
@@ -97,7 +122,7 @@ export default function FormDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Save</Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
