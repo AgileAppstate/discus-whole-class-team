@@ -19,8 +19,9 @@ from discus.util.playlists import *
 # end_date    - A datetime object of when to stop connsidering the image.
 def image_insert(path, duration=0, start_date=None, end_date=None):
   # Parse the file name.
-  filename = re.search("[^/\\]*$", path)[0]
-
+  
+  filename = path.replace("\\", "/").split("/")[-1]
+  
   # Insert the image file into GridFS.
   with open(path, 'rb') as f:
     contents = f.read()

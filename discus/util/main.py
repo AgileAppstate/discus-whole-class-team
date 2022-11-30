@@ -1,6 +1,7 @@
 # --- IMPORTS --- #
 
 import random
+from datetime import datetime
 
 from discus.util import db
 from discus.util import screen
@@ -34,7 +35,9 @@ def get_playlist_images(playlistID):
     if i['type'] == 'playlist':
       imgs.extend(get_playlist_images(i['objectID']))
     elif i['type'] == 'image':
-      imgs.append(image_get_by_id(i['objectID']))
+      imgOBJ = image_get_by_id(i['objectID'])
+      if imgOBJ["start_date"] < datetime.utcnow() and imgOBJ["end_date"] > datetime.utcnow():
+        imgs.append(imgOBJ)
 
   return imgs
 
@@ -43,11 +46,13 @@ def get_live_images(channelID):
   chan = channel_get_by_id(channelID) 
 
   images = get_playlist_images(chan['playlist'])
+
+  for i in images:
+    print(i['filename'])
   
   return images
 
 # --- DISPLAY LOOP --- #
-
 # Display the images.
 while 1:
   # Initialize the start_time for the channel.
