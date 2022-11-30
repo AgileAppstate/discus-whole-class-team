@@ -124,25 +124,3 @@ def channel_get_live():
             ]},
         ]
     })
-
-# TODO: get this working
-def channel_next_swap():
-
-    dt_now = datetime.now()
-
-    db.channels.find({
-        "$and": [
-            {"start_date" : {'$gte' : dt_now}},
-            {"$or": [
-                {"mode": "Daily"},
-                {"$and": [
-                    {"mode": "Weekly"},
-                    {"recurring_info": dt_now.strftime('%a')}
-                ]},
-                {"$and": [
-                    {"mode": "Monthly"},
-                    {"recurring_info": dt_now.strftime('%d')}
-                ]}
-            ]}
-        ]
-    }).sort({"start_date": 1}).limit(1)
