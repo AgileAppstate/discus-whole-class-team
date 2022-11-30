@@ -1,7 +1,9 @@
 # --- IMPORTS --- #
 
-import datetime
+from datetime import datetime
+
 from discus.util import db
+
 
 # --- FUNCTIONS --- #
 
@@ -13,7 +15,7 @@ def playlist_insert(playlistname, shuffle=False, itemList=[]):
         "name" : playlistname,
         "items" : itemList,
         "shuffle" : shuffle,
-        "date_created" : datetime.datetime.utcnow()
+        "date_created" : datetime.now()
     }
     
     # Push the playlist document to the playlists collection.

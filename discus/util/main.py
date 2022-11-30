@@ -18,71 +18,63 @@ db.setup()
 
 # --- DATABASE QUERY --- #
 
-# TODO: handle last-day-of-month
-# TODO: check timeOccurances
-def get_live_channel():
-  return None
-
 # get all images in a playlist
 def get_playlist_images(playlistID):
-  imgs = []
+    imgs = []
 
-  # get playlist
-  chan_playlist = playlist_get_by_id(playlistID)
+    # get playlist
+    chan_playlist = playlist_get_by_id(playlistID)
 
-  # shuffle playlist if shuffle is enabled
-  if chan_playlist['shuffle']:
-    random.shuffle(chan_playlist['items'])
+    # shuffle playlist if shuffle is enabled
+    if chan_playlist['shuffle']:
+        random.shuffle(chan_playlist['items'])
 
-  # looping through items in chanel playlist to find any item with item
-  # type playlist adding any other playlists to a list 
-  for i in chan_playlist['items']:
-    if i['type'] == 'playlist':
-      imgs.extend(get_playlist_images(i['objectID']))
-    elif i['type'] == 'image':
-      imgOBJ = image_get_by_id(i['objectID'])
-      if imgOBJ["start_date"] < datetime.utcnow() and imgOBJ["end_date"] > datetime.utcnow():
-        imgs.append(imgOBJ)
+    # looping through items in chanel playlist to find any item with item
+    # type playlist adding any other playlists to a list 
+    for i in chan_playlist['items']:
+        if i['type'] == 'playlist':
+            imgs.extend(get_playlist_images(i['objectID']))
+        elif i['type'] == 'image':
+            imgOBJ = image_get_by_id(i['objectID'])
+            if imgOBJ["start_date"] < datetime.now() and imgOBJ["end_date"] > datetime.now():
+                imgs.append(imgOBJ)
 
-  return imgs
-
-# Create a list of all of the images that should be displayed.
-def get_live_images(channelID):
-  chan = channel_get_by_id(channelID) 
-
-  images = get_playlist_images(chan['playlist'])
-
-  for i in images:
-    print(i['filename'])
-  
-  return images
+    return imgs
 
 # --- DISPLAY LOOP --- #
+
 # Display the images.
 while 1:
-  # Initialize the start_time for the channel.
-  start_time = datetime.now()
-  prev_time = start_time
-  next_swap = channel_next_swap()
+    # Initialize the start_time for the channel.
+    start_time = datetime.now()
+    prev_time = start_time
+    # next_swap = channel_next_swap()
 
-  # TODO: set CID to channel that is currently live
-  cid = channel_get_id_by_name('Party Time Channel')
+    # Get the ID of the channel that should be playing.
+    chan = channel_get_live()
 
-  # Fetch the current channnel and then display all of the images in it.
-  for img in get_live_images(cid):
-    curr_time = datetime.now()
-    if (prev_time < next_swap and curr_time >= next_swap):
-      break
-    prev_time = curr_time
+    # If no channel is found, clear the screen, wait for 10 seconds, and try again.
+    if chan is None:
+        print("no channel found")
+        screen.clear()
+        screen.sleep(10)
+        continue
 
-    # Read the image binary.
-    bin_img = db.fs.get(img["file_id"]).read()
+    # Fetch the current channnel and then display all of the images in it.
+    for img in get_playlist_images(chan['playlist']):
+        # curr_time = datetime.now()
+        # if (prev_time < next_swap and curr_time >= next_swap):
+        # break
+        # prev_time = curr_time
 
-    # Clear the canvas.
-    screen.clear()
+        # Read the image binary.
+        bin_img = db.fs.get(img["file_id"]).read()
 
-    # Draw the image.
-    screen.draw_img(bin_img)
+        # Clear the canvas.
+        screen.clear()
 
-    # Sleep until the next image needs to be displayed.
-    screen.sleep(img["duration"])
+        # Draw the image.
+        screen.draw_img(bin_img)
+
+        # Sleep until the next image needs to be displayed.
+        screen.sleep(img["duration"])
