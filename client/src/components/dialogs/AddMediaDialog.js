@@ -36,65 +36,6 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-<<<<<<< HEAD
-    // Sets values back to default
-    setName("");
-    setDescription("");
-    setStartDate(dayjs());
-    setEndDate(dayjs(""));
-    setImages([]);
-  };
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleDescChange = (event) => {
-    setDescription(event.target.value);
-  };
-
-  const handleStartDate = (date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDate = (date) => {
-    setEndDate(date);
-  };
-
-  const handleSave = () => {
-    event.preventDefault();
-    const items = [];
-    images.map((image) => {
-      setNewMedia((prevState) => [
-        ...prevState,
-        {
-        ['name']: name,
-        ['description']: description,
-        ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
-        ['image']: {
-          'src': image.src,
-          'filename': image.path,
-        },
-      }
-      ]);
-      items.push({
-        ['name']: name,
-        ['description']: description,
-        ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
-        ['image']: {
-          'src': image.src,
-          'filename': image.path,
-        },
-      })
-    });
-    // For testing purposes
-    console.log(items)
-    // Will return an empty array, but needs to be here to compile
-    console.log(newMedia)
-    handleClose();
-=======
     handleStartChange();
     handleEndChange();
   };
@@ -105,7 +46,6 @@ export default function FormDialog() {
 
   const handleEndChange = (newDate) => {
     setEnd_Date(newDate);
->>>>>>> 108d011 (Seperated out start and end date values)
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -167,8 +107,12 @@ export default function FormDialog() {
               margin="normal"
               value={end_date}
 <<<<<<< HEAD
+<<<<<<< HEAD
               onChange={handleEndDate}
 =======
+=======
+              disabled={start_date === "" ? true: false}
+>>>>>>> b3a2177 (added logic for bad date input - tbd if working)
               onChange={handleEndChange}
 >>>>>>> 108d011 (Seperated out start and end date values)
               renderInput={(params) => <TextField {...params} />}
