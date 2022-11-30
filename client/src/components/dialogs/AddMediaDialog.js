@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { TextareaAutosize } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,7 +8,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
-//import Stack from '@mui/material/Stack';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -122,16 +120,16 @@ export default function FormDialog() {
           </DialogContentText>
           <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
-          <TextField id="name" label="Name" variant="outlined" margin="normal" value={name} onChange={handleNameChange} />
-          <TextareaAutosize
-            id="description"
-            minRows={4}
-            placeholder="Description"
-            style={{ width: 200 }}
+          <TextField 
+            id="name" 
+            label="Name" 
+            variant="outlined" 
             margin="normal"
-            value={description}
-            onChange={handleDescChange}
-          />
+            required
+            fullWidth
+            float
+            />
+          <br/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
@@ -141,6 +139,7 @@ export default function FormDialog() {
               value={start_date}
               onChange={handleStartDate}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
             <DesktopDatePicker
               id="end_date"
@@ -150,8 +149,20 @@ export default function FormDialog() {
               value={end_date}
               onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
           </LocalizationProvider>
+          <br/>
+          <TextField
+            id="description"  
+            label="Description"
+            minRows={4}
+            variant='outlined'
+            margin="normal"
+            multiline
+            fullWidth
+            required
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
