@@ -21,7 +21,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState(dayjs());
+  const [start_date, setStart_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs());
   const [images, setImages] = React.useState([]);
 
   const handleClickOpen = () => {
@@ -30,11 +31,16 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleChange();
+    handleStartChange();
+    handleEndChange();
   };
 
-  const handleChange = (newDate) => {
-    setDate(newDate);
+  const handleStartChange = (newDate) => {
+    setStart_Date(newDate);
+  };
+
+  const handleEndChange = (newDate) => {
+    setEnd_Date(newDate);
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -80,8 +86,8 @@ export default function FormDialog() {
               label="Start Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={start_date}
+              onChange={handleStartChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -90,8 +96,8 @@ export default function FormDialog() {
               label="End Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={end_date}
+              onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
