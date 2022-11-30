@@ -15,6 +15,11 @@ db.setup()
 
 # --- DATABASE QUERY --- #
 
+# TODO: handle last-day-of-month
+# TODO: check timeOccurances
+def get_live_channel():
+  return None
+
 # Create a list of all of the images that should be displayed.
 def get_live_images(channelID):
   chan = get_channel_by_ID(channelID) 

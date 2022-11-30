@@ -29,6 +29,7 @@ def setup(attempts=3):
       # Check if connected.
       client.server_info()
       print("connected!")
+      break
     except pymongo.errors.ServerSelectionTimeoutError as err:
       print("Failed to connect.")
       print(err)

@@ -60,11 +60,25 @@ def channel_add_time_occurance(chanID, startTime, endTime):
 def channel_remove_time_occurance(chanID, startTime, endTime):
     db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : startTime, "end_time" : endTime } } }) # remove time occurances from channel
 
+# TODO: handle last-day-of-month
+# TODO: check timeOccurances
 def channel_next_swap():
-    # return datetime.utcnow() + timedelta(minutes=30)
+    db.channels.find({
+        "$and": [
+            {"start_date" : {'$gte' : datetime.utcnow()}},
+            {"$or": [
+                {"mode": "Daily"},
+                {"$and": [
+                    {"mode": "Weekly"},
+                    {"recurring_info": datetime.utcnow().strftime('%a')}
+                ]},
+                {"$and": [
+                    {"mode": "Monthly"},
+                    {"last_name": datetime.utcnow().strftime('%d')}
+                ]}
+            ]}
+        ]
+    }).sort({"start_date": 1}).limit(1)
 
-    return db.channels.find({
-        "start_date" : {
-            '$gte' : datetime.utcnow()
-        }
-    })["start_date"]
+
+
