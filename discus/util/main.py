@@ -29,6 +29,8 @@ while 1:
         screen.clear()
         screen.sleep(60)
         continue
+    else:
+        print("Playing channel: " + chan["name"])
 
     # Initialize the previous time for the channel.
     dt_prev = datetime.now()
