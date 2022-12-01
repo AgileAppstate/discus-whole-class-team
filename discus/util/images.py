@@ -52,7 +52,7 @@ def image_get_all():
 def image_get_file_id(id):
     return db.images.find_one({"_id" : id})["file_id"]
 
-# gets the image file
+# gets the image file from image id
 def image_get_file(id):
     return db.fs.get(image_get_file_id(id)).read() # get file from GridFS as a readable image
 
