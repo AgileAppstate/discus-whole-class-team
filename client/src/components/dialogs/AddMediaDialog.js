@@ -22,7 +22,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
   const [start_date, setStart_Date] = React.useState(dayjs());
-  const [end_date, setEnd_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -41,11 +41,20 @@ export default function FormDialog() {
   };
 
   const handleStartChange = (newDate) => {
-    setStart_Date(newDate);
+    if (newDate > end_date && end_date != '') {
+        setStart_Date(newDate);
+        setEnd_Date(newDate);
+    } else {
+        setStart_Date(newDate);
+    }
   };
 
   const handleEndChange = (newDate) => {
-    setEnd_Date(newDate);
+    if (start_date > newDate) {
+        setEnd_Date(start_date);
+    } else {
+        setEnd_Date(newDate);
+    }
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -92,11 +101,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
-<<<<<<< HEAD
-              onChange={handleStartDate}
-=======
               onChange={handleStartChange}
->>>>>>> 108d011 (Seperated out start and end date values)
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -106,15 +111,9 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={end_date}
-<<<<<<< HEAD
-<<<<<<< HEAD
               onChange={handleEndDate}
-=======
-=======
               disabled={start_date === "" ? true: false}
->>>>>>> b3a2177 (added logic for bad date input - tbd if working)
               onChange={handleEndChange}
->>>>>>> 108d011 (Seperated out start and end date values)
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
