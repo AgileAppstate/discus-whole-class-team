@@ -19,13 +19,15 @@ function Dropzone({ onDrop, accept }) {
       <div {...getRootProps({ className: 'dropzone' })}>
         <input className="input-zone" {...getInputProps()} />
         <div className="text-center">
+        <button type="button" onClick={open} className="btn">
           {isDragActive ? (
-            <p className="dropzone-content"><b>Chose a file</b> or drag it here.</p>
+            <p className="dropzone-content">Choose a file or drag it here.</p>
           ) : (
             <p className="dropzone-content">
-              Chose a file or drag it here.
+                Choose a file or drag it here.
             </p>
           )}
+          </button>
         </div>
       </div>
       <aside>
