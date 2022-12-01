@@ -24,15 +24,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
   const [images, setImages] = React.useState([]);
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
   const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs());
-  const [newItem, setNewItem] = React.useState({
-    name: "",
-    description: "",
-    start_date: "",
-    end_date: "",
-    images: [],
-  })
+  const [end_date, setEndDate] = React.useState(dayjs(""));
+  const [newMedia, setNewMedia] = React.useState([])
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,12 +36,20 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleChange();
+    // Sets values back to default
+    setName("");
+    setDescription("");
+    setStartDate(dayjs());
+    setEndDate(dayjs(""));
+    setImages([]);
   };
 
-  const handleChange = (event) => {
-    console.log(event)
-    setNewItem({ ...newItem, [event.target.id]: event.target.value });
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleDescChange = (event) => {
+    setDescription(event.target.value);
   };
 
   const handleStartDate = (date) => {
@@ -58,7 +62,36 @@ export default function FormDialog() {
 
   const handleSave = () => {
     event.preventDefault();
-    console.log(newItem);
+    const items = [];
+    images.map((image) => {
+      setNewMedia((prevState) => [
+        ...prevState,
+        {
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
+        ['image']: {
+          'src': image.src,
+          'filename': image.path,
+        },
+      }
+      ]);
+      items.push({
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
+        ['image']: {
+          'src': image.src,
+          'filename': image.path,
+        },
+      })
+    });
+    // For testing purposes
+    console.log(items)
+    // Will return an empty array, but needs to be here to compile
+    console.log(newMedia)
     handleClose();
   };
 
@@ -67,7 +100,7 @@ export default function FormDialog() {
       const reader = new FileReader();
 
       reader.onload = function (e) {
-        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result }]);
+        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result, path: file.path }]);
       };
 
       reader.readAsDataURL(file);
@@ -89,15 +122,15 @@ export default function FormDialog() {
           </DialogContentText>
           <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
-          <TextField id="name" label="Name" variant="outlined" margin="normal" value={newItem.name} onChange={handleChange} />
+          <TextField id="name" label="Name" variant="outlined" margin="normal" value={name} onChange={handleNameChange} />
           <TextareaAutosize
             id="description"
             minRows={4}
             placeholder="Description"
             style={{ width: 200 }}
             margin="normal"
-            value={newItem.description}
-            onChange={handleChange}
+            value={description}
+            onChange={handleDescChange}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -105,8 +138,8 @@ export default function FormDialog() {
               label="Start Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={newItem.start_date}
-              onChange={handleChange}
+              value={start_date}
+              onChange={handleStartDate}
               renderInput={(params) => <TextField {...params} />}
             />
             <DesktopDatePicker
@@ -114,8 +147,8 @@ export default function FormDialog() {
               label="End Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={newItem.end_date}
-              onChange={handleChange}
+              value={end_date}
+              onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
             />
           </LocalizationProvider>
