@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { TextareaAutosize } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,7 +8,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
-//import Stack from '@mui/material/Stack';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -23,7 +21,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState(dayjs());
+  const [start_date, setStart_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
 
   const handleClickOpen = () => {
@@ -32,11 +31,25 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleChange();
+    handleStartChange();
+    handleEndChange();
   };
 
-  const handleChange = (newDate) => {
-    setDate(newDate);
+  const handleStartChange = (newDate) => {
+    if (newDate > end_date && end_date != '') {
+        setStart_Date(newDate);
+        setEnd_Date(newDate);
+    } else {
+        setStart_Date(newDate);
+    }
+  };
+
+  const handleEndChange = (newDate) => {
+    if (start_date > newDate) {
+        setEnd_Date(start_date);
+    } else {
+        setEnd_Date(newDate);
+    }
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -66,34 +79,49 @@ export default function FormDialog() {
           </DialogContentText>
           <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
-          <TextField id="name" label="Name" variant="outlined" margin="normal" />
-          <TextareaAutosize
-            id="description"
-            minRows={4}
-            placeholder="Description"
-            style={{ width: 200 }}
+          <TextField 
+            id="name" 
+            label="Name" 
+            variant="outlined" 
             margin="normal"
-          />
+            required
+            fullWidth
+            float
+            />
+          <br/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
               label="Start Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={start_date}
+              onChange={handleStartChange}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
             <DesktopDatePicker
               id="end_date"
               label="End Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={end_date}
+              onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
           </LocalizationProvider>
+          <br/>
+          <TextField
+            id="description"  
+            label="Description"
+            minRows={4}
+            variant='outlined'
+            margin="normal"
+            multiline
+            fullWidth
+            required
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

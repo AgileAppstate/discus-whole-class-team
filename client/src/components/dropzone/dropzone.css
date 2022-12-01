@@ -5,7 +5,8 @@ body {
 .dropzone {
   text-align: center;
   padding: 20px;
-  border: 3px blue dashed;
+  border: 3px black dashed;
+  border-radius: 10px;
   width: 60%;
   margin: auto;
 }
@@ -22,18 +23,17 @@ body {
 }
 
 .btn:hover {
-  background-color: blue;
+  background-color: royalblue;
   color: aliceblue;
 }
 
-.file-list {
-  /* border: 3px dotted black; */
+/* .file-list {
+  border: 3px dotted black;
   display: flex !important;
   flex-wrap: wrap;
   width: auto;
   padding: 10px 20px;
-  margin: 20px 30px;
-  /* border: 3px dotted black; */
+  margin: 20px 30px
 }
 
 .file-list img {
@@ -41,4 +41,4 @@ body {
   width: 100px;
   padding-right: 10px;
   object-fit: cover;
-}
+} */
