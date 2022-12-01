@@ -52,6 +52,10 @@ def image_get_all():
 def image_get_file_id(id):
     return db.images.find_one({"_id" : id})["file_id"]
 
+# gets the image file
+def image_get_file(id):
+    return db.fs.get(image_get_file_id(id)).read() # get file from GridFS as a readable image
+
 def image_delete(id):
     # Delete the references to this image in any playlists.
     for plst in db.playlists.find({"items": id}):
