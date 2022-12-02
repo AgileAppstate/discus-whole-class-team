@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import './dropzone.css';
 
 function Dropzone({ onDrop, accept }) {
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles, open } = useDropzone({
     accept,
     onDrop
   });
