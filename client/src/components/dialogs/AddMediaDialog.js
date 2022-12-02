@@ -72,10 +72,24 @@ export default function FormDialog() {
   const handleSave = () => {
     event.preventDefault();
     const items = [];
-    images.map((image) => {
-      setNewMedia((prevState) => [
-        ...prevState,
-        {
+
+    // If the user somehow submits media without an image, it will add the backup image
+    if (images.length) {
+      images.map((image) => {
+        setNewMedia((prevState) => [
+          ...prevState,
+          {
+            ['name']: name,
+            ['description']: description,
+            ['start_date']: start_date.toDate(),
+            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+            ['image']: {
+              src: image.src,
+              filename: image.path
+            }
+          }
+        ]);
+        items.push({
           ['name']: name,
           ['description']: description,
           ['start_date']: start_date.toDate(),
@@ -84,19 +98,21 @@ export default function FormDialog() {
             src: image.src,
             filename: image.path
           }
-        }
-      ]);
-      items.push({
-        ['name']: name,
-        ['description']: description,
-        ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-        // ['image']: {
-        //   src: image.src,
-        //   filename: image.path
-        // }
+        });
       });
+  }
+  else {
+    items.push({
+      ['name']: name,
+      ['description']: description,
+      ['start_date']: start_date.toDate(),
+      ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+      ['image']: {
+        src: '/home/discus/default.png',
+        filename: 'default.png'
+      }
     });
+  }
     // For testing purposes
     console.log(items);
     // Will return an empty array, but needs to be here to compile
@@ -133,7 +149,7 @@ export default function FormDialog() {
           <DialogContentText>
             Any information submitted on this screen will apply to all media uploaded.
           </DialogContentText>
-          <Dropzone onDrop={onDrop} accept={'image/*'} />
+          <Dropzone onDrop={onDrop} accept={'image/*'} required />
           <ImageGrid images={images} />
           <TextField
             id="name"
