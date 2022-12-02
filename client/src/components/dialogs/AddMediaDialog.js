@@ -24,11 +24,11 @@ export default function FormDialog() {
   const [start_date, setStart_Date] = React.useState(dayjs());
   const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [name, setName] = React.useState('');
+  const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs(""));
-  const [newMedia, setNewMedia] = React.useState([])
+  const [end_date, setEndDate] = React.useState(dayjs(''));
+  const [newMedia, setNewMedia] = React.useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,33 +36,84 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleStartChange();
-    handleEndChange();
+    // Sets values back to default
+    setName('');
+    setDescription('');
+    setStartDate(dayjs());
+    setEndDate(dayjs(''));
+    setImages([]);
   };
 
   const handleStartChange = (newDate) => {
     if (newDate > end_date && end_date != '') {
-        setStart_Date(newDate);
-        setEnd_Date(newDate);
+      setStartDate(newDate);
+      setEndDate(newDate);
     } else {
-        setStart_Date(newDate);
+      setStartDate(newDate);
     }
   };
 
   const handleEndChange = (newDate) => {
     if (start_date > newDate) {
+<<<<<<< HEAD
         setEnd_Date(start_date);
     } else {
         setEnd_Date(newDate);
     }
   };
 
+=======
+      setEndDate(start_date);
+    } else {
+      setEndDate(newDate);
+    }
+  };
+
+  const handleSave = () => {
+    event.preventDefault();
+    const items = [];
+    images.map((image) => {
+      setNewMedia((prevState) => [
+        ...prevState,
+        {
+          ['name']: name,
+          ['description']: description,
+          ['start_date']: start_date.toDate(),
+          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+          ['image']: {
+            src: image.src,
+            filename: image.path
+          }
+        }
+      ]);
+      items.push({
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+        // ['image']: {
+        //   src: image.src,
+        //   filename: image.path
+        // }
+      });
+    });
+    // For testing purposes
+    console.log(items);
+    // Will return an empty array, but needs to be here to compile
+    console.log(newMedia);
+    handleClose();
+  };
+
+>>>>>>> e0fcbe9 (Linted current changes)
   const onDrop = React.useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
       const reader = new FileReader();
 
       reader.onload = function (e) {
-        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result, path: file.path }]);
+        setImages((prevState) => [
+          ...prevState,
+          { id: cuid(), src: e.target.result, path: file.path }
+        ]);
       };
 
       reader.readAsDataURL(file);
@@ -84,16 +135,23 @@ export default function FormDialog() {
           </DialogContentText>
           <Dropzone onDrop={onDrop} accept={'image/*'} />
           <ImageGrid images={images} />
-          <TextField 
-            id="name" 
-            label="Name" 
-            variant="outlined" 
+          <TextField
+            id="name"
+            label="Name"
+            variant="outlined"
             margin="normal"
             required
             fullWidth
             float
+<<<<<<< HEAD
             />
           <br/>
+=======
+            value={name}
+            onChange={handleNameChange}
+          />
+          <br />
+>>>>>>> e0fcbe9 (Linted current changes)
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
@@ -118,12 +176,12 @@ export default function FormDialog() {
               disablePast
             />
           </LocalizationProvider>
-          <br/>
+          <br />
           <TextField
-            id="description"  
+            id="description"
             label="Description"
             minRows={4}
-            variant='outlined'
+            variant="outlined"
             margin="normal"
             multiline
             fullWidth
