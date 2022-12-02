@@ -19,7 +19,7 @@ class MediaList extends Component {
     //     this.setState({ media });
     //   })
     // Dummy data
-    console.log(tempMedia);
+    //console.log(tempMedia);
     const media = tempMedia;
     this.setState({ media });
     const columns = [

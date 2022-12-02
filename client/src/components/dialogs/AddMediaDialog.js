@@ -21,9 +21,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [start_date, setStart_Date] = React.useState(dayjs());
-  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [start_date, setStartDate] = React.useState(dayjs());
+  const [end_date, setEndDate] = React.useState(dayjs(""));
+  const [newMedia, setNewMedia] = React.useState([])
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,25 +34,72 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleStartChange();
-    handleEndChange();
+    // Sets values back to default
+    setName("");
+    setDescription("");
+    setStartDate(dayjs());
+    setEndDate(dayjs(""));
+    setImages([]);
   };
 
-  const handleStartChange = (newDate) => {
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleDescChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const handleStartDate = (newDate) => {
     if (newDate > end_date && end_date != '') {
-        setStart_Date(newDate);
-        setEnd_Date(newDate);
+        setStartDate(newDate);
+        setEndDate(newDate);
     } else {
-        setStart_Date(newDate);
+        setStartDate(newDate);
     }
   };
 
-  const handleEndChange = (newDate) => {
+  const handleEndDate = (newDate) => {
     if (start_date > newDate) {
-        setEnd_Date(start_date);
+        setEndDate(start_date);
     } else {
-        setEnd_Date(newDate);
+        setEndDate(newDate);
     }
+  };
+
+  const handleSave = () => {
+    event.preventDefault();
+    const items = [];
+    images.map((image) => {
+      setNewMedia((prevState) => [
+        ...prevState,
+        {
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
+        ['image']: {
+          'src': image.src,
+          'filename': image.path,
+        },
+      }
+      ]);
+      items.push({
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : "",
+        ['image']: {
+          'src': image.src,
+          'filename': image.path,
+        },
+      })
+    });
+    // For testing purposes
+    console.log(items)
+    // Will return an empty array, but needs to be here to compile
+    console.log(newMedia)
+    handleClose();
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -57,7 +107,7 @@ export default function FormDialog() {
       const reader = new FileReader();
 
       reader.onload = function (e) {
-        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result }]);
+        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result, path: file.path }]);
       };
 
       reader.readAsDataURL(file);
@@ -87,6 +137,8 @@ export default function FormDialog() {
             required
             fullWidth
             float
+            value={name}
+            onChange={handleNameChange}
             />
           <br/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -96,7 +148,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
-              onChange={handleStartChange}
+              onChange={handleStartDate}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -106,7 +158,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={end_date}
-              onChange={handleEndChange}
+              onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -121,11 +173,13 @@ export default function FormDialog() {
             multiline
             fullWidth
             required
+            value={description}
+            onChange={handleDescChange}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Save</Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
