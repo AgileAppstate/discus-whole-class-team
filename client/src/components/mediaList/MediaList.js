@@ -21,8 +21,16 @@ class MediaList extends Component {
     const media = tempMedia;
     this.setState({ media });
     const columns = [
-      { field: 'id', headerName: 'ID', width: 70 },
+      {
+        field: 'image',
+        headerName: 'Thumbnail',
+        width: 300,
+        editable: true,
+        renderCell: (params) => <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />, // renderCell will render the component
+      },
+      { field: 'duration', headerName: 'Duration', width: 70 },
       { field: 'name', headerName: 'Title', width: 130 },
+      { field: 'description', headerName: 'Description', width: 500 },
       { field: 'start_date', headerName: 'Start Date', width: 130 },
       { field: 'end_date', headerName: 'End Date', width: 130 }
     ];
@@ -31,16 +39,7 @@ class MediaList extends Component {
 
   render() {
     return (
-      // <ul>
-      //   {this.state.media.map((media) => (
-      //     <li key={media.id}>
-      //       Name: {media.name} <br /> Start Date: {media.start_date} <br /> End Date:{' '}
-      //       {media.end_date} <br />
-      //       <br />
-      //     </li>
-      //   ))}
-      // </ul>
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 600, width: '100%' }}>
         <DataGrid
           rows={this.state.media}
           columns={this.state.columns}
