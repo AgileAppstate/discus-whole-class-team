@@ -3,12 +3,10 @@ import React, { Component } from 'react';
 import tempMedia from './tempMedia';
 import { DataGrid } from '@mui/x-data-grid';
 
-
-
 class MediaList extends Component {
   state = {
     media: [],
-    columns:[]
+    columns: []
   };
 
   componentDidMount() {
@@ -26,9 +24,9 @@ class MediaList extends Component {
       { field: 'id', headerName: 'ID', width: 70 },
       { field: 'name', headerName: 'Title', width: 130 },
       { field: 'start_date', headerName: 'Start Date', width: 130 },
-      { field: 'end_date', headerName: 'End Date', width: 130 },
+      { field: 'end_date', headerName: 'End Date', width: 130 }
     ];
-    this.setState({columns});
+    this.setState({ columns });
   }
 
   render() {
@@ -44,11 +42,11 @@ class MediaList extends Component {
       // </ul>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-        rows={this.state.media}
-        columns={this.state.columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
+          rows={this.state.media}
+          columns={this.state.columns}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
         />
       </div>
     );
