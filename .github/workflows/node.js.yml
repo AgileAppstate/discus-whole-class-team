@@ -13,7 +13,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     defaults:
       run:
@@ -41,5 +41,8 @@ jobs:
     - name: Runs any tests
       run: npm --prefix client run test
       
-    - name: Builds and deploys application
-      run: npm --prefix client run deploy
+    #- name: Builds and deploys application
+    #  run: npm --prefix client run deploy
+      
+    - name: Re-runs server
+      run: pm2 restart discus-web
