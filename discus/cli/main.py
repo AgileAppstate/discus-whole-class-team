@@ -3,9 +3,6 @@ import sys
 import os
 import json
 
-### Pymongo imports ###
-from bson.objectid import ObjectId
-
 ### Pygments imports ###
 from pygments import highlight, lexers, formatters
 
@@ -96,6 +93,8 @@ with click.Context(group) as ctx:
           f.write(json.dumps(doc))
       # with open(os...
     # else
+
+
 
     return 0
   # def get
