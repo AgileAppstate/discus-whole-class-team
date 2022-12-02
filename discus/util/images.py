@@ -11,7 +11,7 @@ from discus.util.playlists import playlist_remove_item
 # --- FUNCTIONS --- #
 
 # Insert a new image into the database.
-def image_insert(path, duration=0, start_date=None, end_date=None):
+def image_insert(path, duration=0, desc="", start_date=None, end_date=None):
     # Parse the file name.
     
     filename = path.replace("\\", "/").split("/")[-1]
@@ -24,6 +24,7 @@ def image_insert(path, duration=0, start_date=None, end_date=None):
     # Define what the image document will look like.
     img = {
         "filename" : filename,
+        "description" : desc,
         "file_type" : re.search("[^\.]*$", filename)[0],
         "file_id" : img_fsid,
         "duration" : duration,
@@ -79,3 +80,7 @@ def image_set_start_date(id, start_date):
 # Set the end date for an image.
 def image_set_end_date(id, end_date):
     db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date } }) # set end date for image
+
+# Set the description for an image.
+def image_set_description(id, desc):
+    db.images.update_one({ "_id": id }, { "$set": { "description": desc } }) # set description for image
