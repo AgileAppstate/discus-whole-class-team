@@ -3,7 +3,7 @@ const media = [
     id: 1,
     name: 'Day Change Sign',
     description: 'For when daylight savings hits',
-    duration: 30,
+    duration: 300,
     start_date: '2022-11-14',
     end_date: '2022-11-20',
     image:

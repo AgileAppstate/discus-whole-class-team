@@ -5,6 +5,12 @@ import { DataGrid } from '@mui/x-data-grid';
 //import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import dayjs from 'dayjs';
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration)
 
 class MediaList extends Component {
   state = {
@@ -12,6 +18,10 @@ class MediaList extends Component {
     columns: [],
     selectionModel: [],
   };
+
+  handleDateChange() {
+
+  }
 
   componentDidMount() {
     // Implement after we have the MangoDB API endpoint
@@ -29,14 +39,17 @@ class MediaList extends Component {
         field: 'image',
         headerName: 'Thumbnail',
         width: 300,
-        editable: true,
         renderCell: (params) => <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />, // renderCell will render the component
       },
-      { field: 'duration', headerName: 'Duration', width: 70 },
-      { field: 'name', headerName: 'Name', width: 250 },
-      { field: 'description', headerName: 'Description', width: 500 },
-      { field: 'start_date', headerName: 'Start Date', width: 130 },
-      { field: 'end_date', headerName: 'End Date', width: 130 }
+      { field: 'duration', headerName: 'Duration', width: 80, editable: true, valueFormatter: params => 
+      params?.value < 60 ? dayjs.duration({seconds: params?.value}).asSeconds() + " secs" : dayjs.duration({seconds: params?.value}).asMinutes() + " mins",
+     },
+      { field: 'name', headerName: 'Name', width: 250, editable: true,},
+      { field: 'description', headerName: 'Description', width: 500, editable: true, },
+      { field: 'start_date', headerName: 'Start Date', width: 130, editable: true, valueFormatter: params => 
+      dayjs(params?.value).format("MM/DD/YYYY"),},
+      { field: 'end_date', headerName: 'End Date', width: 130, editable: true, valueFormatter: params => 
+      dayjs(params?.value).format("MM/DD/YYYY"),}
     ];
     this.setState({ columns });
   }
