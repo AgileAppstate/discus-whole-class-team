@@ -3,7 +3,7 @@ const media = [
     id: 1,
     name: 'Day Change Sign',
     description: 'For when daylight savings hits',
-    duration: 10,
+    duration: 30,
     start_date: '2022-11-14',
     end_date: '2022-11-20',
     image:
@@ -13,7 +13,7 @@ const media = [
     id: 2,
     name: "Fenwick's Best Sign",
     description: "Everybody's gotta know!",
-    duration: 10,
+    duration: 30,
     start_date: '2022-11-18',
     end_date: '2022-11-22',
     image:
@@ -23,7 +23,7 @@ const media = [
     id: 3,
     name: 'Yippeeeeee',
     description: 'Wahoooooooo',
-    duration: 10,
+    duration: 30,
     start_date: '2022-11-12',
     end_date: '2022-11-14',
     image:
