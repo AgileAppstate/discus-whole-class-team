@@ -20,9 +20,10 @@ class MediaList extends Component {
     selectionModel: []
   };
 
-  handleDateChange() {}
-
-  componentDidMount() {
+  /**
+   * Loads the media locally
+   */
+  loadMedia = () => {
     // Implement after we have the MangoDB API endpoint
     // axios.get('./tempMedia.json')
     //   .then(res => {
@@ -33,6 +34,40 @@ class MediaList extends Component {
     //console.log(tempMedia);
     const media = tempMedia;
     this.setState({ media });
+  }
+
+  /**
+   * Handles sending off an edited entry to the API
+   * @param {*} params 
+   */
+  handleEditCommit = (params) => {
+    console.log(params)
+    var { id, field, value } = params;
+    // Converts date to JS date if necessary
+    if (dayjs.isDayjs(value)) {
+      value = value.toDate()
+    }
+    // Will need to be replaced with sending an UPDATE to the API
+    console.log( {id, [field]: value} )
+  }
+
+  /**
+   * Handles deleting any selected items
+   */
+  deleteSelectedFile = () => {
+    const media = this.state.media.filter((item) => {
+      // Removes the media from the local list
+      !this.state.selectionModel.includes(item.id);
+      // Will need to send the ID to the API to delete
+      console.log(item.id)
+    });
+    this.setState({ media });
+  };
+
+  componentDidMount() {
+
+    this.loadMedia();
+    // Generates the columns for the list
     const columns = [
       {
         field: 'image',
@@ -59,7 +94,6 @@ class MediaList extends Component {
         headerName: 'Start Date',
         width: 180,
         editable: false,
-        //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
         renderCell: (params) => (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -67,7 +101,9 @@ class MediaList extends Component {
               inputFormat="MM/DD/YYYY"
               value={dayjs(params?.value)}
               onChange={(newDate) => {
+                // Grabs the previous needed fields from the params
                 const { id, api, field } = params;
+                // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
               renderInput={(params) => <TextField {...params} />}
@@ -80,7 +116,6 @@ class MediaList extends Component {
         headerName: 'End Date',
         width: 180,
         editable: false,
-        //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
         renderCell: (params) => (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -88,7 +123,9 @@ class MediaList extends Component {
               inputFormat="MM/DD/YYYY"
               value={dayjs(params?.value)}
               onChange={(newDate) => {
+                // Grabs the previous needed fields from the params
                 const { id, api, field } = params;
+                // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
               renderInput={(params) => <TextField {...params} />}
@@ -99,11 +136,6 @@ class MediaList extends Component {
     ];
     this.setState({ columns });
   }
-
-  deleteSelectedFile = () => {
-    const media = this.state.media.filter((item) => !this.state.selectionModel.includes(item.id));
-    this.setState({ media });
-  };
 
   render() {
     return (
@@ -118,6 +150,7 @@ class MediaList extends Component {
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableSelectionOnClick
+          onCellEditCommit={this.handleEditCommit}
           onSelectionModelChange={(selectionModel) => {
             this.setState({ selectionModel });
           }}
