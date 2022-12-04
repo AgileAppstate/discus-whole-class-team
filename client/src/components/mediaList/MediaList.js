@@ -8,20 +8,19 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
-import duration from "dayjs/plugin/duration";
-dayjs.extend(duration)
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 class MediaList extends Component {
   state = {
     media: [],
     columns: [],
-    selectionModel: [],
+    selectionModel: []
   };
 
-  handleDateChange() {
-
-  }
+  handleDateChange() {}
 
   componentDidMount() {
     // Implement after we have the MangoDB API endpoint
@@ -39,25 +38,56 @@ class MediaList extends Component {
         field: 'image',
         headerName: 'Thumbnail',
         width: 300,
-        renderCell: (params) => <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />, // renderCell will render the component
+        renderCell: (params) => (
+          <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />
+        ) // renderCell will render the component
       },
-      { field: 'duration', headerName: 'Duration', width: 80, editable: true, valueFormatter: params => 
-      params?.value < 60 ? dayjs.duration({seconds: params?.value}).asSeconds() + " secs" : dayjs.duration({seconds: params?.value}).asMinutes() + " mins",
-     },
-      { field: 'name', headerName: 'Name', width: 250, editable: true,},
-      { field: 'description', headerName: 'Description', width: 500, editable: true, },
-      { field: 'start_date', headerName: 'Start Date', width: 130, editable: true, valueFormatter: params => 
-      dayjs(params?.value).format("MM/DD/YYYY"),},
-      { field: 'end_date', headerName: 'End Date', width: 130, editable: true, valueFormatter: params => 
-      dayjs(params?.value).format("MM/DD/YYYY"),}
+      {
+        field: 'duration',
+        headerName: 'Duration',
+        width: 80,
+        editable: true,
+        valueFormatter: (params) =>
+          params?.value < 60
+            ? dayjs.duration({ seconds: params?.value }).asSeconds() + ' secs'
+            : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
+      },
+      { field: 'name', headerName: 'Name', width: 250, editable: true },
+      { field: 'description', headerName: 'Description', width: 500, editable: true },
+      {
+        field: 'start_date',
+        headerName: 'Start Date',
+        width: 180,
+        editable: true,
+        //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
+        renderCell: (params) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              id={params.field}
+              inputFormat="MM/DD/YYYY"
+              value={dayjs(params?.value)}
+              onChange={(newDate) => {
+                params.api.state.editRows(newDate);
+                console.log(params.api);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            </LocalizationProvider>
+        ) // renderCell will render the component
+      },
+      {
+        field: 'end_date',
+        headerName: 'End Date',
+        width: 130,
+        editable: true,
+        valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+      }
     ];
     this.setState({ columns });
   }
 
   deleteSelectedFile = () => {
-    const media = this.state.media.filter(
-      (item) => !this.state.selectionModel.includes(item.id) 
-    );
+    const media = this.state.media.filter((item) => !this.state.selectionModel.includes(item.id));
     this.setState({ media });
   };
 
@@ -65,7 +95,7 @@ class MediaList extends Component {
     return (
       <div style={{ height: 600, width: '100%' }}>
         <IconButton variant="contained" onClick={this.deleteSelectedFile} color="primary">
-        <DeleteOutlinedIcon></DeleteOutlinedIcon>
+          <DeleteOutlinedIcon></DeleteOutlinedIcon>
         </IconButton>
         <DataGrid
           rows={this.state.media}
