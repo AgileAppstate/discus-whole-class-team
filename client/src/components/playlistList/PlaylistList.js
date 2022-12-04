@@ -1,13 +1,29 @@
 import React, { Component } from 'react';
 //import axios from 'axios';
 import tempPlaylists from './tempPlaylists';
+import { DataGrid } from '@mui/x-data-grid';
+import IconButton from '@mui/material/IconButton';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import styled from '@emotion/styled';
+dayjs.extend(duration);
 
 class PlaylistList extends Component {
   state = {
-    playlists: []
+    playlists: [],
+    columns: [],
+    selectionModel: []
   };
 
-  componentDidMount() {
+  /**
+   * Loads the playlist locally
+   */
+  loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
     // axios.get('./tempMedia.json')
     //   .then(res => {
@@ -18,19 +34,36 @@ class PlaylistList extends Component {
     console.log(tempPlaylists);
     const playlists = tempPlaylists;
     this.setState({ playlists });
+  };
+
+  componentDidMount() {
+    this.loadPlaylists();
+    
+    // Sets the columns for the DataGrid
+    const columns = [
+      { field: 'name', headerName: 'Name', width: 200 },
+      { field: 'items', headerName: 'Items', width: 200 },
+      { field: 'date_created', headerName: 'Date Created', width: 200 },
+    ];
+
+    this.setState({ columns });
   }
 
   render() {
     return (
-      <ul>
-        {this.state.playlists.map((playlist) => (
-          <li key={playlist.id}>
-            Name: {playlist.name} <br /> Start Date: {playlist.start_date} <br /> End Date:{' '}
-            {playlist.end_date} <br />
-            <br />
-          </li>
-        ))}
-      </ul>
+      <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
+          rows={this.state.playlists}
+          columns={this.state.columns}
+          pageSize={5}
+          checkboxSelection
+          disableSelectionOnClick
+          onSelectionModelChange={(newSelection) => {
+            this.setState({ selectionModel: newSelection.selectionModel });
+          }}
+          selectionModel={this.state.selectionModel}
+        />
+      </div>
     );
   }
 }
