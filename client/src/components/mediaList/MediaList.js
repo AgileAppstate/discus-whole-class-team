@@ -53,12 +53,12 @@ class MediaList extends Component {
             : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
       },
       { field: 'name', headerName: 'Name', width: 250, editable: true },
-      { field: 'description', headerName: 'Description', width: 500, editable: true },
+      { field: 'description', headerName: 'Description', width: 400, editable: true },
       {
         field: 'start_date',
         headerName: 'Start Date',
         width: 180,
-        editable: true,
+        editable: false,
         //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
         renderCell: (params) => (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -67,8 +67,8 @@ class MediaList extends Component {
               inputFormat="MM/DD/YYYY"
               value={dayjs(params?.value)}
               onChange={(newDate) => {
-                params.api.state.editRows(newDate);
-                console.log(params.api);
+                const { id, api, field } = params;
+                params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
               renderInput={(params) => <TextField {...params} />}
             />
@@ -78,10 +78,24 @@ class MediaList extends Component {
       {
         field: 'end_date',
         headerName: 'End Date',
-        width: 130,
-        editable: true,
-        valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
-      }
+        width: 180,
+        editable: false,
+        //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
+        renderCell: (params) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              id={params.field}
+              inputFormat="MM/DD/YYYY"
+              value={dayjs(params?.value)}
+              onChange={(newDate) => {
+                const { id, api, field } = params;
+                params.api.setEditCellValue({ id, api, field, value: newDate });
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            </LocalizationProvider>
+        ) // renderCell will render the component
+      },
     ];
     this.setState({ columns });
   }
