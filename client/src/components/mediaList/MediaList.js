@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 //import axios from 'axios';
 import tempMedia from './tempMedia';
 import { DataGrid } from '@mui/x-data-grid';
-//import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -102,11 +101,15 @@ class MediaList extends Component {
               value={dayjs(params?.value)}
               onChange={(newDate) => {
                 // Grabs the previous needed fields from the params
-                const { id, api, field } = params;
+                const { id, api, field, row } = params;
+                // If the user sets the date to something after the end date, it will use the end date
+                if (newDate > dayjs(row.end_date) && row.end_date != '') {
+                  newDate = dayjs(row.end_date);
+                }
                 // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => <TextField sx={{ m: -1.4, width: '25ch' }} {...params} />}
             />
             </LocalizationProvider>
         ) // renderCell will render the component
@@ -124,11 +127,15 @@ class MediaList extends Component {
               value={dayjs(params?.value)}
               onChange={(newDate) => {
                 // Grabs the previous needed fields from the params
-                const { id, api, field } = params;
+                const { id, api, field, row } = params;
+                // If user tries to set the end date to before the start date, it will use the start
+                if (dayjs(row.start_date) > newDate) {
+                  newDate = dayjs(row.start_date);
+                }
                 // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => <TextField sx={{ m: -1.4, width: '25ch' }} {...params} />}
             />
             </LocalizationProvider>
         ) // renderCell will render the component
