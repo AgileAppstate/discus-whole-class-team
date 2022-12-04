@@ -2,12 +2,25 @@ import React, { Component } from 'react';
 //import axios from 'axios';
 import tempMedia from './tempMedia';
 import { DataGrid } from '@mui/x-data-grid';
+//import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
 class MediaList extends Component {
   state = {
     media: [],
-    columns: []
+    columns: [],
+    selectionModel: []
   };
+
+  handleDateChange() {}
 
   componentDidMount() {
     // Implement after we have the MangoDB API endpoint
@@ -21,32 +34,80 @@ class MediaList extends Component {
     const media = tempMedia;
     this.setState({ media });
     const columns = [
-      { field: 'id', headerName: 'ID', width: 70 },
-      { field: 'name', headerName: 'Title', width: 130 },
-      { field: 'start_date', headerName: 'Start Date', width: 130 },
-      { field: 'end_date', headerName: 'End Date', width: 130 }
+      {
+        field: 'image',
+        headerName: 'Thumbnail',
+        width: 300,
+        renderCell: (params) => (
+          <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />
+        ) // renderCell will render the component
+      },
+      {
+        field: 'duration',
+        headerName: 'Duration',
+        width: 80,
+        editable: true,
+        valueFormatter: (params) =>
+          params?.value < 60
+            ? dayjs.duration({ seconds: params?.value }).asSeconds() + ' secs'
+            : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
+      },
+      { field: 'name', headerName: 'Name', width: 250, editable: true },
+      { field: 'description', headerName: 'Description', width: 500, editable: true },
+      {
+        field: 'start_date',
+        headerName: 'Start Date',
+        width: 180,
+        editable: true,
+        //valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY'),
+        renderCell: (params) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DesktopDatePicker
+              id={params.field}
+              inputFormat="MM/DD/YYYY"
+              value={dayjs(params?.value)}
+              onChange={(newDate) => {
+                params.api.state.editRows(newDate);
+                console.log(params.api);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            </LocalizationProvider>
+        ) // renderCell will render the component
+      },
+      {
+        field: 'end_date',
+        headerName: 'End Date',
+        width: 130,
+        editable: true,
+        valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+      }
     ];
     this.setState({ columns });
   }
 
+  deleteSelectedFile = () => {
+    const media = this.state.media.filter((item) => !this.state.selectionModel.includes(item.id));
+    this.setState({ media });
+  };
+
   render() {
     return (
-      // <ul>
-      //   {this.state.media.map((media) => (
-      //     <li key={media.id}>
-      //       Name: {media.name} <br /> Start Date: {media.start_date} <br /> End Date:{' '}
-      //       {media.end_date} <br />
-      //       <br />
-      //     </li>
-      //   ))}
-      // </ul>
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 600, width: '100%' }}>
+        <IconButton variant="contained" onClick={this.deleteSelectedFile} color="primary">
+          <DeleteOutlinedIcon></DeleteOutlinedIcon>
+        </IconButton>
         <DataGrid
           rows={this.state.media}
           columns={this.state.columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
+          disableSelectionOnClick
+          onSelectionModelChange={(selectionModel) => {
+            this.setState({ selectionModel });
+          }}
+          selectionModel={this.state.selectionModel}
         />
       </div>
     );
