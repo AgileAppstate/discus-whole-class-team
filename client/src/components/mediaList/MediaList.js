@@ -10,6 +10,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import styled from '@emotion/styled';
 dayjs.extend(duration);
 
 class MediaList extends Component {
@@ -18,6 +19,20 @@ class MediaList extends Component {
     columns: [],
     selectionModel: []
   };
+
+  CssTextField = styled(TextField)({
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'white'
+      },
+      '&:hover fieldset': {
+        borderColor: 'white'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white'
+      }
+    }
+  });
 
   /**
    * Loads the media locally
@@ -33,22 +48,22 @@ class MediaList extends Component {
     //console.log(tempMedia);
     const media = tempMedia;
     this.setState({ media });
-  }
+  };
 
   /**
    * Handles sending off an edited entry to the API
-   * @param {*} params 
+   * @param {*} params
    */
   handleEditCommit = (params) => {
-    console.log(params)
+    console.log(params);
     var { id, field, value } = params;
     // Converts date to JS date if necessary
     if (dayjs.isDayjs(value)) {
-      value = value.toDate()
+      value = value.toDate();
     }
     // Will need to be replaced with sending an UPDATE to the API
-    console.log( {id, [field]: value} )
-  }
+    console.log({ id, [field]: value });
+  };
 
   /**
    * Handles deleting any selected items
@@ -58,13 +73,12 @@ class MediaList extends Component {
       // Removes the media from the local list
       !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
-      console.log(item.id)
+      console.log(item.id);
     });
     this.setState({ media });
   };
 
   componentDidMount() {
-
     this.loadMedia();
     // Generates the columns for the list
     const columns = [
@@ -73,7 +87,7 @@ class MediaList extends Component {
         headerName: 'Thumbnail',
         width: 300,
         renderCell: (params) => (
-          <img style={{ height: 300, width: '50%' }} className="mt-7" src={params.value} />
+          <img style={{ height: '100%', width: '50%' }} className="my-2 mx-16" src={params.value} />
         ) // renderCell will render the component
       },
       {
@@ -87,7 +101,7 @@ class MediaList extends Component {
             : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
       },
       { field: 'name', headerName: 'Name', width: 250, editable: true },
-      { field: 'description', headerName: 'Description', width: 400, editable: true },
+      { field: 'description', headerName: 'Description', width: 380, editable: true },
       {
         field: 'start_date',
         headerName: 'Start Date',
@@ -109,9 +123,11 @@ class MediaList extends Component {
                 // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
-              renderInput={(params) => <TextField sx={{ m: -1.4, width: '25ch' }} {...params} />}
+              renderInput={(params) => (
+                <this.CssTextField sx={{ m: -1.4, width: '25ch' }} {...params} />
+              )}
             />
-            </LocalizationProvider>
+          </LocalizationProvider>
         ) // renderCell will render the component
       },
       {
@@ -135,11 +151,13 @@ class MediaList extends Component {
                 // Sets the edit value to the new selected date
                 params.api.setEditCellValue({ id, api, field, value: newDate });
               }}
-              renderInput={(params) => <TextField sx={{ m: -1.4, width: '25ch' }} {...params} />}
+              renderInput={(params) => (
+                <this.CssTextField sx={{ m: -1.4, width: '25ch' }} {...params} />
+              )}
             />
-            </LocalizationProvider>
+          </LocalizationProvider>
         ) // renderCell will render the component
-      },
+      }
     ];
     this.setState({ columns });
   }
@@ -155,6 +173,7 @@ class MediaList extends Component {
           columns={this.state.columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
+          getRowHeight={() => 'auto'}
           checkboxSelection
           disableSelectionOnClick
           onCellEditCommit={this.handleEditCommit}
