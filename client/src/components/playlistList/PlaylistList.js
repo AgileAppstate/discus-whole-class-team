@@ -36,6 +36,18 @@ class PlaylistList extends Component {
     this.setState({ playlists });
   };
 
+    /**
+   * Handles sending off an edited entry to the API
+   * @param {*} params
+   */
+     handleEditCommit = (params) => {
+      console.log(params);
+      var { id, field, value } = params;
+
+      // Will need to be replaced with sending an UPDATE to the API
+      console.log({ id, [field]: value });
+    };
+
   componentDidMount() {
     this.loadPlaylists();
     
@@ -43,6 +55,7 @@ class PlaylistList extends Component {
     const columns = [
       { field: 'name', headerName: 'Name', width: 200 },
       { field: 'items', headerName: 'Items', width: 200 },
+      { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
       { field: 'date_created', headerName: 'Date Created', width: 200 },
     ];
 
@@ -58,6 +71,7 @@ class PlaylistList extends Component {
           pageSize={5}
           checkboxSelection
           disableSelectionOnClick
+          onCellEditCommit={this.handleEditCommit}
           onSelectionModelChange={(newSelection) => {
             this.setState({ selectionModel: newSelection.selectionModel });
           }}
