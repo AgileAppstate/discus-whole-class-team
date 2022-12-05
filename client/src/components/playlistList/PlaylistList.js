@@ -36,7 +36,7 @@ class PlaylistList extends Component {
     this.setState({ playlists });
   };
 
-    /**
+  /**
    * Handles sending off an edited entry to the API
    * @param {*} params
    */
@@ -47,6 +47,19 @@ class PlaylistList extends Component {
       // Will need to be replaced with sending an UPDATE to the API
       console.log({ id, [field]: value });
     };
+
+  /**
+   * Handles deleting any selected items
+   */
+  deleteSelectedFile = () => {
+    const playlist = this.state.playlists.filter((item) => {
+      // Removes the media from the local list
+      !this.state.selectionModel.includes(item.id);
+      // Will need to send the ID to the API to delete
+      console.log(item.id);
+    });
+    this.setState({ playlist });
+  };
 
   componentDidMount() {
     this.loadPlaylists();
@@ -65,6 +78,9 @@ class PlaylistList extends Component {
   render() {
     return (
       <div style={{ height: 400, width: '100%' }}>
+        <IconButton variant="contained" onClick={this.deleteSelectedFile} color="primary">
+          <DeleteOutlinedIcon></DeleteOutlinedIcon>
+        </IconButton>
         <DataGrid
           rows={this.state.playlists}
           columns={this.state.columns}
