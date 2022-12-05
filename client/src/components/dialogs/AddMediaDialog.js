@@ -98,19 +98,18 @@ export default function FormDialog() {
           }
         });
       });
-  }
-  else {
-    items.push({
-      ['name']: name,
-      ['description']: description,
-      ['start_date']: start_date.toDate(),
-      ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-      ['image']: {
-        src: '/home/discus/default.png',
-        filename: 'default.png'
-      }
-    });
-  }
+    } else {
+      items.push({
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+        ['image']: {
+          src: '/home/discus/default.png',
+          filename: 'default.png'
+        }
+      });
+    }
     // For testing purposes
     console.log(items);
     // Will return an empty array, but needs to be here to compile
