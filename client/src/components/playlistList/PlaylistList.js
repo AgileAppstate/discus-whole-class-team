@@ -66,7 +66,7 @@ class PlaylistList extends Component {
     
     // Sets the columns for the DataGrid
     const columns = [
-      { field: 'name', headerName: 'Name', width: 200 },
+      { field: 'name', headerName: 'Name', width: 200, editable: true },
       { field: 'items', headerName: 'Items', width: 200 },
       { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
       { field: 'date_created', headerName: 'Date Created', width: 200 },
