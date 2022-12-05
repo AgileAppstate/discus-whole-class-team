@@ -71,9 +71,9 @@ class MediaList extends Component {
   deleteSelectedFile = () => {
     const media = this.state.media.filter((item) => {
       // Removes the media from the local list
-      !this.state.selectionModel.includes(item.id);
+      return !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
-      console.log(item.id);
+      //console.log(item.id);
     });
     this.setState({ media });
   };
