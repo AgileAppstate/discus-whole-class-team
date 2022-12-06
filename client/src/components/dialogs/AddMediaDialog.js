@@ -11,6 +11,9 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
 import cuid from 'cuid';
@@ -27,6 +30,7 @@ export default function FormDialog() {
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(''));
   const [newMedia, setNewMedia] = React.useState([]);
+  const [checked, setChecked] = React.useState(true);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -41,6 +45,10 @@ export default function FormDialog() {
     setEndDate(dayjs(''));
     setImages([]);
   };
+
+  const handleChecked = (event) => {
+    setChecked(event.target.checked);
+  }
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -80,7 +88,7 @@ export default function FormDialog() {
             ['name']: name,
             ['description']: description,
             ['start_date']: start_date.toDate(),
-            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+            ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
             ['image']: {
               src: image.src,
               filename: image.path
@@ -91,7 +99,7 @@ export default function FormDialog() {
           ['name']: name,
           ['description']: description,
           ['start_date']: start_date.toDate(),
-          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+          ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
           ['image']: {
             src: image.src,
             filename: image.path
@@ -103,7 +111,7 @@ export default function FormDialog() {
         ['name']: name,
         ['description']: description,
         ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+        ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
         ['image']: {
           src: '/home/discus/default.png',
           filename: 'default.png'
@@ -158,6 +166,9 @@ export default function FormDialog() {
             value={name}
             onChange={handleNameChange}
           />
+          <FormGroup>
+            <FormControlLabel control={<Checkbox label="Indefinite End Date" checked={checked} onChange={handleChecked} color="default" />} label="End Date?" />
+          </FormGroup>
           <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -179,6 +190,7 @@ export default function FormDialog() {
               onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
               disablePast
+              disabled={checked}
             />
           </LocalizationProvider>
           <br />
