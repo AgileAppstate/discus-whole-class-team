@@ -44,6 +44,7 @@ export default function FormDialog() {
     setStartDate(dayjs());
     setEndDate(dayjs(null));
     setImages([]);
+    setChecked(true);
   };
 
   const handleChecked = (event) => {
