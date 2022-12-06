@@ -28,7 +28,7 @@ export default function FormDialog() {
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs(''));
+  const [end_date, setEndDate] = React.useState(dayjs(null));
   const [newMedia, setNewMedia] = React.useState([]);
   const [checked, setChecked] = React.useState(true);
 
@@ -42,7 +42,7 @@ export default function FormDialog() {
     setName('');
     setDescription('');
     setStartDate(dayjs());
-    setEndDate(dayjs(''));
+    setEndDate(dayjs(null));
     setImages([]);
   };
 
@@ -167,7 +167,12 @@ export default function FormDialog() {
             onChange={handleNameChange}
           />
           <FormGroup>
-            <FormControlLabel control={<Checkbox label="Indefinite End Date" checked={checked} onChange={handleChecked} color="default" />} label="End Date?" />
+            <FormControlLabel control= {
+                <Checkbox label="Indefinite End Date" 
+                checked={checked} 
+                onChange={handleChecked} 
+                color="default" 
+                />} label="No End Date" />
           </FormGroup>
           <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>

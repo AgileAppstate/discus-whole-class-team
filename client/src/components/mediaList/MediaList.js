@@ -87,7 +87,7 @@ class MediaList extends Component {
         headerName: 'Thumbnail',
         width: 300,
         renderCell: (params) => (
-          <img style={{ height: '100%', width: '50%' }} className="my-2 mx-16" src={params.value} />
+          <img style={{ height: '100%', width: '50%', objectFit: 'contain'}} className="my-2 mx-16" src={params.value} />
         ) // renderCell will render the component
       },
       {
