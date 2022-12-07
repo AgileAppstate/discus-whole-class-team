@@ -21,6 +21,15 @@ def image_insert(path, duration=0, desc="", start_date=None, end_date=None):
         contents = f.read()
     img_fsid = db.fs.put(contents, filename=filename)
 
+    
+    start_date_only = None
+    if isinstance(start_date, datetime):
+        start_date_only = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    end_date_only = None
+    if isinstance(end_date, datetime):
+        end_date_only = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
     # Define what the image document will look like.
     img = {
         "filename" : filename,
@@ -28,8 +37,8 @@ def image_insert(path, duration=0, desc="", start_date=None, end_date=None):
         "file_type" : re.search("[^\.]*$", filename)[0],
         "file_id" : img_fsid,
         "duration" : duration,
-        "start_date" : start_date,
-        "end_date" : end_date,
+        "start_date" : start_date_only,
+        "end_date" : end_date_only,
         "date_added" : datetime.now()
     }
 
@@ -75,11 +84,17 @@ def image_set_duration(id, duration):
 
 # Set the start date for an image.
 def image_set_start_date(id, start_date):
-    db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date } }) # set start date for image
+    start_date_only = None
+    if isinstance(start_date, datetime):
+        start_date_only = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date_only } }) # set start date for image
 
 # Set the end date for an image.
 def image_set_end_date(id, end_date):
-    db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date } }) # set end date for image
+    end_date_only = None
+    if isinstance(end_date, datetime):
+        end_date_only = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date_only } }) # set end date for image
 
 # Set the description for an image.
 def image_set_description(id, desc):
