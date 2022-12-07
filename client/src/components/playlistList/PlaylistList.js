@@ -25,10 +25,10 @@ class PlaylistList extends Component {
    */
   loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
-    // axios.get('./tempMedia.json')
+    // axios.get('./tempPlaylist.json')
     //   .then(res => {
-    //     const media = res.data;
-    //     this.setState({ media });
+    //     const playlist = res.data;
+    //     this.setState({ playlist });
     //   })
     // Dummy data
     console.log(tempPlaylists);
