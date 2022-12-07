@@ -1,0 +1,12 @@
+[Unit]
+Description=Digital Signage Control System
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/discus/discus-whole-class-team
+ExecStart=/usr/bin/python /home/discus/discus-whole-class-team/run.py
+
+[Install]
+WantedBy=multi-user.target

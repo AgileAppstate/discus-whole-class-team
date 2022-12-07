@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-//import "./dropzone.css"
+import './dropzone.css';
 
-function Dropzone({ onDrop, accept, open }) {
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+function Dropzone({ onDrop, accept }) {
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles, open } = useDropzone({
     accept,
     onDrop
   });
@@ -19,19 +19,15 @@ function Dropzone({ onDrop, accept, open }) {
       <div {...getRootProps({ className: 'dropzone' })}>
         <input className="input-zone" {...getInputProps()} />
         <div className="text-center">
-          {isDragActive ? (
-            <p className="dropzone-content">Release to drop the files here</p>
-          ) : (
-            <p className="dropzone-content">
-              Drag’ n’ drop some files here, or click to select files
-            </p>
-          )}
           <button type="button" onClick={open} className="btn">
-            Click to select files
+            {isDragActive ? (
+              <p className="dropzone-content">Choose a file or drag it here.</p>
+            ) : (
+              <p className="dropzone-content">Choose a file or drag it here.</p>
+            )}
           </button>
         </div>
       </div>
-      re
       <aside>
         <ul>{files}</ul>
       </aside>

@@ -41,11 +41,11 @@ def create_image():
 #how to pass multiple records
 #636ff99df79d9f60de9d05a4
 #636ff99cf79d9f60de9d05a1
-@app.route("/get_row_<images>_<1,2,3,5,8>", methods=)
-def get_rows()
+#@app.route("/get_row_<images>_<1,2,3,5,8>", methods=)
+#def get_rows():
 
 #For image insert, find where to save
-@app.route("")
+#@app.route("")
 
 
 @app.route("/playlists", methods=["POST"])
