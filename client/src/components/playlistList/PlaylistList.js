@@ -4,20 +4,17 @@ import tempPlaylists from './tempPlaylists';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import TextField from '@mui/material/TextField';
+import ItemDialog from '../dialogs/PlaylistItemsDialog'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import styled from '@emotion/styled';
 dayjs.extend(duration);
 
 class PlaylistList extends Component {
   state = {
     playlists: [],
     columns: [],
-    selectionModel: []
+    selectionModel: [],
+    openItems: false,
   };
 
   /**
@@ -48,15 +45,26 @@ class PlaylistList extends Component {
       console.log({ id, [field]: value });
     };
 
+    /**
+     * Handles double-clicking a cell so we can popup the media dialog for the items list
+     * @param {*} params 
+     */
+    handleDoubleClick = (params) => {
+      if (params.field === "items")
+      {
+        console.log(params)
+      }
+    };
+
   /**
    * Handles deleting any selected items
    */
   deleteSelectedFile = () => {
     const playlist = this.state.playlists.filter((item) => {
       // Removes the media from the local list
-      !this.state.selectionModel.includes(item.id);
+      return !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
-      console.log(item.id);
+      //console.log(item.id);
     });
     this.setState({ playlist });
   };
@@ -67,9 +75,11 @@ class PlaylistList extends Component {
     // Sets the columns for the DataGrid
     const columns = [
       { field: 'name', headerName: 'Name', width: 200, editable: true },
-      { field: 'items', headerName: 'Items', width: 200 },
+      { field: 'items', headerName: 'Items', width: 250, renderCell: () => <ItemDialog /> },
       { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
-      { field: 'date_created', headerName: 'Date Created', width: 200 },
+      { field: 'date_created', headerName: 'Date Created', width: 200, valueFormatter: (params) =>
+      dayjs(params?.value).format("MM/DD/YYYY")
+    },
     ];
 
     this.setState({ columns });
@@ -88,10 +98,11 @@ class PlaylistList extends Component {
           checkboxSelection
           disableSelectionOnClick
           onCellEditCommit={this.handleEditCommit}
-          onSelectionModelChange={(newSelection) => {
-            this.setState({ selectionModel: newSelection.selectionModel });
+          onSelectionModelChange={(selectionModel) => {
+            this.setState({ selectionModel });
           }}
           selectionModel={this.state.selectionModel}
+          onCellDoubleClick={this.handleDoubleClick}
         />
       </div>
     );

@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import styled from '@emotion/styled';
+import MediaButton from '../buttons/AddMedia';
 dayjs.extend(duration);
 
 class MediaList extends Component {
@@ -55,7 +56,6 @@ class MediaList extends Component {
    * @param {*} params
    */
   handleEditCommit = (params) => {
-    console.log(params);
     var { id, field, value } = params;
     // Converts date to JS date if necessary
     if (dayjs.isDayjs(value)) {
@@ -66,14 +66,23 @@ class MediaList extends Component {
   };
 
   /**
+   * Adds added media to the local media array
+   * @param {*} params 
+   */
+  handleImageChange = (items) => {
+    const media = this.state.media.concat(items);
+    this.setState({ media });
+  }
+
+  /**
    * Handles deleting any selected items
    */
   deleteSelectedFile = () => {
     const media = this.state.media.filter((item) => {
       // Removes the media from the local list
-      !this.state.selectionModel.includes(item.id);
+      return !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
-      console.log(item.id);
+      //console.log(item.id);
     });
     this.setState({ media });
   };
@@ -87,7 +96,7 @@ class MediaList extends Component {
         headerName: 'Thumbnail',
         width: 300,
         renderCell: (params) => (
-          <img style={{ height: '100%', width: '50%' }} className="my-2 mx-16" src={params.value} />
+          <img style={{ height: '100%', width: '50%', objectFit: 'contain'}} className="my-2 mx-16" src={params.value} />
         ) // renderCell will render the component
       },
       {
@@ -182,6 +191,7 @@ class MediaList extends Component {
           }}
           selectionModel={this.state.selectionModel}
         />
+        <MediaButton onChange={this.handleImageChange} />
       </div>
     );
   }
