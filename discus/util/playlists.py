@@ -80,7 +80,7 @@ def playlist_get_images(playlistID):
             imgs.extend(playlist_get_images(i['objectID']))
         elif i['type'] == 'image':
             imgOBJ = db.images.find_one({"_id" : i['objectID']})
-            if imgOBJ["start_date"] < datetime.now() and imgOBJ["end_date"] > datetime.now():
+            if imgOBJ["start_date"] < datetime.now() and (imgOBJ["end_date"] > datetime.now() or imgOBJ["end_date"] == None):
                 imgs.append(imgOBJ)
 
     return imgs

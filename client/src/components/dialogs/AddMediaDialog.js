@@ -21,6 +21,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
+  const [start_date, setStart_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -42,15 +44,7 @@ export default function FormDialog() {
     setImages([]);
   };
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleDescChange = (event) => {
-    setDescription(event.target.value);
-  };
-
-  const handleStartDate = (newDate) => {
+  const handleStartChange = (newDate) => {
     if (newDate > end_date && end_date != '') {
       setStartDate(newDate);
       setEndDate(newDate);
@@ -59,8 +53,16 @@ export default function FormDialog() {
     }
   };
 
-  const handleEndDate = (newDate) => {
+  const handleEndChange = (newDate) => {
     if (start_date > newDate) {
+<<<<<<< HEAD
+        setEnd_Date(start_date);
+    } else {
+        setEnd_Date(newDate);
+    }
+  };
+
+=======
       setEndDate(start_date);
     } else {
       setEndDate(newDate);
@@ -117,6 +119,7 @@ export default function FormDialog() {
     handleClose();
   };
 
+>>>>>>> e0fcbe9 (Linted current changes)
   const onDrop = React.useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
       const reader = new FileReader();
@@ -155,10 +158,15 @@ export default function FormDialog() {
             required
             fullWidth
             float
+<<<<<<< HEAD
+            />
+          <br/>
+=======
             value={name}
             onChange={handleNameChange}
           />
           <br />
+>>>>>>> e0fcbe9 (Linted current changes)
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
@@ -166,7 +174,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
-              onChange={handleStartDate}
+              onChange={handleStartChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -177,6 +185,8 @@ export default function FormDialog() {
               margin="normal"
               value={end_date}
               onChange={handleEndDate}
+              disabled={start_date === "" ? true: false}
+              onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -191,8 +201,6 @@ export default function FormDialog() {
             multiline
             fullWidth
             required
-            value={description}
-            onChange={handleDescChange}
           />
         </DialogContent>
         <DialogActions>
