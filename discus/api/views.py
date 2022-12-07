@@ -31,6 +31,12 @@ def get_collection(coll_name):
         json_data = cursor_to_json(cursor)
     return json_data
 
+@app.route('/insert_image', methods=["POST"])
+def create_image():
+    if not request.json or not 'filename' in request.json:
+        abort(400)
+    print(request.json)
+
 #Get a single record or multiple records, by id
 #how to pass multiple records
 #636ff99df79d9f60de9d05a4
@@ -54,6 +60,8 @@ def insert_into_playlist():
     item_id = request.args.get('item_id')
     item_type = request.args.get('item_type')
     playlists.playlist_insert_item(playlist, item_id, item_type)
+
+
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
