@@ -12,7 +12,6 @@ import dayjs from 'dayjs';
 
 import styled from '@emotion/styled';
 
-
 class ChannelList extends Component {
   state = {
     media: [],
