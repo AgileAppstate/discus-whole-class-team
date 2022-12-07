@@ -24,6 +24,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
+  const [start_date, setStart_Date] = React.useState(dayjs());
+  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -45,7 +47,7 @@ export default function FormDialog(props) {
     setImages([]);
     setChecked(true);
   };
-
+  
   const handleChecked = (event) => {
     setChecked(event.target.checked);
   }
@@ -67,7 +69,7 @@ export default function FormDialog(props) {
     }
   };
 
-  const handleEndDate = (newDate) => {
+  const handleEndChange = (newDate) => {
     if (start_date > newDate) {
       setEndDate(start_date);
     } else {
@@ -173,7 +175,7 @@ export default function FormDialog(props) {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
-              onChange={handleStartDate}
+              onChange={handleStartChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -184,6 +186,8 @@ export default function FormDialog(props) {
               margin="normal"
               value={end_date}
               onChange={handleEndDate}
+              disabled={start_date === "" ? true: false}
+              onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
               disabled={checked}
@@ -199,8 +203,6 @@ export default function FormDialog(props) {
             multiline
             fullWidth
             required
-            value={description}
-            onChange={handleDescChange}
           />
         </DialogContent>
         <DialogActions>
