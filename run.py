@@ -12,5 +12,5 @@ elif sys.argv[1] == "api":
     app.run(debug=True, port=8080)
 elif sys.argv[1] == "cli":
     import discus.cli.main as main
-    main() 
-
+    sys.argv.pop()
+    main.main() 
