@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { TextareaAutosize } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,7 +8,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
-//import Stack from '@mui/material/Stack';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -23,8 +21,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState(dayjs());
   const [images, setImages] = React.useState([]);
+  const [name, setName] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [start_date, setStartDate] = React.useState(dayjs());
+  const [end_date, setEndDate] = React.useState(dayjs(''));
+  const [newMedia, setNewMedia] = React.useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -32,11 +34,88 @@ export default function FormDialog() {
 
   const handleClose = () => {
     setOpen(false);
-    handleChange();
+    // Sets values back to default
+    setName('');
+    setDescription('');
+    setStartDate(dayjs());
+    setEndDate(dayjs(''));
+    setImages([]);
   };
 
-  const handleChange = (newDate) => {
-    setDate(newDate);
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleDescChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const handleStartDate = (newDate) => {
+    if (newDate > end_date && end_date != '') {
+      setStartDate(newDate);
+      setEndDate(newDate);
+    } else {
+      setStartDate(newDate);
+    }
+  };
+
+  const handleEndDate = (newDate) => {
+    if (start_date > newDate) {
+      setEndDate(start_date);
+    } else {
+      setEndDate(newDate);
+    }
+  };
+
+  const handleSave = () => {
+    event.preventDefault();
+    const items = [];
+
+    // If the user somehow submits media without an image, it will add the backup image
+    if (images.length) {
+      images.map((image) => {
+        setNewMedia((prevState) => [
+          ...prevState,
+          {
+            ['name']: name,
+            ['description']: description,
+            ['start_date']: start_date.toDate(),
+            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+            ['image']: {
+              src: image.src,
+              filename: image.path
+            }
+          }
+        ]);
+        items.push({
+          ['name']: name,
+          ['description']: description,
+          ['start_date']: start_date.toDate(),
+          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+          ['image']: {
+            src: image.src,
+            filename: image.path
+          }
+        });
+      });
+  }
+  else {
+    items.push({
+      ['name']: name,
+      ['description']: description,
+      ['start_date']: start_date.toDate(),
+      ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+      ['image']: {
+        src: '/home/discus/default.png',
+        filename: 'default.png'
+      }
+    });
+  }
+    // For testing purposes
+    console.log(items);
+    // Will return an empty array, but needs to be here to compile
+    console.log(newMedia);
+    handleClose();
   };
 
   const onDrop = React.useCallback((acceptedFiles) => {
@@ -44,7 +123,10 @@ export default function FormDialog() {
       const reader = new FileReader();
 
       reader.onload = function (e) {
-        setImages((prevState) => [...prevState, { id: cuid(), src: e.target.result }]);
+        setImages((prevState) => [
+          ...prevState,
+          { id: cuid(), src: e.target.result, path: file.path }
+        ]);
       };
 
       reader.readAsDataURL(file);
@@ -64,40 +146,59 @@ export default function FormDialog() {
           <DialogContentText>
             Any information submitted on this screen will apply to all media uploaded.
           </DialogContentText>
-          <Dropzone onDrop={onDrop} accept={'image/*'} />
+          <Dropzone onDrop={onDrop} accept={'image/*'} required />
           <ImageGrid images={images} />
-          <TextField id="name" label="Name" variant="outlined" margin="normal" />
-          <TextareaAutosize
-            id="description"
-            minRows={4}
-            placeholder="Description"
-            style={{ width: 200 }}
+          <TextField
+            id="name"
+            label="Name"
+            variant="outlined"
             margin="normal"
+            required
+            fullWidth
+            float
+            value={name}
+            onChange={handleNameChange}
           />
+          <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
               label="Start Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={start_date}
+              onChange={handleStartDate}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
             <DesktopDatePicker
               id="end_date"
               label="End Date"
               inputFormat="MM/DD/YYYY"
               margin="normal"
-              value={date}
-              onChange={handleChange}
+              value={end_date}
+              onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
+              disablePast
             />
           </LocalizationProvider>
+          <br />
+          <TextField
+            id="description"
+            label="Description"
+            minRows={4}
+            variant="outlined"
+            margin="normal"
+            multiline
+            fullWidth
+            required
+            value={description}
+            onChange={handleDescChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Save</Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
