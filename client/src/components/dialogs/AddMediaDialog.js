@@ -11,6 +11,9 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
 import cuid from 'cuid';
@@ -19,16 +22,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FormDialog() {
+export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
-  const [start_date, setStart_Date] = React.useState(dayjs());
-  const [end_date, setEnd_Date] = React.useState(dayjs(''));
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs(''));
-  const [newMedia, setNewMedia] = React.useState([]);
+  const [end_date, setEndDate] = React.useState(dayjs(null));
+  const [checked, setChecked] = React.useState(true);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,11 +41,24 @@ export default function FormDialog() {
     setName('');
     setDescription('');
     setStartDate(dayjs());
-    setEndDate(dayjs(''));
+    setEndDate(dayjs(null));
     setImages([]);
+    setChecked(true);
   };
 
-  const handleStartChange = (newDate) => {
+  const handleChecked = (event) => {
+    setChecked(event.target.checked);
+  }
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handleDescChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const handleStartDate = (newDate) => {
     if (newDate > end_date && end_date != '') {
       setStartDate(newDate);
       setEndDate(newDate);
@@ -53,16 +67,8 @@ export default function FormDialog() {
     }
   };
 
-  const handleEndChange = (newDate) => {
+  const handleEndDate = (newDate) => {
     if (start_date > newDate) {
-<<<<<<< HEAD
-        setEnd_Date(start_date);
-    } else {
-        setEnd_Date(newDate);
-    }
-  };
-
-=======
       setEndDate(start_date);
     } else {
       setEndDate(newDate);
@@ -76,51 +82,40 @@ export default function FormDialog() {
     // If the user somehow submits media without an image, it will add the backup image
     if (images.length) {
       images.map((image) => {
-        setNewMedia((prevState) => [
-          ...prevState,
-          {
-            ['name']: name,
-            ['description']: description,
-            ['start_date']: start_date.toDate(),
-            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-            ['image']: {
-              src: image.src,
-              filename: image.path
-            }
-          }
-        ]);
         items.push({
           ['name']: name,
           ['description']: description,
           ['start_date']: start_date.toDate(),
-          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
+          ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
           ['image']: {
             src: image.src,
             filename: image.path
           }
         });
       });
-  }
-  else {
-    items.push({
-      ['name']: name,
-      ['description']: description,
-      ['start_date']: start_date.toDate(),
-      ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-      ['image']: {
-        src: '/home/discus/default.png',
-        filename: 'default.png'
-      }
-    });
-  }
+    } else {
+      items.push({
+        ['name']: name,
+        ['description']: description,
+        ['start_date']: start_date.toDate(),
+        ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
+        ['image']: {
+          src: '/home/discus/default.png',
+          filename: 'default.png'
+        }
+      });
+    }
     // For testing purposes
     console.log(items);
-    // Will return an empty array, but needs to be here to compile
-    console.log(newMedia);
+    // Adds ID to item, which will eventually be replaced with ID received from API
+    items.map((item) => {
+      item['id'] = cuid();
+      item['image'] = item['image'].src
+    });
+    props.onChange(items);
     handleClose();
   };
 
->>>>>>> e0fcbe9 (Linted current changes)
   const onDrop = React.useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
       const reader = new FileReader();
@@ -159,15 +154,18 @@ export default function FormDialog() {
             required
             fullWidth
             float
-<<<<<<< HEAD
-            />
-          <br/>
-=======
             value={name}
             onChange={handleNameChange}
           />
+          <FormGroup>
+            <FormControlLabel control= {
+                <Checkbox label="Indefinite End Date" 
+                checked={checked} 
+                onChange={handleChecked} 
+                color="default" 
+                />} label="No End Date" />
+          </FormGroup>
           <br />
->>>>>>> e0fcbe9 (Linted current changes)
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
@@ -175,7 +173,7 @@ export default function FormDialog() {
               inputFormat="MM/DD/YYYY"
               margin="normal"
               value={start_date}
-              onChange={handleStartChange}
+              onChange={handleStartDate}
               renderInput={(params) => <TextField {...params} />}
               disablePast
             />
@@ -186,10 +184,9 @@ export default function FormDialog() {
               margin="normal"
               value={end_date}
               onChange={handleEndDate}
-              disabled={start_date === "" ? true: false}
-              onChange={handleEndChange}
               renderInput={(params) => <TextField {...params} />}
               disablePast
+              disabled={checked}
             />
           </LocalizationProvider>
           <br />
@@ -202,6 +199,8 @@ export default function FormDialog() {
             multiline
             fullWidth
             required
+            value={description}
+            onChange={handleDescChange}
           />
         </DialogContent>
         <DialogActions>
