@@ -22,14 +22,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FormDialog() {
+export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(null));
-  const [newMedia, setNewMedia] = React.useState([]);
   const [checked, setChecked] = React.useState(true);
 
   const handleClickOpen = () => {
@@ -83,19 +82,6 @@ export default function FormDialog() {
     // If the user somehow submits media without an image, it will add the backup image
     if (images.length) {
       images.map((image) => {
-        setNewMedia((prevState) => [
-          ...prevState,
-          {
-            ['name']: name,
-            ['description']: description,
-            ['start_date']: start_date.toDate(),
-            ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
-            ['image']: {
-              src: image.src,
-              filename: image.path
-            }
-          }
-        ]);
         items.push({
           ['name']: name,
           ['description']: description,
@@ -121,8 +107,12 @@ export default function FormDialog() {
     }
     // For testing purposes
     console.log(items);
-    // Will return an empty array, but needs to be here to compile
-    console.log(newMedia);
+    // Adds ID to item, which will eventually be replaced with ID received from API
+    items.map((item) => {
+      item['id'] = cuid();
+      item['image'] = item['image'].src
+    });
+    props.onChange(items);
     handleClose();
   };
 

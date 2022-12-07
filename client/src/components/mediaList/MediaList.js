@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import styled from '@emotion/styled';
+import MediaButton from '../buttons/AddMedia';
 dayjs.extend(duration);
 
 class MediaList extends Component {
@@ -55,7 +56,6 @@ class MediaList extends Component {
    * @param {*} params
    */
   handleEditCommit = (params) => {
-    console.log(params);
     var { id, field, value } = params;
     // Converts date to JS date if necessary
     if (dayjs.isDayjs(value)) {
@@ -64,6 +64,15 @@ class MediaList extends Component {
     // Will need to be replaced with sending an UPDATE to the API
     console.log({ id, [field]: value });
   };
+
+  /**
+   * Adds added media to the local media array
+   * @param {*} params 
+   */
+  handleImageChange = (items) => {
+    const media = this.state.media.concat(items);
+    this.setState({ media });
+  }
 
   /**
    * Handles deleting any selected items
@@ -182,6 +191,7 @@ class MediaList extends Component {
           }}
           selectionModel={this.state.selectionModel}
         />
+        <MediaButton onChange={this.handleImageChange} />
       </div>
     );
   }
