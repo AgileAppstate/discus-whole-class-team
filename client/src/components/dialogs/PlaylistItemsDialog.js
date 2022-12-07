@@ -73,13 +73,15 @@ export default function PlaylistItemsDialog() {
       <Button variant="outlined" onClick={handleClickOpen} color="primary">
         Open Items
       </Button>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}
+        PaperProps={{ sx: { width: "100%", height: "100%" } }}>
         <DialogTitle>Current Media</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select any media that you want to be in the playlist.
           </DialogContentText>
       <DataGrid
+          autoHeight {...media}
           rows={media}
           columns={columns}
           pageSize={5}

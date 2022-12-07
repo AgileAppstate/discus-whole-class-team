@@ -60,13 +60,13 @@ class PlaylistList extends Component {
    * Handles deleting any selected items
    */
   deleteSelectedFile = () => {
-    const playlist = this.state.playlists.filter((item) => {
-      // Removes the media from the local list
+    const playlists = this.state.playlists.filter((item) => {
+      // Removes the playlist from the local list
       return !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
       //console.log(item.id);
     });
-    this.setState({ playlist });
+    this.setState({ playlists });
   };
 
   componentDidMount() {

@@ -9,14 +9,14 @@ const playlists = [
   {
     id: 2,
     name: 'Playlist Of Motivational Posters',
-    items: 'So motivational!',
+    items: [2, 1],
     shuffle: true,
     date_created: '2022-10-14',
   },
   {
     id: 3,
     name: 'Very Cool Playlist',
-    items: 'So cool...',
+    items: [3],
     shuffle: true,
     date_created: '2022-10-25',
   }
