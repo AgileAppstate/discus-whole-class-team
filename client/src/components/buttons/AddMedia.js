@@ -3,8 +3,12 @@ import Dialog from '../dialogs/AddMediaDialog';
 import 'reactjs-popup/dist/index.css';
 
 class AddMedia extends React.Component {
+  handleItemAdd = (event) => {
+    this.props.onChange(event);
+  }
+
   render() {
-    return <Dialog></Dialog>;
+    return <Dialog onChange={this.handleItemAdd}></Dialog>;
   }
 }
 
