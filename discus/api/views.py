@@ -4,16 +4,31 @@ from discus.util import images
 from discus.util import channels
 from discus.api import app
 from bson.json_util import dumps
+import base64
+import os
+import json
 
 #dropzone web, 
 # db.setup() will have to be run before any actions with the database
 
 #BASE_64 convert the images
 
-@app.route('/ping', methods=['POST'])
+@app.route('/ping', methods=['GET'])
 def status():
-    image_ids = request.args.get('id')
-    return {'msg':image_ids}
+    #image_ids = request.args.get('id')
+    #img insert test
+    f = open("json_img.txt", 'r')
+    img_ex = {
+        "description": "testing",
+        'end_date': 'Date Thu Dec 31 2099 00:00:00 GMT-0500 (Eastern Standard Time)',
+        'id': "clbe5s03c00012e63z2jqlvup",
+        'image': f.read(),
+        'name': "test",
+        'start_date': 'Date Wed Dec 07 2022 16:20:39 GMT-0500 (Eastern Standard Time)'
+    }
+    
+    return insert_image(img_ex['image'])
+    #return {'msg':image_ids}
 
 #get all records 
 @app.route("/get_collection_<string:coll_name>", methods=["GET"])
@@ -31,11 +46,17 @@ def get_collection(coll_name):
         json_data = cursor_to_json(cursor)
     return json_data
 
-@app.route('/insert_image', methods=["POST"])
-def create_image():
-    if not request.json or not 'filename' in request.json:
-        abort(400)
-    print(request.json)
+#@app.route('/insert_image', methods=["POST"])
+def insert_image(json_entry):
+    #if not request.json or not 'name' in request.json:
+        #abort(400)
+    headers = json_entry.split(',')
+    with open(r'/images/img_test_save.jpg', 'wb') as f:
+        f.write(base64.decodebytes(bytes(headers[1], 'utf-8')))
+    return str(headers)
+    
+
+
 
 #Get a single record or multiple records, by id
 #how to pass multiple records
