@@ -11,14 +11,19 @@ from discus.util.playlists import playlist_remove_item
 # --- FUNCTIONS --- #
 
 # Insert a new image into the database.
-def image_insert(path, duration=0, desc="", start_date=None, end_date=None):
+def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_bytes=None):
     # Parse the file name.
     
-    filename = path.replace("\\", "/").split("/")[-1]
+    if img_bytes != None:
+        filename = path
+        contents = img_bytes
+    else:
+        filename = path.replace("\\", "/").split("/")[-1]
+        
+        # Insert the image file into GridFS.
+        with open(path, 'rb') as f:
+            contents = f.read()
     
-    # Insert the image file into GridFS.
-    with open(path, 'rb') as f:
-        contents = f.read()
     img_fsid = db.fs.put(contents, filename=filename)
 
     
