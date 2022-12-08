@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from discus.util import playlists
 from discus.util import images
 from discus.util import channels
@@ -56,7 +56,9 @@ def get_collection(coll_name):
     elif (coll_name == 'channels'):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
-    return json_data
+    resp = Response(json_data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @app.route('/insert_image', methods=["POST"])
 def insert_image():
