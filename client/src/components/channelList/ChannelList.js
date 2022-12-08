@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import axios from 'axios';
-import tempMedia from './tempChannel';
+import axios from 'axios';
+//import tempMedia from './tempChannel';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -38,15 +38,29 @@ class ChannelList extends Component {
    */
   loadMedia = () => {
     // Implement after we have the MangoDB API endpoint
-    // axios.get('./tempMedia.json')
-    //   .then(res => {
-    //     const media = res.data;
-    //     this.setState({ media });
-    //   })
-    // Dummy data
-    //console.log(tempMedia);
-    const media = tempMedia;
-    this.setState({ media });
+    axios.get('http://152.10.212.58:8000/get_collection_channels')
+    .then(res => {
+      const raw = res.data;
+      const media = [];
+      raw.forEach((item) => {
+        const item_json = {
+          id: item._id.$oid,
+          name: item.name,
+          playlist: item.playlist.$oid,
+          mode: item.mode,
+          date_created: item.date_created.$date,
+          start_date: item.start_date.$date,
+          end_date: item.end_date,
+          recurring_info: item.recurring_info,
+          time_occurances: item.time_occurances,
+        };
+        media.push(item_json);
+      });
+      console.log(media);
+      this.setState({ media });
+    });
+    // const media = tempMedia;
+    // this.setState({ media });
   };
 
   /**
@@ -81,16 +95,7 @@ class ChannelList extends Component {
     this.loadMedia();
     // Generates the columns for the list
     const columns = [
-      {
-        field: 'image',
-        headerName: 'Thumbnail',
-        width: 300,
-        renderCell: (params) => (
-          <img style={{ height: '100%', width: '50%' }} className="my-2 mx-16" src={params.value} />
-        ) // renderCell will render the component
-      },
       { field: 'name', headerName: 'Name', width: 250, editable: true },
-      { field: 'description', headerName: 'Description', width: 380, editable: true },
       {
         field: 'start_date',
         headerName: 'Start Date',
