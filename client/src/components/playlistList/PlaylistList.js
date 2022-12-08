@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import axios from 'axios';
-import tempPlaylists from './tempPlaylists';
+import axios from 'axios';
+//import tempPlaylists from './tempPlaylists';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -22,15 +22,26 @@ class PlaylistList extends Component {
    */
   loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
-    // axios.get('./tempPlaylist.json')
-    //   .then(res => {
-    //     const playlist = res.data;
-    //     this.setState({ playlist });
-    //   })
+    axios.get('http://152.10.212.58:8000/get_collection_playlists')
+    .then(res => {
+      const raw = res.data;
+      const playlists = [];
+      raw.forEach((item) => {
+        const item_json = {
+          id: item._id.$oid,
+          name: item.name,
+          items: item.items.filter((item) => item.objectID.$oid),
+          shuffle: item.shuffle,
+          date_created: item.date_created.$date,
+        };
+        playlists.push(item_json);
+      });
+      this.setState({ playlists });
+    });
     // Dummy data
-    console.log(tempPlaylists);
-    const playlists = tempPlaylists;
-    this.setState({ playlists });
+    // console.log(tempPlaylists);
+    // const playlists = tempPlaylists;
+    // this.setState({ playlists });
   };
 
   /**
@@ -74,7 +85,7 @@ class PlaylistList extends Component {
     
     // Sets the columns for the DataGrid
     const columns = [
-      { field: 'name', headerName: 'Name', width: 200, editable: true },
+      { field: 'name', headerName: 'Name', width: 250, editable: true },
       { field: 'items', headerName: 'Items', width: 250, renderCell: () => <ItemDialog /> },
       { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
       { field: 'date_created', headerName: 'Date Created', width: 200, valueFormatter: (params) =>

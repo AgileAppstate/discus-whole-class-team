@@ -17,7 +17,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function PlaylistItemsDialog() {
   const [open, setOpen] = React.useState(false);
   const [selectionModel, setSelectionModel] = React.useState("");
-  const media = tempMedia
+  const media = tempMedia;
   const columns = [{
     field: 'image',
     headerName: 'Thumbnail',
