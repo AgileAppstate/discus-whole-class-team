@@ -16,30 +16,18 @@ from datetime import datetime
 def status():
     #image_ids = request.args.get('id')
     #img insert test
-    f = open("json_img.txt", 'r')
-    img_ex = {
-        "description": "testing",
-        'end_date': 'Date Thu Dec 31 2099 00:00:00 GMT-0500 (Eastern Standard Time)',
-        'id': "clbe5s03c00012e63z2jqlvup",
-        'image': f.read(),
-        'name': "test",
-        'start_date': 'Date Wed Dec 07 2022 16:20:39 GMT-0500 (Eastern Standard Time)'
-    }
-    #clean up response for insertion
-    fname, img_bytes = format_image_data(img_ex['image'], img_ex['name'])
-    start_date = format_date(img_ex['start_date'])
-    end_date = format_date(img_ex['end_date'])
-    images.image_insert(path=fname,
-                     desc=img_ex['description'],
-                     start_date=start_date,
-                     end_date=end_date,
-                     img_bytes=img_bytes)
-    return {'path': fname,
-                    'desc': str(img_ex['description']),
-                    'end_date': end_date,
-                    'start_date': start_date,
-                    'img_bytes': str(type(img_bytes))
-            }
+    #f = open("json_img.txt", 'r')
+    #img_ex = {
+    #    "description": "testing",
+    #    'end_date': 'Date Thu Dec 31 2099 00:00:00 GMT-0500 (Eastern Standard Time)',
+    #    'id': "clbe5s03c00012e63z2jqlvup",
+    #    'image': f.read(),
+    #    'name': "test",
+    #    'start_date': 'Date Wed Dec 07 2022 16:20:39 GMT-0500 (Eastern Standard Time)'
+    #}
+
+    print('myname')
+    return {'mesg': 'foo'}
     #return {'msg':image_ids}
 
 #get all records 
@@ -62,8 +50,21 @@ def get_collection(coll_name):
 
 @app.route('/insert_image', methods=["POST"])
 def insert_image():
-    pass
+    img_data = request.get_json()
+    print("anything")
+    #clean up response for insertion
+    fname, img_bytes = format_image_data(img_data['image'], img_data['name'])
+    start_date = format_date(img_data['start_date'])
+    end_date = format_date(img_data['end_date'])
+    img_id = images.image_insert(path=fname,
+                     desc=img_data['description'],
+                     start_date=start_date,
+                     end_date=end_date,
+                     img_bytes=img_bytes)
     
+    resp = Response({'id': img_id})
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 
@@ -100,8 +101,11 @@ def cursor_to_json(cursor):
 
 def format_date(date_str):
     try:
-        date_time = datetime.strptime(date_str[9:29], '%b %d %Y %H:%M:%S')
-        return date_time
+        if date_str is not None:
+            date_time = datetime.strptime(date_str[9:29], '%b %d %Y %H:%M:%S')
+            return date_time
+        else:
+            return None
     except ValueError as e:
         print(e)
         return str(e)
@@ -113,7 +117,6 @@ def format_image_data(img_data, name):
     img_type_headers = headers[0].split(';')
     img_type = img_type_headers[0].split('/')[-1]
     img_bytes = base64.decodebytes(bytes(headers[1], 'utf-8'))
-
     fname = name + '.' + img_type
     return fname, img_bytes
 
