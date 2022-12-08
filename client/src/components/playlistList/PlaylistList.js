@@ -30,12 +30,13 @@ class PlaylistList extends Component {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          items: item.items.filter((item) => item.objectID.$oid),
+          items: item.items.map((item) => item.objectID.$oid),
           shuffle: item.shuffle,
           date_created: item.date_created.$date,
         };
         playlists.push(item_json);
       });
+      console.log(playlists);
       this.setState({ playlists });
     });
     // Dummy data
