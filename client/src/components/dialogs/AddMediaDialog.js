@@ -16,6 +16,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
+import axios from 'axios';
 import cuid from 'cuid';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -75,7 +76,7 @@ export default function FormDialog(props) {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     event.preventDefault();
     const items = [];
 
@@ -87,10 +88,8 @@ export default function FormDialog(props) {
           ['description']: description,
           ['start_date']: start_date.toDate(),
           ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
-          ['image']: {
-            src: image.src,
-            filename: image.path
-          }
+          ['image']: image.src,
+          ['filename']: image.path,
         });
       });
     } else {
@@ -99,20 +98,33 @@ export default function FormDialog(props) {
         ['description']: description,
         ['start_date']: start_date.toDate(),
         ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
-        ['image']: {
-          src: '/home/discus/default.png',
-          filename: 'default.png'
-        }
+        ['image']: '/home/discus/default.png',
+        ['filename']: 'default.png',
       });
     }
     // For testing purposes
     console.log(items);
-    // Adds ID to item, which will eventually be replaced with ID received from API
-    items.map((item) => {
-      item['id'] = cuid();
-      item['image'] = item['image'].src
-    });
-    props.onChange(items);
+    try {
+      const res = await axios.post("http://152.10.212.58:8000/insert_image", items, {
+        headers: {
+          'content-type': '*/json',
+        }
+      });
+
+      // Adds ID to item, which will eventually be replaced with ID received from API
+      items.map((item) => {
+        item['id'] = cuid();
+      });
+
+      console.log(res);
+      props.onChange(items);
+    } catch (error) {
+      if (error.response) {
+        console.log(error.reponse.status);
+      } else {
+        console.log(error.message);
+      }
+    }
     handleClose();
   };
 
