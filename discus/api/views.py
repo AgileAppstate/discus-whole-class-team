@@ -5,9 +5,8 @@ from discus.util import channels
 from discus.api import app
 from bson.json_util import dumps
 import base64
-import os
-import json
-
+#import json
+from datetime import datetime
 #dropzone web, 
 # db.setup() will have to be run before any actions with the database
 
@@ -26,8 +25,21 @@ def status():
         'name': "test",
         'start_date': 'Date Wed Dec 07 2022 16:20:39 GMT-0500 (Eastern Standard Time)'
     }
-    
-    return insert_image(img_ex['image'])
+    #clean up response for insertion
+    fname, img_bytes = format_image_data(img_ex['image'], img_ex['name'])
+    start_date = format_date(img_ex['start_date'])
+    end_date = format_date(img_ex['end_date'])
+    images.image_insert(path=fname,
+                     desc=img_ex['description'],
+                     start_date=start_date,
+                     end_date=end_date,
+                     img_bytes=img_bytes)
+    return {'path': fname,
+                    'desc': str(img_ex['description']),
+                    'end_date': end_date,
+                    'start_date': start_date,
+                    'img_bytes': str(type(img_bytes))
+            }
     #return {'msg':image_ids}
 
 #get all records 
@@ -46,14 +58,9 @@ def get_collection(coll_name):
         json_data = cursor_to_json(cursor)
     return json_data
 
-#@app.route('/insert_image', methods=["POST"])
-def insert_image(json_entry):
-    #if not request.json or not 'name' in request.json:
-        #abort(400)
-    headers = json_entry.split(',')
-    with open(r'/images/img_test_save.jpg', 'wb') as f:
-        f.write(base64.decodebytes(bytes(headers[1], 'utf-8')))
-    return str(headers)
+@app.route('/insert_image', methods=["POST"])
+def insert_image():
+    pass
     
 
 
@@ -89,14 +96,26 @@ def cursor_to_json(cursor):
     json_data = dumps(list_cursor, indent=4)
     return json_data
 
-#@app.route("/get_collection_<string:coll_name>", methods=["GET"])
-#def get_collection(coll_name):
-#    return collection_tojson(coll_name)
+def format_date(date_str):
+    try:
+        date_time = datetime.strptime(date_str[9:29], '%b %d %Y %H:%M:%S')
+        return date_time
+    except ValueError as e:
+        print(e)
+        return str(e)
 
+def format_image_data(img_data, name):
+    #if not request.json or not 'name' in request.json:
+        #abort(400)
+    headers = img_data.split(',')
+    img_type_headers = headers[0].split(';')
+    img_type = img_type_headers[0].split('/')[-1]
+    img_bytes = base64.decodebytes(bytes(headers[1], 'utf-8'))
 
+    fname = name + '.' + img_type
+    return fname, img_bytes
 
 #TODO
-#all the table
 
 #RETURN N RECORDS (table_name, id_list)
 
