@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import axios from 'axios';
-import tempMedia from './tempMedia';
+import axios from 'axios';
+//import tempMedia from './tempMedia';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -40,15 +40,31 @@ class MediaList extends Component {
    */
   loadMedia = () => {
     // Implement after we have the MangoDB API endpoint
-    // axios.get('./tempMedia.json')
-    //   .then(res => {
-    //     const media = res.data;
-    //     this.setState({ media });
-    //   })
+    axios.get('http://152.10.212.58:8000/get_collection_images')
+      .then(res => {
+        const raw = res.data;
+        const media = [];
+        raw.forEach((item) => {
+          const item_json = {
+            id: item._id.$oid,
+            name: item.display_name,
+            description: item.description,
+            duration: item.duration,
+            date_added: item.date_added.$date,
+            start_date: item.start_date.$date,
+            end_date: item.end_date.$data,
+            image: item.file_id.$oid,
+            filename: item.filename,
+          };
+          media.push(item_json);
+        });
+        console.log(media);
+        this.setState({ media });
+      });
     // Dummy data
-    //console.log(tempMedia);
-    const media = tempMedia;
-    this.setState({ media });
+    // console.log(tempMedia);
+    // const media = tempMedia;
+    // this.setState({ media });
   };
 
   /**
