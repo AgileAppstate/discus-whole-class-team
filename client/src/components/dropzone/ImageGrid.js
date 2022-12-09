@@ -13,7 +13,7 @@ const Image = ({ image }) => {
 // ImageList Component//
 const ImageGrid = ({ images }) => {
   // render each image by calling Image component
-  const renderImage = (image, index) => {
+  const renderImage = (image) => {
     return <Image image={image} key={`${image.id}-image`} />;
   };
   // Return the list of files//
