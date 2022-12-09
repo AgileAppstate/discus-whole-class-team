@@ -109,17 +109,17 @@ class MediaList extends Component {
   };
 
   /**
-   * Sets alert information to be error
+   * Sets alert information to be an error
    */
-  handleSetAlertError = () => {
+  handleSetAlertError = (error) => {
     const alertSeverity = 'error';
-    const alertTitle = 'Error';
-    const alertMessage = 'An error has occurred. Please try again.';
+    const alertTitle = "Error: " + (error.code ? error.code : "GENERIC_ERROR");
+    const alertMessage = error.message ? error.message : 'An error has occurred. Please try again later.';
     this.setState({ alertSeverity, alertTitle, alertMessage });
   };
 
   /**
-   * Sets alert information to be success
+   * Sets alert information to be a success
    */
   handleSetAlertSuccess = () => {
     const alertSeverity = 'success';
@@ -133,7 +133,7 @@ class MediaList extends Component {
    * @param {*} error
    */
   handleSubmitError = (error) => {
-    this.handleSetAlertError();
+    this.handleSetAlertError(error);
     console.log(error);
     this.setState({ alert: true });
   };
