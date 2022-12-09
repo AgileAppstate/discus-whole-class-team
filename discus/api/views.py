@@ -1,15 +1,17 @@
 from flask import Flask, request, Response
+from flask_cors import CORS, cross_origin
 from discus.util import playlists
 from discus.util import images
 from discus.util import channels
 from discus.api import app
 from bson.json_util import dumps
 import base64
-#import json
 from datetime import datetime
-#dropzone web, 
-# db.setup() will have to be run before any actions with the database
+import logging
+import sys
 
+# db.setup() will have to be run before any actions with the database
+#CORS(app, origins=['http://localhost:8080'], methods=['GET', 'POST'])
 #BASE_64 convert the images
 
 @app.route('/ping', methods=['GET'])
@@ -41,6 +43,7 @@ def get_collection(coll_name):
     elif (coll_name == 'images'):
         cursor = images.image_get_all()
         json_data = cursor_to_json(cursor)
+        #include all image data in another json object.
     elif (coll_name == 'channels'):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
@@ -48,25 +51,34 @@ def get_collection(coll_name):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-@app.route('/insert_image', methods=["POST"])
+@app.route('/insert_image', methods=["POST", "OPTIONS"], strict_slashes=False)
+@cross_origin()
 def insert_image():
-    img_data = request.get_json()
-    print("anything")
+    if request.method == "OPTIONS":
+        return _build_cors_preflight_response()
+    elif request.method == "POST":
+        img_data = request.get_json()
+        return _corsify_actual_response(img_data)
+    else:
+        raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+    #with open('test_cors.txt', 'w') as f:
+        #f.write(request.get_json())
     #clean up response for insertion
-    fname, img_bytes = format_image_data(img_data['image'], img_data['name'])
-    start_date = format_date(img_data['start_date'])
-    end_date = format_date(img_data['end_date'])
-    img_id = images.image_insert(path=fname,
-                     desc=img_data['description'],
-                     start_date=start_date,
-                     end_date=end_date,
-                     img_bytes=img_bytes)
+    #fname, img_bytes = format_image_data(img_data['image'], img_data['name'])
+    #start_date = format_date(img_data['start_date'])
+    #end_date = format_date(img_data['end_date'])
+    #img_id = images.image_insert(path=fname,
+     #                desc=img_data['description'],
+    #                 start_date=start_date,
+      #               end_date=end_date,
+      #               img_bytes=img_bytes)
     
-    resp = Response({'id': img_id})
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    #response = jsonify(message=img_id)
+    #response.headers.add("Access-Control-Allow-Origin", "*")
 
-
+@app.route('/get_image_file', methods=['GET'])
+def get_image_file():
+    pass
 
 #Get a single record or multiple records, by id
 #how to pass multiple records
@@ -91,8 +103,6 @@ def insert_into_playlist():
     item_id = request.args.get('item_id')
     item_type = request.args.get('item_type')
     playlists.playlist_insert_item(playlist, item_id, item_type)
-
-
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
@@ -119,6 +129,18 @@ def format_image_data(img_data, name):
     img_bytes = base64.decodebytes(bytes(headers[1], 'utf-8'))
     fname = name + '.' + img_type
     return fname, img_bytes
+
+
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 #TODO
 
