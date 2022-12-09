@@ -25,8 +25,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function PlaylistItemsDialog() {
   const [open, setOpen] = React.useState(false);
-  const [selectionModel, setSelectionModel] = React.useState("");
-  const media = tempMedia;
+  const [selectionModel, setSelectionModel] = React.useState([]);
+  const [selectedMedia, setSelectedMedia] = React.useState(tempMedia);
+  const [media] = React.useState(tempMedia);
   const columns = [{
     field: 'image',
     headerName: 'Thumbnail',
@@ -74,36 +75,15 @@ export default function PlaylistItemsDialog() {
   const handleSave = () => {
     event.preventDefault();
     console.log(selectionModel);
+    // TODO: Update media with new list
+    // TODO: Update selected media with new IDs
     handleClose();
   };
 
-  const SortableList = () => {
-    const [items, setItems] = React.useState(media);
-
     const onDrop = ({ removedIndex, addedIndex }) => {
       console.log({ removedIndex, addedIndex });
-      setItems(items => arrayMoveImmutable(items, removedIndex, addedIndex));
+      setSelectedMedia(selectedMedia => arrayMoveImmutable(selectedMedia, removedIndex, addedIndex));
     };
-
-    return (
-      <List>
-      <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
-        {items.map(({ index, name }) => (
-          <Draggable key={index}>
-            <ListItem>
-              <ListItemText primary={name} />
-              <ListItemSecondaryAction>
-                <ListItemIcon className="drag-handle">
-                  <DragHandleIcon />
-                </ListItemIcon>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </Draggable>
-        ))}
-      </Container>
-    </List>
-    );
-  };
   
   return (
     <div>
@@ -131,13 +111,26 @@ export default function PlaylistItemsDialog() {
               }}
               selectionModel={selectionModel}
             />
-
         <DialogTitle>Current Media</DialogTitle>
           <DialogContentText>
             Drag and drop to reorder the media in the playlist.
           </DialogContentText>
-          <SortableList />
-                
+          <List>
+      <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
+        {selectedMedia.map(({ index, name }) => (
+          <Draggable key={index}>
+            <ListItem>
+              <ListItemText primary={name} />
+              <ListItemSecondaryAction>
+                <ListItemIcon className="drag-handle">
+                  <DragHandleIcon />
+                </ListItemIcon>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </Draggable>
+        ))}
+      </Container>
+    </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
@@ -146,4 +139,4 @@ export default function PlaylistItemsDialog() {
         </Dialog>
     </div>
   );
-}
+            }
