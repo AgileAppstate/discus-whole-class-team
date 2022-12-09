@@ -6,16 +6,25 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DataGrid } from '@mui/x-data-grid';
+import { List } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import Dropzone from '../dropzone/ImageDrop';
-import ImageGrid from '../dropzone/ImageGrid';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
 import cuid from 'cuid';
 import { CircularProgress, Fade } from '@mui/material';
+import tempMedia from '../mediaList/tempMedia';
+
+import { Container, Draggable } from 'react-smooth-dnd';
+import {arrayMoveImmutable} from 'array-move';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -23,12 +32,50 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
-  const [images, setImages] = React.useState([]);
+  // New fields to use
   const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs(''));
+  //const [items, setItems] = React.useState([]);
+  const [shuffle, setShuffle] = React.useState(false);
+  const [date_created, setDateCreated] = React.useState(dayjs());
   const [loading, setLoading] = React.useState(false);
+  const [selectionModel, setSelectionModel] = React.useState([]);
+  const [selectedMedia, setSelectedMedia] = React.useState([]);
+  const [media] = React.useState(tempMedia);
+  const columns = [{
+    field: 'image',
+    headerName: 'Thumbnail',
+    width: 300,
+    renderCell: (params) => (
+      <img style={{ height: '100%', width: '50%', objectFit: 'contain'}} className="my-2 mx-16" src={params.value} />
+    ) // renderCell will render the component
+  },
+  {
+    field: 'duration',
+    headerName: 'Duration',
+    width: 80,
+    valueFormatter: (params) =>
+      params?.value < 60
+        ? dayjs.duration({ seconds: params?.value }).asSeconds() + ' secs'
+        : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
+  },
+  { field: 'name', headerName: 'Name', width: 250 },
+  { field: 'description', headerName: 'Description', width: 380 },
+  {
+    field: 'start_date',
+    headerName: 'Start Date',
+    width: 180,
+    editable: false,
+    valueFormatter: (params) =>
+    dayjs(params?.value).format("MM/DD/YYYY")
+  },
+  {
+    field: 'end_date',
+    headerName: 'End Date',
+    width: 180,
+    valueFormatter: (params) =>
+    dayjs(params?.value).format("MM/DD/YYYY")
+  }
+]
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,36 +84,23 @@ export default function FormDialog(props) {
   const handleClose = () => {
     setOpen(false);
     // Sets values back to default
-    setName('');
-    setDescription('');
-    setStartDate(dayjs());
-    setEndDate(dayjs(''));
-    setImages([]);
+    setName("");
+    setSelectionModel([]);
+    setSelectedMedia([]);
+    setShuffle(false);
+    setDateCreated(dayjs());
+  };
+
+  // const handleItemsChange = (event) => {
+  //   setItems(event.target.value);
+  // };
+  
+  const handleShuffleChange = () => {
+    setShuffle(oldShuffle => !oldShuffle);
   };
 
   const handleNameChange = (event) => {
     setName(event.target.value);
-  };
-
-  const handleDescChange = (event) => {
-    setDescription(event.target.value);
-  };
-
-  const handleStartDate = (newDate) => {
-    if (newDate > end_date && end_date != '') {
-      setStartDate(newDate);
-      setEndDate(newDate);
-    } else {
-      setStartDate(newDate);
-    }
-  };
-
-  const handleEndDate = (newDate) => {
-    if (start_date > newDate) {
-      setEndDate(start_date);
-    } else {
-      setEndDate(newDate);
-    }
   };
 
   const handleLoading = () => {
@@ -76,46 +110,27 @@ export default function FormDialog(props) {
   const handleSave = async () => {
     event.preventDefault();
     handleLoading();
-    const items = [];
 
-    // If the user somehow submits media without an image, it will add the backup image
-    if (images.length) {
-      images.map((image) => {
-        items.push({
-          ['name']: name,
-          ['description']: description,
-          ['start_date']: start_date.toDate(),
-          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-          ['image']: image.src,
-          ['filename']: image.path
-        });
-      });
-    } else {
-      items.push({
-        ['name']: name,
-        ['description']: description,
-        ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-        ['image']: '/home/discus/default.png',
-        ['filename']: 'default.png'
-      });
-    }
+    const playlist = {
+      ['name']: name,
+      ['items']: selectionModel,
+      ['shuffle']: shuffle,
+      ['date_created']: date_created.toDate(),
+    };
     // For testing purposes
-    console.log(items);
+    console.log(playlist);
     try {
-      const res = await axios.post('http://localhost:8000/insert_image', items, {
+      const res = await axios.post('http://localhost:8000/insert_image', playlist, {
         headers: {
           'content-type': '*/json'
         }
       });
 
       // Adds ID to item, which will eventually be replaced with ID received from API
-      items.map((item) => {
-        item['id'] = cuid();
-      });
+      playlist['id'] = cuid();
 
       console.log(res);
-      props.onChange(items);
+      props.onChange(playlist);
     } catch (error) {
       props.onError(error);
       if (error.response) {
@@ -128,22 +143,17 @@ export default function FormDialog(props) {
     handleClose();
   };
 
-  const onDrop = React.useCallback((acceptedFiles) => {
-    acceptedFiles.map((file) => {
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        setImages((prevState) => [
-          ...prevState,
-          { id: cuid(), src: e.target.result, path: file.path }
-        ]);
-      };
-
-      reader.readAsDataURL(file);
-
-      return file;
+  const onDrop = ({ removedIndex, addedIndex }) => {
+    //console.log({ removedIndex, addedIndex });
+    setSelectedMedia(selectedMedia => {
+      // Creates new array in the new order they should appear
+      const newArray = arrayMoveImmutable(selectedMedia, removedIndex, addedIndex);
+      // Reorders the ID's in the selection model
+      setSelectionModel(newArray.map((item) => item.id));
+      // Returns the new array to modify selectionMedia
+      return newArray;
     });
-  }, []);
+  };
 
   return (
     <div>
@@ -154,10 +164,8 @@ export default function FormDialog(props) {
         <DialogTitle>Create Playlist</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Any information submitted on this screen will apply to all media uploaded.
+            Create a playlist!
           </DialogContentText>
-          <Dropzone onDrop={onDrop} accept={'image/*'} required />
-          <ImageGrid images={images} />
           <TextField
             id="name"
             label="Name"
@@ -169,42 +177,57 @@ export default function FormDialog(props) {
             value={name}
             onChange={handleNameChange}
           />
-          <br />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker
-              id="start_date"
-              label="Start Date"
-              inputFormat="MM/DD/YYYY"
-              margin="normal"
-              value={start_date}
-              onChange={handleStartDate}
-              renderInput={(params) => <TextField {...params} />}
-              disablePast
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  label="Shuffle"
+                  checked={shuffle}
+                  onChange={handleShuffleChange}
+                  color="default"
+                />
+              }
+              label="Shuffle"
             />
-            <DesktopDatePicker
-              id="end_date"
-              label="End Date"
-              inputFormat="MM/DD/YYYY"
-              margin="normal"
-              value={end_date}
-              onChange={handleEndDate}
-              renderInput={(params) => <TextField {...params} />}
-              disablePast
-            />
-          </LocalizationProvider>
+          </FormGroup>
           <br />
-          <TextField
-            id="description"
-            label="Description"
-            minRows={4}
-            variant="outlined"
-            margin="normal"
-            multiline
-            fullWidth
-            required
-            value={description}
-            onChange={handleDescChange}
-          />
+          <DataGrid
+              autoHeight {...media}
+              rows={media}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              getRowHeight={() => 'auto'}
+              checkboxSelection
+              disableSelectionOnClick
+              onSelectionModelChange={(selectionModel) => {
+                setSelectionModel(selectionModel);
+                setSelectedMedia(media.filter((item) => {
+                  return selectionModel.includes(item.id);
+                }));
+              }}
+              selectionModel={selectionModel}
+            />
+        <DialogTitle>Current Media</DialogTitle>
+          <DialogContentText>
+            Drag and drop to reorder the media in the playlist.
+          </DialogContentText>
+          <List>
+      <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
+        {selectedMedia.map(({ index, name }) => (
+          <Draggable key={index}>
+            <ListItem>
+              <ListItemText primary={name} />
+              <ListItemSecondaryAction>
+                <ListItemIcon className="drag-handle">
+                  <DragHandleIcon />
+                </ListItemIcon>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </Draggable>
+        ))}
+      </Container>
+    </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
