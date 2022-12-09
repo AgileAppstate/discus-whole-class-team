@@ -9,6 +9,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
 import tempMedia from '../mediaList/tempMedia';
+import { List } from '@mui/material';
+
+import { Container, Draggable } from 'react-smooth-dnd';
+import {arrayMoveImmutable} from 'array-move';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -68,6 +77,34 @@ export default function PlaylistItemsDialog() {
     handleClose();
   };
 
+  const SortableList = () => {
+    const [items, setItems] = React.useState(media);
+
+    const onDrop = ({ removedIndex, addedIndex }) => {
+      console.log({ removedIndex, addedIndex });
+      setItems(items => arrayMoveImmutable(items, removedIndex, addedIndex));
+    };
+
+    return (
+      <List>
+      <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
+        {items.map(({ index, name }) => (
+          <Draggable key={index}>
+            <ListItem>
+              <ListItemText primary={name} />
+              <ListItemSecondaryAction>
+                <ListItemIcon className="drag-handle">
+                  <DragHandleIcon />
+                </ListItemIcon>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </Draggable>
+        ))}
+      </Container>
+    </List>
+    );
+  };
+  
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen} color="primary">
@@ -75,25 +112,32 @@ export default function PlaylistItemsDialog() {
       </Button>
       <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}
         PaperProps={{ sx: { width: "100%", height: "100%" } }}>
-        <DialogTitle>Current Media</DialogTitle>
+        <DialogTitle>All Media</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select any media that you want to be in the playlist.
           </DialogContentText>
-      <DataGrid
-          autoHeight {...media}
-          rows={media}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          getRowHeight={() => 'auto'}
-          checkboxSelection
-          disableSelectionOnClick
-          onSelectionModelChange={(selectionModel) => {
-            setSelectionModel(selectionModel);
-          }}
-          selectionModel={selectionModel}
-        />
+          <DataGrid
+              autoHeight {...media}
+              rows={media}
+              columns={columns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              getRowHeight={() => 'auto'}
+              checkboxSelection
+              disableSelectionOnClick
+              onSelectionModelChange={(selectionModel) => {
+                setSelectionModel(selectionModel);
+              }}
+              selectionModel={selectionModel}
+            />
+
+        <DialogTitle>Current Media</DialogTitle>
+          <DialogContentText>
+            Drag and drop to reorder the media in the playlist.
+          </DialogContentText>
+          <SortableList />
+                
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

@@ -22,7 +22,7 @@ class PlaylistList extends Component {
    */
   loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
-    axios.get('http://152.10.212.58:8000/get_collection_playlists')
+    axios.get('http://localhost:8000/get_collection_playlists')
     .then(res => {
       const raw = res.data;
       const playlists = [];
