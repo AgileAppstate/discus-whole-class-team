@@ -13,20 +13,22 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
+import axios from 'axios';
 import cuid from 'cuid';
+import { CircularProgress, Fade } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FormDialog() {
+export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
   const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(''));
-  const [newMedia, setNewMedia] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,35 +69,25 @@ export default function FormDialog() {
     }
   };
 
-  const handleSave = () => {
+  const handleLoading = () => {
+    setLoading((prevLoading) => !prevLoading);
+  };
+
+  const handleSave = async () => {
     event.preventDefault();
+    handleLoading();
     const items = [];
 
     // If the user somehow submits media without an image, it will add the backup image
     if (images.length) {
       images.map((image) => {
-        setNewMedia((prevState) => [
-          ...prevState,
-          {
-            ['name']: name,
-            ['description']: description,
-            ['start_date']: start_date.toDate(),
-            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-            ['image']: {
-              src: image.src,
-              filename: image.path
-            }
-          }
-        ]);
         items.push({
           ['name']: name,
           ['description']: description,
           ['start_date']: start_date.toDate(),
           ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-          ['image']: {
-            src: image.src,
-            filename: image.path
-          }
+          ['image']: image.src,
+          ['filename']: image.path
         });
       });
     } else {
@@ -104,16 +96,35 @@ export default function FormDialog() {
         ['description']: description,
         ['start_date']: start_date.toDate(),
         ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-        ['image']: {
-          src: '/home/discus/default.png',
-          filename: 'default.png'
-        }
+        ['image']: '/home/discus/default.png',
+        ['filename']: 'default.png'
       });
     }
     // For testing purposes
     console.log(items);
-    // Will return an empty array, but needs to be here to compile
-    console.log(newMedia);
+    try {
+      const res = await axios.post('http://localhost:8000/insert_image', items, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+
+      // Adds ID to item, which will eventually be replaced with ID received from API
+      items.map((item) => {
+        item['id'] = cuid();
+      });
+
+      console.log(res);
+      props.onChange(items);
+    } catch (error) {
+      props.onError(error);
+      if (error.response) {
+        console.log(error.reponse.status);
+      } else {
+        console.log(error.message);
+      }
+    }
+    handleLoading();
     handleClose();
   };
 
@@ -198,6 +209,15 @@ export default function FormDialog() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
+          <Fade
+            in={loading}
+            style={{
+              transitionDelay: loading ? '800ms' : '0ms'
+            }}
+            unmountOnExit
+          >
+            <CircularProgress color="primary" />
+          </Fade>
         </DialogActions>
       </Dialog>
     </div>
