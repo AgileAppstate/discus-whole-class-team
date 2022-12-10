@@ -18,3 +18,6 @@ https://discord.gg/Q5qzncEnmD
 ## Web Application
 Uses Node.js and React. In the discus-web directory, run the application locally with:
 ```npm run dev```
+
+## How-To set up testing environemnt
+Added a PDF and letex document that describes how to set up a testing environment locally. This is a zip file that is located in the main directory of the project folder. "discus project set up guide.zip" 
