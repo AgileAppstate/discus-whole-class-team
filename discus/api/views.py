@@ -13,35 +13,11 @@ from datetime import datetime
 
 #BASE_64 convert the images
 
-@app.route('/ping', methods=['GET'])
-def status():
-    #image_ids = request.args.get('id')
-    #img insert test
-    f = open("json_img.txt", 'r')
-    img_ex = {
-        "description": "testing",
-        'end_date': 'Date Thu Dec 31 2099 00:00:00 GMT-0500 (Eastern Standard Time)',
-        'id': "clbe5s03c00012e63z2jqlvup",
-        'image': f.read(),
-        'name': "test",
-        'start_date': 'Date Wed Dec 07 2022 16:20:39 GMT-0500 (Eastern Standard Time)'
-    }
-    #clean up response for insertion
-    fname, img_bytes = format_image_data(img_ex['image'], img_ex['name'])
-    start_date = format_date(img_ex['start_date'])
-    end_date = format_date(img_ex['end_date'])
-    images.image_insert(path=fname,
-                     desc=img_ex['description'],
-                     start_date=start_date,
-                     end_date=end_date,
-                     img_bytes=img_bytes)
-    return {'path': fname,
-                    'desc': str(img_ex['description']),
-                    'end_date': end_date,
-                    'start_date': start_date,
-                    'img_bytes': str(type(img_bytes))
-            }
-    #return {'msg':image_ids}
+@app.route('/api/ping', methods=['POST'])
+def ping():
+    record = request.get_data()
+    json_data = json.loads(record)[0]
+    return jsonify(json_data)
 
 #get all records 
 @app.route("/get_collection_<string:coll_name>", methods=["GET"])
@@ -61,37 +37,43 @@ def get_collection(coll_name):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+#Insert an image from Web
 @app.route('/api/insert_image', methods=["POST"])
 def insert_image():
     record = request.get_data()
     json_data = json.loads(record)[0]
-
+    with open('image_json.txt','w') as f:
+        f.write(json.dumps(json_data))
     fname, img_bytes = format_image_data(json_data['image'], json_data['name'])
     start_date = format_date(json_data['start_date'])
     end_date = format_date(json_data['end_date'])
     
     with open('tst.txt', 'w') as f:
-        f.write(str(json_data['description']))
-        f.write('\n')
-        f.write(fname)
-        f.write('\n')
-        f.write(str(start_date))
+        f.write(str(json_data))
         
     ret_img_id = images.image_insert(path=fname,
+                     duration='',
                      desc=json_data['description'],
                      start_date=start_date,
                      end_date=end_date,
-                     img_bytes=img_bytes)
- 
-    #resp = Response(record)
-    #resp.headers['Access-Control-Allow-Origin'] = '*'
-    #resp.headers['Content-Type'] = '*/json'
-    #resp.set_data(json.dumps({"id": "2342423525"}))
+                     img_bytes=img_bytes,
+                     display_name=fname)
     return jsonify(img_id=str(ret_img_id))
-    #return jsonify(Response(200))
 
+#Insert a playlist from Web
+@app.route('/api/insert_playlist', methods=["POST"])
+def insert_playlist():
+    #def playlist_insert(playlistname, shuffle=False, itemList=[]):
+    fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
+    return jsonify(fields=fields_str)
 
-
+@app.route('/api/insert_playlist', methods=["POST"])    
+def insert_channel():
+    #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
+    fields_str = 'def channel_insert(chanName, playlistID=None,'
+    fields_str += 'mode=\"Daily\", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[])'
+    return jsonify(fields=fields_str)
+    
 #Get a single record or multiple records, by id
 #how to pass multiple records
 #636ff99df79d9f60de9d05a4
@@ -148,10 +130,3 @@ def format_image_data(img_data, name):
 #UPDATE record, list of records
 
 #DELETE single id or a list of ids and a table name
-
-#def collection_tojson(collectionName):
-#    discus = db.get_db()
-#    collection = discus.get_collection(collectionName)
-#    cursor = collection.find()
-
-
