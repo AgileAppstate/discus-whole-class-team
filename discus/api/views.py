@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 from discus.util import playlists
 from discus.util import images
@@ -6,7 +6,7 @@ from discus.util import channels
 from discus.api import app
 from bson.json_util import dumps
 import base64
-#import json
+import json
 from datetime import datetime
 #dropzone web, 
 # db.setup() will have to be run before any actions with the database
@@ -63,11 +63,13 @@ def get_collection(coll_name):
 
 @app.route('/insert_image', methods=["POST"])
 def insert_image():
-    json_data = request.args['name']
-    print(json_data)
-    resp = Response(response=json_data, content_type="text/json")
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    record = request.get_data()
+    # Do stuff here
+    resp = Response(record)
+    #resp.headers['Access-Control-Allow-Origin'] = '*'
+    #resp.headers['Content-Type'] = '*/json'
+    #resp.set_data(json.dumps({"id": "2342423525"}))
+    return jsonify({"test": "bar"}), 200, {'Access-Control-Allow-Origin': '*', 'Content-Type': '*/json'}
     
 
 
