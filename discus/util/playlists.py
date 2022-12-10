@@ -52,7 +52,7 @@ def playlist_delete(id):
         playlist_remove_item(plst["_id"], id)
 
     # Delete the playlist document.
-    db.playlists.delete(id)
+    db.playlists.delete_one({"_id" : id})
 
 # sets the shuffle mode for the playlist
 def playlist_set_shuffle(id, shuffle):
