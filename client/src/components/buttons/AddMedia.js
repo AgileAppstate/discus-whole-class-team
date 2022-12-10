@@ -5,10 +5,14 @@ import 'reactjs-popup/dist/index.css';
 class AddMedia extends React.Component {
   handleItemAdd = (event) => {
     this.props.onChange(event);
-  }
+  };
+
+  handleError = (error) => {
+    this.props.onError(error);
+  };
 
   render() {
-    return <Dialog onChange={this.handleItemAdd}></Dialog>;
+    return <Dialog onChange={this.handleItemAdd} onError={this.handleError}></Dialog>;
   }
 }
 

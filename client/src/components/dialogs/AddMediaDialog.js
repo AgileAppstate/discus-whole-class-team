@@ -18,6 +18,7 @@ import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
 import axios from 'axios';
 import cuid from 'cuid';
+import { CircularProgress, Fade } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -31,6 +32,7 @@ export default function FormDialog(props) {
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(null));
   const [checked, setChecked] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -49,7 +51,7 @@ export default function FormDialog(props) {
 
   const handleChecked = (event) => {
     setChecked(event.target.checked);
-  }
+  };
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -76,8 +78,13 @@ export default function FormDialog(props) {
     }
   };
 
+  const handleLoading = () => {
+    setLoading((prevLoading) => !prevLoading);
+  };
+
   const handleSave = async () => {
     event.preventDefault();
+    handleLoading();
     const items = [];
 
     // If the user somehow submits media without an image, it will add the backup image
@@ -87,9 +94,13 @@ export default function FormDialog(props) {
           ['name']: name,
           ['description']: description,
           ['start_date']: start_date.toDate(),
-          ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
+          ['end_date']: end_date.isValid()
+            ? end_date.toDate()
+            : checked
+            ? dayjs('12/31/2099').toDate()
+            : '',
           ['image']: image.src,
-          ['filename']: image.path,
+          ['filename']: image.path
         });
       });
     } else {
@@ -97,17 +108,21 @@ export default function FormDialog(props) {
         ['name']: name,
         ['description']: description,
         ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : checked ? dayjs("12/31/2099").toDate() : '',
+        ['end_date']: end_date.isValid()
+          ? end_date.toDate()
+          : checked
+          ? dayjs('12/31/2099').toDate()
+          : '',
         ['image']: '/home/discus/default.png',
-        ['filename']: 'default.png',
+        ['filename']: 'default.png'
       });
     }
     // For testing purposes
     console.log(items);
     try {
-      const res = await axios.post("http://localhost:8000/insert_image", items, {
+      const res = await axios.post('http://localhost:8000/insert_image', items, {
         headers: {
-          'content-type': '*/json',
+          'content-type': '*/json'
         }
       });
 
@@ -119,12 +134,14 @@ export default function FormDialog(props) {
       console.log(res);
       props.onChange(items);
     } catch (error) {
+      props.onError(error);
       if (error.response) {
         console.log(error.reponse.status);
       } else {
         console.log(error.message);
       }
     }
+    handleLoading();
     handleClose();
   };
 
@@ -170,12 +187,17 @@ export default function FormDialog(props) {
             onChange={handleNameChange}
           />
           <FormGroup>
-            <FormControlLabel control= {
-                <Checkbox label="Indefinite End Date" 
-                checked={checked} 
-                onChange={handleChecked} 
-                color="default" 
-                />} label="No End Date" />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  label="Indefinite End Date"
+                  checked={checked}
+                  onChange={handleChecked}
+                  color="default"
+                />
+              }
+              label="No End Date"
+            />
           </FormGroup>
           <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -218,6 +240,15 @@ export default function FormDialog(props) {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
+          <Fade
+            in={loading}
+            style={{
+              transitionDelay: loading ? '800ms' : '0ms'
+            }}
+            unmountOnExit
+          >
+            <CircularProgress color="primary" />
+          </Fade>
         </DialogActions>
       </Dialog>
     </div>
