@@ -1,4 +1,5 @@
 from flask import Flask, request, Response
+from flask_cors import CORS
 from discus.util import playlists
 from discus.util import images
 from discus.util import channels
@@ -62,7 +63,11 @@ def get_collection(coll_name):
 
 @app.route('/insert_image', methods=["POST"])
 def insert_image():
-    pass
+    json_data = request.args['name']
+    print(json_data)
+    resp = Response(response=json_data, content_type="text/json")
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
     
 
 
