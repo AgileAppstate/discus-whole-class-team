@@ -82,6 +82,9 @@ def get_image_file():
 def edit_image():
     record = request.get_data()
     json_data = json.loads(record)
+    
+    
+    
     json_data['id']
     return jsonify(foo=str(json_data))
 
@@ -103,12 +106,12 @@ def insert_image():
                      display_name=fname)
     return jsonify(img_id=str(ret_img_id))
 
+
+
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
     json_data = dumps(list_cursor, indent=4)
     return json_data
-
-
 
 def format_date(date_str):
     try:
