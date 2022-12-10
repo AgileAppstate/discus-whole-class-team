@@ -70,11 +70,19 @@ def image_get_all():
 
 # Return the file_id of the file associated with an image.
 def image_get_file_id(id):
-    return db.images.find_one({"_id" : id})["file_id"]
+    file = db.images.find_one({"_id" : id})
+    if file is None:
+        return None
+    else:
+        return file["file_id"]
 
 # gets the image file from image id
 def image_get_file(id):
-    return db.fs.get(image_get_file_id(id)).read() # get file from GridFS as a readable image
+    file = image_get_file_id(id)
+    if file is None:
+        return None
+    else:
+        return db.fs.get(file).read() # get file from GridFS as a readable image
 
 def image_delete(id):
     # Delete the references to this image in any playlists.
