@@ -71,16 +71,16 @@ def image_delete(id):
 
 # Set the duration for an image.
 def image_set_duration(id, duration):
-    db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
+    return db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
 
 # Set the start date for an image.
 def image_set_start_date(id, start_date):
-    db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date } }) # set start date for image
+    return db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date } }) # set start date for image
 
 # Set the end date for an image.
 def image_set_end_date(id, end_date):
-    db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date } }) # set end date for image
+    return db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date } }) # set end date for image
 
 # Set the description for an image.
 def image_set_description(id, desc):
-    db.images.update_one({ "_id": id }, { "$set": { "description": desc } }) # set description for image
+    return db.images.update_one({ "_id": id }, { "$set": { "description": desc } }) # set description for image
