@@ -49,7 +49,7 @@ def channel_get_all():
 # deletes the channel
 def channel_delete(id):
     # Delete the channel document.
-    db.channels.delete(id)
+    db.channels.delete_one({"_id" : id})
 
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):

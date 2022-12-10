@@ -85,7 +85,7 @@ def image_delete(id):
     db.fs.delete(image_get_file_id(id))
 
     # Delete the image document.
-    db.images.delete(id)
+    db.images.delete_one({"_id" : id})
 
 
 # Set the duration for an image.
