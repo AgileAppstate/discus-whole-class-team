@@ -42,8 +42,6 @@ def get_collection(coll_name):
 def insert_image():
     record = request.get_data()
     json_data = json.loads(record)[0]
-    with open('image_json.txt','w') as f:
-        f.write(json.dumps(json_data))
     fname, img_bytes = format_image_data(json_data['image'], json_data['name'])
     start_date = format_date(json_data['start_date'])
     end_date = format_date(json_data['end_date'])
@@ -67,7 +65,7 @@ def insert_playlist():
     fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
     return jsonify(fields=fields_str)
 
-@app.route('/api/insert_playlist', methods=["POST"])    
+@app.route('/api/insert_channel', methods=["POST"])    
 def insert_channel():
     #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
     fields_str = 'def channel_insert(chanName, playlistID=None,'
@@ -84,19 +82,15 @@ def insert_channel():
 #For image insert, find where to save
 #@app.route("")
 
+@app.route('/api/get_image_file', methods=["POST"])
+def get_image_file():
+    record = request.get_data()
+    json_data = json.loads(record)
+    
+    ret = image_get_file({"$oid":json_data['img_id']})
+    
+    return jsonify(foo=str(json_data['img_id']))
 
-@app.route("/playlists", methods=["POST"])
-def add_playlist():
-    playlist = request.args.get('playlist')
-    playlists.playlist_insert(playlist)
-    return {}
-
-@app.route('/playlists/insert', methods=["POST"])
-def insert_into_playlist():
-    playlist = request.args.get('playlist')
-    item_id = request.args.get('item_id')
-    item_type = request.args.get('item_type')
-    playlists.playlist_insert_item(playlist, item_id, item_type)
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
