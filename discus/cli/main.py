@@ -22,6 +22,7 @@ import pymongo
 import discus.util.playlists as playlists
 import discus.util.channels as channels
 import discus.util.images as images
+import discus.util.db as db 
 import discus.api.views as views
 
 
@@ -30,6 +31,7 @@ import discus.api.views as views
 ###
 
 def _on_finished(ctx):
+    db.close()
     click.echo(f'Exiting DISCUS.')
 
 @shell(prompt='discus > ', 
