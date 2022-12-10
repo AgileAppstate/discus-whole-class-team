@@ -90,7 +90,7 @@ def image_delete(id):
 
 # Set the duration for an image.
 def image_set_duration(id, duration):
-    db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
+    return db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
 
 # Set the start date for an image.
 def image_set_start_date(id, start_date):
