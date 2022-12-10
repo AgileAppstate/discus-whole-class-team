@@ -61,16 +61,34 @@ def get_collection(coll_name):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-@app.route('/insert_image', methods=["POST"])
+@app.route('/api/insert_image', methods=["POST"])
 def insert_image():
     record = request.get_data()
-    # Do stuff here
-    resp = Response(record)
+    json_data = json.loads(record)[0]
+
+    fname, img_bytes = format_image_data(json_data['image'], json_data['name'])
+    start_date = format_date(json_data['start_date'])
+    end_date = format_date(json_data['end_date'])
+    
+    with open('tst.txt', 'w') as f:
+        f.write(str(json_data['description']))
+        f.write('\n')
+        f.write(fname)
+        f.write('\n')
+        f.write(str(start_date))
+        
+    ret_img_id = images.image_insert(path=fname,
+                     desc=json_data['description'],
+                     start_date=start_date,
+                     end_date=end_date,
+                     img_bytes=img_bytes)
+ 
+    #resp = Response(record)
     #resp.headers['Access-Control-Allow-Origin'] = '*'
     #resp.headers['Content-Type'] = '*/json'
     #resp.set_data(json.dumps({"id": "2342423525"}))
-    return jsonify({"test": "bar"}), 200, {'Access-Control-Allow-Origin': '*', 'Content-Type': '*/json'}
-    
+    return jsonify(img_id=str(ret_img_id))
+    #return jsonify(Response(200))
 
 
 
@@ -98,8 +116,6 @@ def insert_into_playlist():
     item_type = request.args.get('item_type')
     playlists.playlist_insert_item(playlist, item_id, item_type)
 
-
-
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
     json_data = dumps(list_cursor, indent=4)
@@ -107,15 +123,14 @@ def cursor_to_json(cursor):
 
 def format_date(date_str):
     try:
-        date_time = datetime.strptime(date_str[9:29], '%b %d %Y %H:%M:%S')
+        date_time = datetime.strptime(date_str[0:10], '%Y-%m-%d')
         return date_time
     except ValueError as e:
         print(e)
         return str(e)
 
 def format_image_data(img_data, name):
-    #if not request.json or not 'name' in request.json:
-        #abort(400)
+    
     headers = img_data.split(',')
     img_type_headers = headers[0].split(';')
     img_type = img_type_headers[0].split('/')[-1]

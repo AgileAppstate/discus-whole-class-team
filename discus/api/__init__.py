@@ -5,7 +5,7 @@ from discus.util import playlists
 from discus.util import db
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources=r'/api/*')
 
 # db.setup() will have to be run before any actions with the database
 db.setup()
