@@ -31,6 +31,7 @@ export default function FormDialog(props) {
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(null));
+  const [duration, setDuration] = React.useState(25);
   const [checked, setChecked] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 
@@ -59,6 +60,10 @@ export default function FormDialog(props) {
 
   const handleDescChange = (event) => {
     setDescription(event.target.value);
+  };
+
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
   };
 
   const handleStartDate = (newDate) => {
@@ -93,6 +98,7 @@ export default function FormDialog(props) {
         items.push({
           ['name']: name,
           ['description']: description,
+          ['duration']: duration,
           ['start_date']: start_date.toDate(),
           ['end_date']: end_date.isValid()
             ? end_date.toDate()
@@ -107,6 +113,7 @@ export default function FormDialog(props) {
       items.push({
         ['name']: name,
         ['description']: description,
+        ['duration']: duration,
         ['start_date']: start_date.toDate(),
         ['end_date']: end_date.isValid()
           ? end_date.toDate()
@@ -199,6 +206,17 @@ export default function FormDialog(props) {
               label="No End Date"
             />
           </FormGroup>
+          <TextField
+            id="duration"
+            label="Duration"
+            minRows={4}
+            variant="outlined"
+            margin="normal"
+            float
+            required
+            value={duration}
+            onChange={handleDurationChange}
+          />
           <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
