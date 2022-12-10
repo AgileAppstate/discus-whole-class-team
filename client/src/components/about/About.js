@@ -1,4 +1,6 @@
-class About extends Component {
+import React from 'react';
+
+class About extends React.Component {
     state = {
       About: [],
       columns: []
