@@ -83,11 +83,24 @@ def edit_image():
     record = request.get_data()
     json_data = json.loads(record)
     
+    keys = get_keys()
     
+    #find the key and select what is gonna change.
+    images.image_set_duration(id, duration)
+    images.image_set_start_date(id, start_date)
+    images.image_set_end_date(id, end_date)
+    images.image_set_description(id, desc)
+    images.image_set_display_name(id, display_name)
     
     json_data['id']
     return jsonify(foo=str(json_data))
 
+@app.route('/api/delete_image')
+def delete_image():
+    record = request.get_data()
+    json_data = json.loads(record)
+    return jsonify(foo=str(json_data))
+    
 #Insert an image from Web
 @app.route('/api/insert_image', methods=["POST"])
 def insert_image():
