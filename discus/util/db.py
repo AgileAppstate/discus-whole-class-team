@@ -47,7 +47,7 @@ def setup(attempts=3):
     playlists = client_discus["playlists"]
     channels = client_discus["channels"]
     client_gridfs = client["gridfs"]
-    fs = gridfs.GridFS(client_gridfs
+    fs = gridfs.GridFS(client_gridfs)
 
 # Method to close connection to db
 def close(client):
