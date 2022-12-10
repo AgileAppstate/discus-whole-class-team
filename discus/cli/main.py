@@ -401,7 +401,7 @@ def _delete(id: int, params: dict, collection: str) -> None:
     print('_delete', _delete_collection_dispatch_map[collection])
     result = _delete_collection_dispatch_map[collection](id)
 
-    if result.matched_count == 0:
+    if result.deleted_count == 0:
         click.echo(f"No {collection} with id {id}. No changes made.") 
 
 ### Quitting
