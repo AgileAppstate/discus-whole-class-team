@@ -1,36 +1,209 @@
 import React, { Component } from 'react';
-//import axios from 'axios';
-import tempPlaylists from './tempPlaylists';
+import axios from 'axios';
+//import tempPlaylists from './tempPlaylists';
+import { DataGrid } from '@mui/x-data-grid';
+import IconButton from '@mui/material/IconButton';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+import ItemDialog from '../dialogs/PlaylistItemsDialog'
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { Alert, AlertTitle, Collapse } from '@mui/material';
+import PlaylistButton from '../buttons/CreatePlaylist';
+dayjs.extend(duration);
 
 class PlaylistList extends Component {
   state = {
-    playlists: []
+    playlists: [],
+    columns: [],
+    selectionModel: [],
+    openItems: false,
+    loading: true,
+    alert: false,
+    alertSeverity: 'error',
+    alertTitle: 'Error',
+    alertMessage: 'An error has occurred. Please try again.'
+  };
+
+  /**
+   * Loads the playlist locally
+   */
+  loadPlaylists = () => {
+    // Implement after we have the MangoDB API endpoint
+    axios.get('http://localhost:8000/get_collection_playlists')
+    .then(res => {
+      const raw = res.data;
+      const playlists = [];
+      raw.forEach((item) => {
+        const item_json = {
+          id: item._id.$oid,
+          name: item.name,
+          items: item.items.map((item) => item.objectID.$oid),
+          shuffle: item.shuffle,
+          date_created: item.date_created.$date,
+        };
+        playlists.push(item_json);
+      });
+      console.log(playlists);
+      this.setState({ playlists });
+      const loading = false;
+      this.setState({ loading });
+    });
+    // Dummy data
+    // console.log(tempPlaylists);
+    // const playlists = tempPlaylists;
+    // this.setState({ playlists });
+  };
+
+  /**
+   * Handles sending off an edited entry to the API
+   * @param {*} params
+   */
+     handleEditCommit = (params) => {
+      console.log(params);
+      var { id, field, value } = params;
+
+      // Will need to be replaced with sending an UPDATE to the API
+      console.log({ id, [field]: value });
+    };
+
+    /**
+     * Handles double-clicking a cell so we can popup the media dialog for the items list
+     * @param {*} params 
+     */
+    handleDoubleClick = (params) => {
+      if (params.field === "items")
+      {
+        console.log(params)
+      }
+    };
+
+  /**
+   * Adds added media to the local media array
+   * @param {*} params
+   */
+  handlePlaylistChange = (items) => {
+    this.handleSetAlertSuccess();
+    this.setState({ alert: true });
+    const playlists = this.state.playlists.concat(items);
+    this.setState({ playlists });
+  };
+
+  /**
+   * Handles changing the alert variable
+   * @param {*} alert
+   */
+  handleAlert = (alert) => {
+    this.setState({ alert });
+  };
+
+  /**
+   * Sets alert information to be an error
+   */
+  handleSetAlertError = (error) => {
+    const alertSeverity = 'error';
+    const alertTitle = "Error: " + (error.code ? error.code : "GENERIC_ERROR");
+    const alertMessage = error.message ? error.message : 'An error has occurred. Please try again later.';
+    this.setState({ alertSeverity, alertTitle, alertMessage });
+  };
+
+  /**
+   * Sets alert information to be a success
+   */
+  handleSetAlertSuccess = () => {
+    const alertSeverity = 'success';
+    const alertTitle = 'Success';
+    const alertMessage = 'Item has been submitted!';
+    this.setState({ alertSeverity, alertTitle, alertMessage });
+  };
+
+  /**
+   * Causes error to popup on page
+   * @param {*} error
+   */
+  handleSubmitError = (error) => {
+    this.handleSetAlertError(error);
+    console.log(error);
+    this.setState({ alert: true });
+  };
+
+  /**
+   * Handles deleting any selected items
+   */
+  deleteSelectedFile = () => {
+    const playlists = this.state.playlists.filter((item) => {
+      // Removes the playlist from the local list
+      return !this.state.selectionModel.includes(item.id);
+      // Will need to send the ID to the API to delete
+      //console.log(item.id);
+    });
+    this.setState({ playlists });
   };
 
   componentDidMount() {
-    // Implement after we have the MangoDB API endpoint
-    // axios.get('./tempMedia.json')
-    //   .then(res => {
-    //     const media = res.data;
-    //     this.setState({ media });
-    //   })
-    // Dummy data
-    console.log(tempPlaylists);
-    const playlists = tempPlaylists;
-    this.setState({ playlists });
+    this.loadPlaylists();
+    
+    // Sets the columns for the DataGrid
+    const columns = [
+      { field: 'name', headerName: 'Name', width: 250, editable: true },
+      { field: 'items', headerName: 'Items', width: 250, renderCell: () => <ItemDialog /> },
+      { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
+      { field: 'date_created', headerName: 'Date Created', width: 200, valueFormatter: (params) =>
+      dayjs(params?.value).format("MM/DD/YYYY")
+    },
+    ];
+
+    this.setState({ columns });
   }
 
   render() {
     return (
-      <ul>
-        {this.state.playlists.map((playlist) => (
-          <li key={playlist.id}>
-            Name: {playlist.name} <br /> Start Date: {playlist.start_date} <br /> End Date:{' '}
-            {playlist.end_date} <br />
-            <br />
-          </li>
-        ))}
-      </ul>
+      <div style={{ height: 400, width: '100%' }}>
+        <Collapse
+          in={this.state.alert}
+          style={{
+            transitionDelay: this.state.alert ? '800ms' : '0ms'
+          }}
+          unmountOnExit
+        >
+          <Alert
+            severity={this.state.alertSeverity}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  this.handleAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit"></CloseIcon>
+              </IconButton>
+            }
+          >
+            <AlertTitle>{this.state.alertTitle}</AlertTitle>
+            {this.state.alertMessage}
+          </Alert>
+        </Collapse>
+        <IconButton variant="contained" onClick={this.deleteSelectedFile} color="primary">
+          <DeleteOutlinedIcon></DeleteOutlinedIcon>
+        </IconButton>
+        <DataGrid
+          rows={this.state.playlists}
+          columns={this.state.columns}
+          pageSize={5}
+          checkboxSelection
+          disableSelectionOnClick
+          onCellEditCommit={this.handleEditCommit}
+          onSelectionModelChange={(selectionModel) => {
+            this.setState({ selectionModel });
+          }}
+          selectionModel={this.state.selectionModel}
+          onCellDoubleClick={this.handleDoubleClick}
+          loading={this.state.loading}
+        />
+        <PlaylistButton onChange={this.handlePlaylistChange} onError={this.handleSubmitError} />
+      </div>
     );
   }
 }
