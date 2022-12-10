@@ -38,26 +38,7 @@ def get_collection(coll_name):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-#Insert an image from Web
-@app.route('/api/insert_image', methods=["POST"])
-def insert_image():
-    record = request.get_data()
-    json_data = json.loads(record)[0]
-    fname, img_bytes = format_image_data(json_data['image'], json_data['name'])
-    start_date = format_date(json_data['start_date'])
-    end_date = format_date(json_data['end_date'])
-    
-    with open('tst.txt', 'w') as f:
-        f.write(str(json_data))
-        
-    ret_img_id = images.image_insert(path=fname,
-                     duration='',
-                     desc=json_data['description'],
-                     start_date=start_date,
-                     end_date=end_date,
-                     img_bytes=img_bytes,
-                     display_name=fname)
-    return jsonify(img_id=str(ret_img_id))
+
 
 #Insert a playlist from Web
 @app.route('/api/insert_playlist', methods=["POST"])
@@ -72,14 +53,11 @@ def insert_channel():
     fields_str = 'def channel_insert(chanName, playlistID=None,'
     fields_str += 'mode=\"Daily\", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[])'
     return jsonify(fields=fields_str)
-    
-#Get a single record or multiple records, by id
-#how to pass multiple records
-#636ff99df79d9f60de9d05a4
-#636ff99cf79d9f60de9d05a1
+
 
 #return a list of image records
 #provided a json {img_ids: ["1", "2"]}
+
 @app.route("/get_images", methods=["POST"])
 def get_image_records():
     record = request.get_data()
@@ -88,20 +66,49 @@ def get_image_records():
     #image_get_by_id()
     return id_list
 
+
+#return bytes of a file, given 
+#json expected {id: "123num345ber"}
 @app.route('/api/get_image_file', methods=["POST"])
 def get_image_file():
     record = request.get_data()
     json_data = json.loads(record)
     
-    #ret = images.image_get_file(ObjectID(str(json_data['img_id'])))
+    ret = images.image_get_file(ObjectId(str(json_data['id'])))
     
-    return jsonify(foo=str(json_data['img_id']))
+    return jsonify(foo=str(ret))
 
+@app.route('/api/edit_image', methods=["POST"])
+def edit_image():
+    record = request.get_data()
+    json_data = json.loads(record)
+    json_data['id']
+    return jsonify(foo=str(json_data))
+
+#Insert an image from Web
+@app.route('/api/insert_image', methods=["POST"])
+def insert_image():
+    record = request.get_data()
+    json_data = json.loads(record)[0]
+    fname, img_bytes = format_image_data(json_data['image'], json_data['name'])
+    start_date = format_date(json_data['start_date'])
+    end_date = format_date(json_data['end_date'])
+        
+    ret_img_id = images.image_insert(path=fname,
+                     duration='',
+                     desc=json_data['description'],
+                     start_date=start_date,
+                     end_date=end_date,
+                     img_bytes=img_bytes,
+                     display_name=fname)
+    return jsonify(img_id=str(ret_img_id))
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
     json_data = dumps(list_cursor, indent=4)
     return json_data
+
+
 
 def format_date(date_str):
     try:
@@ -111,15 +118,15 @@ def format_date(date_str):
         print(e)
         return str(e)
 
-def format_image_data(img_data, name):
-    
+def format_image_data(img_data, name):   
     headers = img_data.split(',')
     img_type_headers = headers[0].split(';')
     img_type = img_type_headers[0].split('/')[-1]
     img_bytes = base64.decodebytes(bytes(headers[1], 'utf-8'))
-
     fname = name + '.' + img_type
     return fname, img_bytes
+
+
 
 #TODO
 
