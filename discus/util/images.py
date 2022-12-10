@@ -11,7 +11,7 @@ from discus.util.playlists import playlist_remove_item
 # --- FUNCTIONS --- #
 
 # Insert a new image into the database.
-def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_bytes=None, display_name=""):
+def image_insert(path, duration=5, desc="", start_date=None, end_date=None, img_bytes=None, display_name=""):
     # Parse the file name.
     
     if img_bytes != None:
