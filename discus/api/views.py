@@ -76,18 +76,23 @@ def insert_channel():
 #how to pass multiple records
 #636ff99df79d9f60de9d05a4
 #636ff99cf79d9f60de9d05a1
-#@app.route("/get_row_<images>_<1,2,3,5,8>", methods=)
-#def get_rows():
 
-#For image insert, find where to save
-#@app.route("")
+#return a list of image records
+#provided a json {img_ids: ["1", "2"]}
+@app.route("/get_images", methods=["POST"])
+def get_image_records():
+    record = request.get_data()
+    json_data = json.loads(record)
+    id_list = json_data['img_ids']
+    #image_get_by_id()
+    return id_list
 
 @app.route('/api/get_image_file', methods=["POST"])
 def get_image_file():
     record = request.get_data()
     json_data = json.loads(record)
     
-    ret = image_get_file({"$oid":json_data['img_id']})
+    ret = images.image_get_file(json_data['img_id'])
     
     return jsonify(foo=str(json_data['img_id']))
 
