@@ -12,6 +12,4 @@ elif sys.argv[1] == "api":
     app.run(debug=True, port=8000)
 elif sys.argv[1] == "cli":
     import discus.cli.main as main
-    sys.argv.pop() # Required to prevent Click-Shell from crashing
-                   # when it passes 'cli' as a parameter to its Cmd instance
-    main.main()
+    main()

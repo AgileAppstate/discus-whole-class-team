@@ -11,7 +11,7 @@ from discus.util.playlists import playlist_remove_item
 # --- FUNCTIONS --- #
 
 # Insert a new image into the database.
-def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_bytes=None, display_name=""):
+def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_bytes=None):
     # Parse the file name.
     
     if img_bytes != None:
@@ -39,7 +39,6 @@ def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_
     img = {
         "filename" : filename,
         "description" : desc,
-        "display_name" : display_name,
         "file_type" : re.search("[^\.]*$", filename)[0],
         "file_id" : img_fsid,
         "duration" : duration,
@@ -52,13 +51,9 @@ def image_insert(path, duration=0, desc="", start_date=None, end_date=None, img_
     post_id = db.images.insert_one(img)
     return post_id.inserted_id
 
-def image_get_id_by_name(filename):
+def image_get_id_by_name(name):
     # Find the image with the given name.
-    return db.images.find_one({"filename" : filename})["_id"]
-
-def image_get_id_by_display_name(display_name):
-    # Find the image with the given name.
-    return db.images.find_one({"display_name" : display_name})["_id"]
+    return db.images.find_one({"filename" : name})["_id"]
 
 # get image by id
 def image_get_by_id(id):
@@ -85,12 +80,12 @@ def image_delete(id):
     db.fs.delete(image_get_file_id(id))
 
     # Delete the image document.
-    return db.images.delete_one({"_id" : id})
+    db.images.delete(id)
 
 
 # Set the duration for an image.
 def image_set_duration(id, duration):
-    return db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
+    db.images.update_one({ "_id": id }, { "$set": { "duration": duration } }) # set duration for image
 
 # Set the start date for an image.
 def image_set_start_date(id, start_date):
@@ -109,7 +104,3 @@ def image_set_end_date(id, end_date):
 # Set the description for an image.
 def image_set_description(id, desc):
     db.images.update_one({ "_id": id }, { "$set": { "description": desc } }) # set description for image
-   
-# Set the display name for an image.
-def image_set_display_name(id, display_name):
-    db.images.update_one({ "_id": id }, { "$set": { "display_name": display_name } }) # set display_name for image

@@ -49,15 +49,15 @@ def channel_get_all():
 # deletes the channel
 def channel_delete(id):
     # Delete the channel document.
-    return db.channels.delete_one({"_id" : id})
+    db.channels.delete(id)
 
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):
-    return db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
+    db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
 
 # sets the mode for the channel
 def channel_set_mode(chanID, mode, recurringInfo=None):
-    return db.channels.update_one({ "_id": chanID }, { "$set": { "mode": mode, "recurring_info": recurringInfo } }) # set mode for channel
+    db.channels.update_one({ "_id": chanID }, { "$set": { "mode": mode, "recurring_info": recurringInfo } }) # set mode for channel
 
 # sets the start time for the channel
 def channel_set_start_date(chanID, startDate):
@@ -77,13 +77,13 @@ def channel_set_end_date(chanID, endDate):
 def channel_add_time_occurance(chanID, startTime, endTime):
     start_int = startTime.hour * 60 + startTime.minute
     end_int = endTime.hour * 60 + endTime.minute
-    return db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # add time occurances to channel
+    db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # add time occurances to channel
 
 # removes a time occurances from the channel
 def channel_remove_time_occurance(chanID, startTime, endTime):
     start_int = startTime.hour * 60 + startTime.minute
     end_int = endTime.hour * 60 + endTime.minute
-    return db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # remove time occurances from channel
+    db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # remove time occurances from channel
 
 # Get a channel that is valid to be played right now. If multiple are valid,
 # pick a random one.

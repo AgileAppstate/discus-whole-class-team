@@ -52,15 +52,15 @@ def playlist_delete(id):
         playlist_remove_item(plst["_id"], id)
 
     # Delete the playlist document.
-    return db.playlists.delete_one({"_id" : id})
+    db.playlists.delete(id)
 
 # sets the shuffle mode for the playlist
 def playlist_set_shuffle(id, shuffle):
-    return db.playlists.update_one({ "_id": id }, { "$set": { "shuffle": shuffle } }) # set shuffle for playlist
+    db.playlists.update_one({ "_id": id }, { "$set": { "shuffle": shuffle } }) # set shuffle for playlist
 
 # sets the name for the playlist
 def playlist_set_name(id, name):
-    return db.playlists.update_one({ "_id": id }, { "$set": { "name": name } }) # set name for playlist
+    db.playlists.update_one({ "_id": id }, { "$set": { "name": name } }) # set name for playlist
 
 # get all images in a playlist
 def playlist_get_images(playlistID):
