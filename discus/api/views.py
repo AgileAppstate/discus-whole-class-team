@@ -5,6 +5,7 @@ from discus.util import images
 from discus.util import channels
 from discus.api import app
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import base64
 import json
 from datetime import datetime
@@ -92,7 +93,7 @@ def get_image_file():
     record = request.get_data()
     json_data = json.loads(record)
     
-    ret = images.image_get_file(json_data['img_id'])
+    #ret = images.image_get_file(ObjectID(str(json_data['img_id'])))
     
     return jsonify(foo=str(json_data['img_id']))
 
