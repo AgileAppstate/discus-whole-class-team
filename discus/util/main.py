@@ -16,7 +16,6 @@ from discus.util.channels import *
 db.setup()
 screen.setup()
 
-
 # --- DISPLAY LOOP --- #
 
 while 1:

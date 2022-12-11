@@ -1,3 +1,8 @@
+/**
+ * OLD CODE, NOW USES DIALOG
+ */
+
+
 /** The prompt content component */
 class Prompt extends React.Component {
   constructor(props) {
