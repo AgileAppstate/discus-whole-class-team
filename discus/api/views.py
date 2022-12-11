@@ -28,15 +28,21 @@ def get_collection(coll_name):
     if (coll_name == 'playlists'):
         cursor = playlists.playlist_get_all()
         json_data = cursor_to_json(cursor)
+        
     elif (coll_name == 'images'):
         cursor = images.image_get_all()
         json_data = cursor_to_json(cursor)
+        curr_dict = json.loads(json_data)
+        curr_dict.append(get_image_data_for_collection(curr_dict))
+        json_data = json.dumps(curr_dict, indent=4)
+        
     elif (coll_name == 'channels'):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
-    resp = Response(json_data)
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+        
+    #resp = Response(json_data)
+    #resp.headers['Access-Control-Allow-Origin'] = '*'
+    return jsonify(data=json_data)
 
 
 
@@ -86,10 +92,10 @@ def edit_image():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    with open('kvps.txt', 'w') as f:
-        f.write(str(keys_list[1]))
-        f.write("\n")
-        f.write(str(vals_list[1]))
+    #with open('kvps.txt', 'w') as f:
+    #    f.write(str(keys_list[1]))
+    #    f.write("\n")
+    #    f.write(str(vals_list[1]))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
     if (keys_list[1] == 'duration'):
@@ -185,8 +191,11 @@ def format_image_data(img_data, name):
     #    f.write(str(img_bytes))
     return fname, img_bytes
 
-
-
+def get_image_data_for_collection(coll_json):
+    with open('coll_json.txt', 'w') as f:
+        f.write(str(type(coll_json)))
+        #f.write(str(coll_json))
+    return ['00000000000000000000000000000', 'fffffffffffffffff'] 
 #TODO
 
 #RETURN N RECORDS (table_name, id_list)
