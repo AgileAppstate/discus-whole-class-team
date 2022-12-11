@@ -127,7 +127,7 @@ export default function FormDialog(props) {
     // For testing purposes
     //console.log(items);
     try {
-      const res = await axios.post('http://localhost:8000/api/insert_image', items, {
+      const res = await axios.post('http://152.10.212.58:8000/api/insert_image', items, {
         headers: {
           'content-type': '*/json'
         }
