@@ -58,7 +58,7 @@ def insert_channel():
 #return a list of image records
 #provided a json {ids: ["1", "2"]}
 
-@app.route("/get_images", methods=["POST"])
+@app.route("/api/get_images", methods=["POST"])
 def get_image_records():
     record = request.get_data()
     json_data = json.loads(record)
@@ -84,18 +84,27 @@ def edit_image():
     record = request.get_data()
     json_data = json.loads(record)
     
-    with open('keys.txt', 'w') as f:
-        f.write(str(json_data.keys()))
-    
+    keys_list = list(json_data.keys())
+    vals_list = list(json_data.values())
+    with open('kvps.txt', 'w') as f:
+        f.write(str(keys_list[1]))
+        f.write("\n")
+        f.write(str(vals_list[1]))
+    id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    images.image_set_duration(id, duration)
-    images.image_set_start_date(id, start_date)
-    images.image_set_end_date(id, end_date)
-    images.image_set_description(id, desc)
-    images.image_set_display_name(id, display_name)
+    if (keys_list[1] == 'duration'):
+        images.image_set_duration(id, int(vals_list[1]))
+    elif (keys_list[1] == 'start_date'):
+        images.image_set_start_date(id, datetime(vals_list[1]))
+    elif (keys_list[1] == 'end_date'):
+        images.image_set_end_date(id, datetime(vals_list[1]))
+    elif (keys_list[1] == 'description'):
+        images.image_set_description(id, str(vals_list[1]))
+    elif (keys_list[1] == 'name'):
+        images.image_set_display_name(id, str(vals_list[1]))
     
-    json_data['id']
-    return jsonify(foo=str(json_data))
+    ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
+    return jsonify(status='successfully edited')
 
 # json expected {ids: "1234", "asdf"}
 @app.route('/api/delete_image')
