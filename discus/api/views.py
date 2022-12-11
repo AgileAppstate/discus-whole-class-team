@@ -53,8 +53,16 @@ def get_collection(coll_name):
 @app.route('/api/insert_playlist', methods=["POST"])
 def insert_playlist():
     #def playlist_insert(playlistname, shuffle=False, itemList=[]):
+    record = request.get_data()
+    json_data = json.loads(record)
+
+    # with open('body.txt', 'w') as f:
+    #     f.write(str(json_data))
+
     fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
-    return jsonify(fields=fields_str)
+    # !!!! We need to formate the Items lists at some point !!!!
+    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],json_data['items'])
+    return jsonify(id=ret)
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_playlist', methods=["POST"])
@@ -64,23 +72,18 @@ def edit_playlist():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    #with open('kvps.txt', 'w') as f:
-    #    f.write(str(keys_list[1]))
-    #    f.write("\n")
-    #    f.write(str(vals_list[1]))
-    id = ObjectId(vals_list[0])
+    with open('body.txt', 'w') as f:
+       f.write(str(keys_list[1]))
+       f.write("\n")
+       f.write(str(vals_list[1]))
+    #id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    if (keys_list[1] == 'duration'):
-        images.image_set_duration(id, int(vals_list[1]))
-    elif (keys_list[1] == 'start_date'):
-        images.image_set_start_date(id, datetime(vals_list[1]))
-    elif (keys_list[1] == 'end_date'):
-        images.image_set_end_date(id, datetime(vals_list[1]))
-    elif (keys_list[1] == 'description'):
-        images.image_set_description(id, str(vals_list[1]))
-    elif (keys_list[1] == 'name'):
-        images.image_set_display_name(id, str(vals_list[1]))
-    
+    # if (keys_list[1] == 'name'):
+    #     playlists.playlist_set_name()
+    # elif (keys_list[1] == 'shuffle'):
+    #     playlists.playlist_set_shuffle()
+    # elif (keys_list[1] == 'items'):
+    #     playlists.playlist_reorder()
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
@@ -246,7 +249,7 @@ def insert_image():
                          start_date=start_date,
                          end_date=end_date,
                          img_bytes=img_bytes,
-                         display_name=fname)
+                         display_name=record['name'])
         
         return_ids.append(ret_img_id)
 #        with open('sent_data.txt', 'w+') as f:
