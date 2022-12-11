@@ -34,8 +34,8 @@ def get_collection(coll_name):
         json_data = cursor_to_json(cursor)
         curr_dict = json.loads(json_data)
         curr_dict.append(get_image_data_for_collection(curr_dict))
-        json_data = json.dumps(curr_dict, indent=4)
-        
+        #json_data = json.dumps(curr_dict, indent=4)
+        json_data = curr_dict
     elif (coll_name == 'channels'):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
@@ -192,13 +192,18 @@ def format_image_data(img_data, name):
     return fname, img_bytes
 
 def get_image_data_for_collection(coll_json):
-    with open('coll_json.txt', 'w') as f:
-        for item in coll_json:
-            f.write(str(type(coll_json)))
+    #with open('coll_json.txt', 'w') as f:
+    ret_binaries = []
+    for item in coll_json:
+        ret = images.image_get_file(ObjectId(str(item['_id']['$oid'])))
+        ret_binaries.append(str(ret))
+    #        f.write(str(ret[0:10]))
+    #        f.write("\n")
         #f.write(str(coll_json))
     
         
-    return {'img_binaries': ['00000000000000000000000000000', 'fffffffffffffffff']} 
+    return {'img_binaries': ret_binaries}
+    #return 0
 #TODO
 
 #RETURN N RECORDS (table_name, id_list)
