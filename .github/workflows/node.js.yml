@@ -40,8 +40,8 @@ jobs:
       run: npm --prefix client ci --force
       
       
-    - name: Runs any tests
-      run: npm --prefix client run test
+    #- name: Runs any tests
+    #  run: npm --prefix client run test
       
     #- name: Builds and deploys application
     #  run: npm --prefix client run deploy
