@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import styled from '@emotion/styled';
 import MediaButton from '../buttons/AddMedia';
+import PropTypes from 'prop-types';
 import { Alert, AlertTitle, Collapse } from '@mui/material';
 
 dayjs.extend(duration);
@@ -79,14 +80,30 @@ class MediaList extends Component {
    * Handles sending off an edited entry to the API
    * @param {*} params
    */
-  handleEditCommit = (params) => {
+  handleEditCommit = async (params) => {
     var { id, field, value } = params;
     // Converts date to JS date if necessary
     if (dayjs.isDayjs(value)) {
       value = value.toDate();
     }
     // Will need to be replaced with sending an UPDATE to the API
-    console.log({ id, [field]: value });
+    const body = { id, [field]: value };
+    console.log(body);
+    try {
+      axios.post('http://localhost:8000/edit_image', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
+    //console.log({ id, [field]: value });
   };
 
   /**
@@ -145,10 +162,25 @@ class MediaList extends Component {
     const media = this.state.media.filter((item) => {
       // Removes the media from the local list
       return !this.state.selectionModel.includes(item.id);
-      // Will need to send the ID to the API to delete
       //console.log(item.id);
     });
-    this.setState({ media });
+    const body = {'ids': this.state.selectionModel};
+    console.log(body);
+    try {
+      axios.post('http://localhost:8000/delete_image', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+      this.setState({ media });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
   };
 
   componentDidMount() {
@@ -291,5 +323,10 @@ class MediaList extends Component {
     );
   }
 }
+
+MediaList.propTypes = {
+  children: PropTypes.any,
+  onError: PropTypes.func,
+};
 
 export default MediaList;
