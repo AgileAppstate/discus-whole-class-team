@@ -193,9 +193,12 @@ def format_image_data(img_data, name):
 
 def get_image_data_for_collection(coll_json):
     with open('coll_json.txt', 'w') as f:
-        f.write(str(type(coll_json)))
+        for item in coll_json:
+            f.write(str(type(coll_json)))
         #f.write(str(coll_json))
-    return ['00000000000000000000000000000', 'fffffffffffffffff'] 
+    
+        
+    return {'img_binaries': ['00000000000000000000000000000', 'fffffffffffffffff']} 
 #TODO
 
 #RETURN N RECORDS (table_name, id_list)
