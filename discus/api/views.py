@@ -86,7 +86,7 @@ def get_image_file():
         #   f.write(str(type(record['id'])))
         #    f.write('\n')
         ret = images.image_get_file(ObjectId(str(record['id'])))
-        return_data.append(str(bytes_to_base64(ret)))
+        return_data.append(bytes_to_base64(ret))
     return jsonify(img_dat=return_data)
 
 # json expected {id: "1234", "asdf"}
@@ -125,13 +125,13 @@ def delete_image():
     data = json.loads(record)
     keys_list = list(data.keys())
     vals_list = list(data.values())
-    with open('delete.txt', 'w') as f:
-        f.write(str(keys_list))
-        f.write('\n')
-        f.write(str(vals_list))
-        f.write('\n')
-        #ret = images.image_delete(ObjectId(str(record['id'])))
-        #ret_str += 'successfully deleted: ' + keys_list[1] + ' to ' + vals_list[1] + '\n'
+    
+    for id_val in vals_list[0]:
+        with open('delete.txt', 'w+') as f:
+            f.write(str(id_val))
+            f.write('\n')
+        ret = images.image_delete(ObjectId(str(id_val)))
+        ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
     
 #Insert an image from Web
@@ -168,7 +168,7 @@ def insert_image():
     return jsonify(ids=str(return_ids))
 
 def bytes_to_base64(img_bytes):
-    return base64.b64encode(img_bytes)
+    return base64.b64encode(img_bytes).decode('utf-8')
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
