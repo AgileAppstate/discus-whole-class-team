@@ -71,12 +71,12 @@ def get_image_records():
 #json expected {id: "123num345ber"}
 @app.route('/api/get_image_file', methods=["POST"])
 def get_image_file():
-    record = request.get_data()
-    json_data = json.loads(record)
-    
-    ret = images.image_get_file(ObjectId(str(json_data['id'])))
-    
-    return jsonify(foo=str(ret))
+    records = request.get_data()
+    return_data = []
+    for record in json.loads(records):
+        ret = images.image_get_file(ObjectId(str(record['id'])))
+        return_data.append(ret)
+    return jsonify(img_dat=str(return_data))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_image', methods=["POST"])
@@ -84,7 +84,8 @@ def edit_image():
     record = request.get_data()
     json_data = json.loads(record)
     
-    keys = get_keys()
+    with open('keys.txt', 'w') as f:
+        f.write(str(json_data.keys()))
     
     #find the key and select what is gonna change.
     images.image_set_duration(id, duration)
@@ -135,7 +136,6 @@ def insert_image():
 #            f.write(str(img_bytes))
         
     return jsonify(ids=str(return_ids))
-    #return jsonify(foo='bar')
 
 def bytes_to_base64(img_bytes):
     return base64.b64encodebytes(img_bytes)
