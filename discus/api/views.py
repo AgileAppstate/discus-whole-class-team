@@ -244,7 +244,7 @@ def insert_image():
         end_date = format_date(record['end_date'])
             
         ret_img_id = images.image_insert(path=fname,
-                         duration=12,
+                         duration=record['duration'],
                          desc=record['description'],
                          start_date=start_date,
                          end_date=end_date,
