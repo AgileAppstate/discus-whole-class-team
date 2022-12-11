@@ -90,8 +90,7 @@ export default function PlaylistItemsDialog() {
       <Button variant="outlined" onClick={handleClickOpen} color="primary">
         Open Items
       </Button>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}
-        PaperProps={{ sx: { width: "100%", height: "100%" } }}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition} maxWidth={'lg'} fullWidth={true}>
         <DialogTitle>All Media</DialogTitle>
         <DialogContent>
           <DialogContentText>
