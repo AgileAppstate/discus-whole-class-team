@@ -32,7 +32,19 @@ class About extends React.Component {
               </a>
             </div> */}
           </div>
-        </div>
+          </div>
+          <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+          <br></br>
+           Web Team: Derek, Alcinder, Logan, Luke, Katherine <br></br>
+           Util Team: Christine, Phillip, Jacob, Thom, Tyler <br></br>
+           CLI/ API Team: Alex, Eli, Vidhi, Olivia, Sami <br></br>
+           Product Owner: Dr. Jay Fenwick  link to webpage <br></br>
+           <a href="https://github.com/AgileAppstate/discus-whole-class-team">
+                <button className="inline-flex text-white bg-black border-0 py-2 px-6 focus:outline-none hover:bg-slate-600 rounded text-lg">
+                  GitHub Repo
+                </button>
+              </a>
+          </div>
       </section>
 
 
