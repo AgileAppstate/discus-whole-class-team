@@ -124,7 +124,7 @@ def delete_image():
     ret_str = ''
     for record in json.loads(records):
         json_data = json.loads(record)
-    
+        
         
         ret_str += 'successfully deleted: ' + keys_list[1] + ' to ' + vals_list[1] + '\n'
     return jsonify(status=ret_str)
@@ -164,10 +164,6 @@ def insert_image():
 
 def bytes_to_base64(img_bytes):
     return base64.b64encodebytes(img_bytes)
-
-def get_keys(json_str):
-    #with open('get_keys.txt','w') as f:
-        #f.write(json_str)
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
