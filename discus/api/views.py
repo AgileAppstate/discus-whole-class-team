@@ -153,7 +153,8 @@ def insert_image():
                          end_date=end_date,
                          img_bytes=img_bytes,
                          display_name=fname)
-                         
+        
+        return_ids.append(ret_img_id)
 #        with open('sent_data.txt', 'w+') as f:
 #            f.write(fname)
 #            f.write("\n")

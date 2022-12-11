@@ -125,20 +125,27 @@ export default function FormDialog(props) {
       });
     }
     // For testing purposes
-    console.log(items);
+    //console.log(items);
     try {
       const res = await axios.post('http://localhost:8000/api/insert_image', items, {
         headers: {
           'content-type': '*/json'
         }
       });
-
-      // Adds ID to item, which will eventually be replaced with ID received from API
-      items.map((item) => {
-        item['id'] = cuid();
+      const ids = []
+      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // TODO: Get CLI team to return IDs better
+      res.data.ids.split('\'').forEach((val) => {
+        if (val != "[ObjectId(" && val != ")" && val != "), ObjectId(" && val != ")]") {
+          ids.push(val);
+        }
       });
 
-      console.log(res);
+      // Adds each ID to its item
+      for (let i = 0; i < items.length; i++) {
+        items[i]['id'] = ids[i];
+      } 
+
       props.onChange(items);
     } catch (error) {
       props.onError(error);

@@ -75,7 +75,7 @@ class MediaList extends Component {
           // Adds the encoded image to the media
           item['image'] = "data:image/png;base64," + res.data.img_dat[0];
         });
-        console.log(media);
+        //console.log(media);
         this.setState({ media });
         const loading = false;
         this.setState({ loading });
@@ -106,7 +106,7 @@ class MediaList extends Component {
     }
     // Will need to be replaced with sending an UPDATE to the API
     const body = { id, [field]: value };
-    console.log(body);
+    //console.log(body);
     try {
       axios.post('http://localhost:8000/api/edit_image', body, {
         headers: {
@@ -183,7 +183,7 @@ class MediaList extends Component {
       //console.log(item.id);
     });
     const body = {'ids': this.state.selectionModel};
-    console.log(body);
+    //console.log(body);
     try {
       axios.post('http://localhost:8000/api/delete_image', body, {
         headers: {
