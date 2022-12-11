@@ -48,28 +48,46 @@ class MediaList extends Component {
    * Loads the media locally
    */
   loadMedia = () => {
-    axios.get('http://localhost:8000/get_collection_images').then((res) => {
-      const raw = res.data;
-      const media = [];
-      raw.forEach((item) => {
-        const item_json = {
-          id: item._id.$oid,
-          name: item.display_name,
-          description: item.description,
-          duration: item.duration,
-          date_added: item.date_added.$date,
-          start_date: item.start_date.$date,
-          end_date: item.end_date.$data,
-          image: item.file_id.$oid,
-          filename: item.filename
-        };
-        media.push(item_json);
+    try {
+      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+        const raw = res.data;
+        const media = [];
+        raw.forEach(async (item) => {
+          const item_json = {
+            id: item._id.$oid,
+            name: item.display_name,
+            description: item.description,
+            duration: item.duration,
+            date_added: item.date_added.$date,
+            start_date: item.start_date.$date,
+            end_date: item.end_date.$data,
+            image_id: item.file_id.$oid,
+            filename: item.filename
+          };
+          media.push(item_json);
+        });
+        media.forEach(async (item) => {
+          const res = await axios.post('http://localhost:8000/api/get_image_file', [{'id': item.id}], {
+            headers: {
+              'content-type': '*/json'
+            }
+          });
+          // Adds the encoded image to the media
+          item['image'] = "data:image/png;base64," + res.data.img_dat[0];
+        });
+        console.log(media);
+        this.setState({ media });
+        const loading = false;
+        this.setState({ loading });
       });
-      console.log(media);
-      this.setState({ media });
-      const loading = false;
-      this.setState({ loading });
-    });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
     // Dummy data
     // console.log(tempMedia);
     // const media = tempMedia;
