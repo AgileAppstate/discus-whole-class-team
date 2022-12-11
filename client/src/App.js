@@ -4,7 +4,7 @@ import Navbars from './components/navbar/Navbar';
 import Home from './pages/public/home/home';
 import About from './pages/public/about/About';
 import Login from './pages/public/login/Login';
-import Media from './pages/public/media/Media';
+import Media from './pages/public/media/Media.js';
 import Playlists from './pages/public/playlists/Playlists';
 import Channels from './pages/public/channels/Channels';
 import LiveFeed from './pages/public/livefeed/LiveFeed';

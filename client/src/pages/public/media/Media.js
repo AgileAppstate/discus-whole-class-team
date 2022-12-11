@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MediaList from '../../../components/mediaList/MediaList';
+import MediaList from '../../../components/mediaList/MediaList.js';
 
 class Media extends Component {
   render() {
