@@ -10,10 +10,10 @@ class About extends React.Component {
     render() {
       return (
         <section className="text-gray-600 body-font">
-          <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
             <h1 className="font-bold sm:text-3xl lg:text-6xl text-black">DiSCuS - Digital Signage Control System</h1>
           </div>
-          <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
             <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0">
               <img className="object-cover object-center rounded w-full" alt="hero" src={svg} />
             </div>
@@ -22,24 +22,27 @@ class About extends React.Component {
                 <h1 className="font-bold sm:text-3xl lg:text-7xl text-black">DiSCuS</h1>Throw your digitial messages further.
               </h1>
               <p className="mb-8 leading-relaxed text-lg text-black">
-                Developed in partial fulfillment of requirement of CS 5666 <br></br> Software Engineering Fall 2022.
+                Developed in partial fulfillment of requirement of CS 5666:<br></br> Software Engineering Fall 2022.
               </p>
             </div>
           </div>
-          <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-            <br></br>
-            Web Team: Derek, Alcinder, Logan, Luke, Katherine <br></br>
-            CLI/ API Team: Christine, Phillip, Jacob, Thom, Tyler <br></br>
-            Util Team: Alex, Eli, Vidhi, Olivia, Sami <br></br>
-            Product Owner: <a href="https://compsci.appstate.edu/faculty-staff/dr-jay-fenwick" target={"blank"}>Dr. Jay Fenwick</a>
+          <div className="container mx-auto flex px-5 py-10 md:flex-row flex-col items-center">
+            <p className="w-full text-3xl text-left">
+              <b>Web Team: </b> <a href="https://github.com/SageJames" target={"blank"}>Alcinder Lewis</a>, <a href="https://github.com/wilsondc5" target={"blank"}>Derek Wilson</a>, <a href="https://github.com/bealkg" target={"blank"}>Katherine Beal</a>, <a href="https://github.com/loganwrichardson" target={"blank"}>Logan Richardson</a>, <a href="https://github.com/pattersonlt" target={"blank"}>Luke Patterson</a><br></br><br></br>
+              <b>CLI/ API Team: </b> <a href="https://github.com/Chris-Carter-cs" target={"blank"}>Christine Carter</a>, <a href="https://github.com/zzMountainManzz" target={"blank"}>Jacob Villemagne</a>, <a href="https://github.com/phdavis1027" target={"blank"}>Phillip Davis</a>, <a href="https://github.com/cosmicboots" target={"blank"}>Thom Dickson</a>, <a href="https://github.com/t9605tripp" target={"blank"}>Tyler Tripp</a><br></br><br></br>
+              <b>Util Team: </b> <a href="https://github.com/alexpclarke" target={"blank"}>Alex Clarke</a>, <a href="https://github.com/eliorians" target={"blank"}>Eli Orians</a>, <a href="https://github.com/hessorr" target={"blank"}>Olivia Hess</a>, <a href="https://github.com/KittenMoon" target={"blank"}>Sami Griep</a>, <a href="https://github.com/Vidhi67" target={"blank"}>Vidhi Patel</a><br></br><br></br>
+              <b>Product Owner: </b> <a href="https://compsci.appstate.edu/faculty-staff/dr-jay-fenwick" target={"blank"}>Dr. Jay Fenwick</a><br></br>
+            </p>
           </div>
-          <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+          <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
             <a href="https://github.com/AgileAppstate/discus-whole-class-team" target={"blank"}>
               <button className="inline-flex text-white bg-black border-0 py-2 px-6 focus:outline-none hover:bg-slate-600 rounded text-lg">
                 GitHub Repo
               </button>
             </a>
           </div>
+          <br></br>
+          <br></br>
       </section>
 
 
