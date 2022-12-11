@@ -41,9 +41,10 @@ def get_collection(coll_name):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
         
-    #resp = Response(json_data)
-    #resp.headers['Access-Control-Allow-Origin'] = '*'
-    return jsonify(data=json.loads(json_data))
+    resp = Response(json_data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    #return jsonify(data=json.loads(json_data))
+    return resp
 
 
 
