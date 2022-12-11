@@ -34,6 +34,10 @@ def playlist_get_by_id(id):
 def playlist_get_all():
     return db.playlists.find()
 
+# reorders the playlist
+def playlist_reorder(id, newOrder):
+    return db.playlists.update_one({"_id": id }, { "$set": { "items": newOrder } }) # set new order for playlist
+
 # adds image or playlist to playlist
 def playlist_insert_item(playlistID, itemID, itemType):
     if itemID == playlistID:
