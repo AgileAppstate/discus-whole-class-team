@@ -90,7 +90,7 @@ class MediaList extends Component {
     const body = { id, [field]: value };
     console.log(body);
     try {
-      axios.post('http://localhost:8000/edit_image', body, {
+      axios.post('http://localhost:8000/api/edit_image', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -167,7 +167,7 @@ class MediaList extends Component {
     const body = {'ids': this.state.selectionModel};
     console.log(body);
     try {
-      axios.post('http://localhost:8000/delete_image', body, {
+      axios.post('http://localhost:8000/api/delete_image', body, {
         headers: {
           'content-type': '*/json'
         }
