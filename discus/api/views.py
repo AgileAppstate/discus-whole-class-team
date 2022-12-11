@@ -122,7 +122,7 @@ def edit_image():
 def delete_image():
     record = request.get_data()
     ret_str = ''
-    data = json.loads(record):
+    data = json.loads(record)
     keys_list = list(data.keys())
     vals_list = list(data.values())
     with open('delete.txt', 'w') as f:
