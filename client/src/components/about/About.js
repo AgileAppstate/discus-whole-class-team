@@ -22,7 +22,7 @@ class About extends React.Component {
               <h1 className="font-bold sm:text-3xl lg:text-7xl text-black">DiSCuS</h1>Throw your digitial messages further.
             </h1>
             <p className="mb-8 leading-relaxed text-lg text-black">
-             Developed in partial fulfillment of requirement of CS 5666 Software Engineering, Fall 2022.
+             Developed in partial fulfillment of requirement of CS 5666 <br></br> Software Engineering Fall 2022.
             </p>
             {/* <div className="flex justify-center">
               <a href="/About">
@@ -39,11 +39,13 @@ class About extends React.Component {
            Util Team: Christine, Phillip, Jacob, Thom, Tyler <br></br>
            CLI/ API Team: Alex, Eli, Vidhi, Olivia, Sami <br></br>
            Product Owner: Dr. Jay Fenwick  link to webpage <br></br>
+           </div>
+           <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
            <a href="https://github.com/AgileAppstate/discus-whole-class-team">
                 <button className="inline-flex text-white bg-black border-0 py-2 px-6 focus:outline-none hover:bg-slate-600 rounded text-lg">
                   GitHub Repo
                 </button>
-              </a>
+            </a>
           </div>
       </section>
 
