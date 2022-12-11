@@ -120,7 +120,7 @@ export default function FormDialog(props) {
     // For testing purposes
     console.log(playlist);
     try {
-      const res = await axios.post('http://localhost:8000/insert_playlist', playlist, {
+      const res = await axios.post('http://localhost:8000/api/insert_playlist', playlist, {
         headers: {
           'content-type': '*/json'
         }

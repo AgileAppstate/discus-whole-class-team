@@ -63,8 +63,22 @@ class PlaylistList extends Component {
       console.log(params);
       var { id, field, value } = params;
 
-      // Will need to be replaced with sending an UPDATE to the API
-      console.log({ id, [field]: value });
+      const body = { id, [field]: value };
+
+      try {
+        axios.post('http://localhost:8000/api/edit_playlist', body, {
+          headers: {
+            'content-type': '*/json'
+          }
+        });
+      } catch (error) {
+        this.handleSubmitError(error);
+        if (error.response) {
+          console.log(error.response.status);
+        } else {
+          console.log(error.message);
+        }
+      }
     };
 
     /**
@@ -137,6 +151,23 @@ class PlaylistList extends Component {
       // Will need to send the ID to the API to delete
       //console.log(item.id);
     });
+    const body = {'ids': this.state.selectionModel};
+    //console.log(body);
+    try {
+      axios.post('http://localhost:8000/api/delete_playlist', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+      this.setState({ playlists });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
     this.setState({ playlists });
   };
 
