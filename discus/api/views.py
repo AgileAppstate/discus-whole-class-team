@@ -76,7 +76,7 @@ def get_image_records():
 
 
 #return bytes of a file, given 
-#json expected {id: "123num345ber"}
+#json expected [{id: "123num345ber"},{}]
 @app.route('/api/get_image_file', methods=["POST"])
 def get_image_file():
     records = request.get_data()
@@ -86,7 +86,7 @@ def get_image_file():
         #    f.write(str(type(record)))
         #    f.write('\n')
         ret = images.image_get_file(ObjectId(str(record['id'])))
-        return_data.append(ret)
+        return_data.append(str(bytes_to_base64(ret)))
     return jsonify(img_dat=str(return_data))
 
 # json expected {id: "1234", "asdf"}
@@ -118,15 +118,20 @@ def edit_image():
     return jsonify(status=ret_str)
 
 # json expected {ids: "1234", "asdf"}
-@app.route('/api/delete_image')
+@app.route('/api/delete_image', methods=["POST"])
 def delete_image():
-    records = request.get_data()
+    record = request.get_data()
     ret_str = ''
-    for record in json.loads(records):
-        json_data = json.loads(record)
-        
-        
-        ret_str += 'successfully deleted: ' + keys_list[1] + ' to ' + vals_list[1] + '\n'
+    data = json.loads(record):
+    keys_list = list(data.keys())
+    vals_list = list(data.values())
+    with open('delete.txt', 'w') as f:
+        f.write(str(keys_list))
+        f.write('\n')
+        f.write(str(vals_list))
+        f.write('\n')
+        #ret = images.image_delete(ObjectId(str(record['id'])))
+        #ret_str += 'successfully deleted: ' + keys_list[1] + ' to ' + vals_list[1] + '\n'
     return jsonify(status=ret_str)
     
 #Insert an image from Web
