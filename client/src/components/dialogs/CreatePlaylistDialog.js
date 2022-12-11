@@ -120,7 +120,7 @@ export default function FormDialog(props) {
     // For testing purposes
     console.log(playlist);
     try {
-      const res = await axios.post('http://localhost:8000/insert_image', playlist, {
+      const res = await axios.post('http://localhost:8000/api/insert_playlist', playlist, {
         headers: {
           'content-type': '*/json'
         }
@@ -160,7 +160,7 @@ export default function FormDialog(props) {
       <Button variant="contained" onClick={handleClickOpen} color="primary">
         Create Playlist
       </Button>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition} maxWidth={'lg'} fullWidth={true}>
         <DialogTitle>Create Playlist</DialogTitle>
         <DialogContent>
           <DialogContentText>

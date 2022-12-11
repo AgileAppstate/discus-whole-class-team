@@ -14,7 +14,7 @@ class CreatePlaylist extends React.Component {
   };
 
   render() {
-    return <Dialog onChange={this.handleItemAdd} onError={this.handleError}></Dialog>;
+    return <Dialog onChange={this.handleItemAdd} onError={this.handleError} ></Dialog>;
   }
 }
 
