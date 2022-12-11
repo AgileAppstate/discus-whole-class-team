@@ -36,7 +36,9 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
         
     - name: Does a clean install of dependencies
-      run: npm --prefix client ci
+    # This should not be forced in the future, as it could break a lot of things, but it works for now
+      run: npm --prefix client ci --force
+      
       
     - name: Runs any tests
       run: npm --prefix client run test
