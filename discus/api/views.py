@@ -18,7 +18,7 @@ from datetime import datetime
 def ping():
     record = request.get_data()
     json_data = json.loads(record)[0]
-    return jsonify(json_data)
+    return jsonify(pong=str(json_data))
 
 #get all records 
 @app.route("/get_collection_<string:coll_name>", methods=["GET"])
@@ -65,7 +65,7 @@ def insert_channel():
 
 #return a list of image records
 #provided a json {ids: ["1", "2"]}
-
+#TODO! This is incomplete, not needed by web rn. use get_collection_images
 @app.route("/api/get_images", methods=["POST"])
 def get_image_records():
     record = request.get_data()
@@ -82,6 +82,9 @@ def get_image_file():
     records = request.get_data()
     return_data = []
     for record in json.loads(records):
+        #with open('get_img_file.txt', 'w') as f:
+        #    f.write(str(type(record)))
+        #    f.write('\n')
         ret = images.image_get_file(ObjectId(str(record['id'])))
         return_data.append(ret)
     return jsonify(img_dat=str(return_data))
@@ -112,14 +115,19 @@ def edit_image():
         images.image_set_display_name(id, str(vals_list[1]))
     
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
-    return jsonify(status='successfully edited')
+    return jsonify(status=ret_str)
 
 # json expected {ids: "1234", "asdf"}
 @app.route('/api/delete_image')
 def delete_image():
     records = request.get_data()
-    json_data = json.loads(record)
-    return jsonify(foo=str(json_data))
+    ret_str = ''
+    for record in json.loads(records):
+        json_data = json.loads(record)
+    
+        
+        ret_str += 'successfully deleted: ' + keys_list[1] + ' to ' + vals_list[1] + '\n'
+    return jsonify(status=ret_str)
     
 #Insert an image from Web
 @app.route('/api/insert_image', methods=["POST"])
@@ -158,8 +166,8 @@ def bytes_to_base64(img_bytes):
     return base64.b64encodebytes(img_bytes)
 
 def get_keys(json_str):
-    with open('get_keys.txt','w') as f:
-        f.write(json_str)
+    #with open('get_keys.txt','w') as f:
+        #f.write(json_str)
 
 def cursor_to_json(cursor):
     list_cursor = list(cursor)
