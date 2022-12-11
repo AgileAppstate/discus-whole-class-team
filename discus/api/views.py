@@ -43,7 +43,7 @@ def get_collection(coll_name):
         
     #resp = Response(json_data)
     #resp.headers['Access-Control-Allow-Origin'] = '*'
-    return jsonify(data=json_data)
+    return jsonify(data=json.loads(json_data))
 
 
 
@@ -116,7 +116,7 @@ def edit_image():
 # json expected {ids: "1234", "asdf"}
 @app.route('/api/delete_image')
 def delete_image():
-    record = request.get_data()
+    records = request.get_data()
     json_data = json.loads(record)
     return jsonify(foo=str(json_data))
     
