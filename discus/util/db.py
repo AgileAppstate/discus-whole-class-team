@@ -7,13 +7,13 @@ import os
 
 # --- SETTINGS --- #
 
-db_username = os.environ['MONGO_USER']
-db_password = os.environ['MONGO_PASS']
-db_host = os.environ['MONGO_HOST']
+#db_username = os.environ['MONGO_USER']
+#db_password = os.environ['MONGO_PASS']
+#db_host = os.environ['MONGO_HOST']
 
-# db_username = "test_user"
-# db_password = "password1234"
-# db_host = "cluster0.5v8p9am.mongodb.net"
+db_username = "test_user"
+db_password = "password1234"
+db_host = "cluster0.5v8p9am.mongodb.net"
 
 
 # --- FUNCTIONS --- #
