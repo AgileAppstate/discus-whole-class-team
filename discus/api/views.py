@@ -32,10 +32,11 @@ def get_collection(coll_name):
     elif (coll_name == 'images'):
         cursor = images.image_get_all()
         json_data = cursor_to_json(cursor)
-        curr_dict = json.loads(json_data)
-        curr_dict.append(get_image_data_for_collection(curr_dict))
+        #Appending the binary was a terrible idea, don't do this.
+        #curr_dict = json.loads(json_data)
+        #curr_dict.append(get_image_data_for_collection(curr_dict))
         #json_data = json.dumps(curr_dict, indent=4)
-        json_data = curr_dict
+        #json_data = curr_dict
     elif (coll_name == 'channels'):
         cursor = channels.channel_get_all()
         json_data = cursor_to_json(cursor)
@@ -191,25 +192,15 @@ def format_image_data(img_data, name):
     #    f.write(str(img_bytes))
     return fname, img_bytes
 
-def get_image_data_for_collection(coll_json):
+#def get_image_data_for_collection(coll_json):
     #with open('coll_json.txt', 'w') as f:
-    ret_binaries = []
-    for item in coll_json:
-        ret = images.image_get_file(ObjectId(str(item['_id']['$oid'])))
-        ret_binaries.append(str(ret))
+#    ret_binaries = []
+#    for item in coll_json:
+#        ret = images.image_get_file(ObjectId(str(item['_id']['$oid'])))
+#        ret_binaries.append(str(ret))
     #        f.write(str(ret[0:10]))
     #        f.write("\n")
         #f.write(str(coll_json))
     
         
-    return {'img_binaries': ret_binaries}
-    #return 0
-#TODO
-
-#RETURN N RECORDS (table_name, id_list)
-
-#INSERT (no id from them) single json object or a list of json objects
-
-#UPDATE record, list of records
-
-#DELETE single id or a list of ids and a table name
+#    return {'img_binaries': ret_binaries}
