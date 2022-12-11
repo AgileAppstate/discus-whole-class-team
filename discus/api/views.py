@@ -203,9 +203,11 @@ def edit_image():
     if (keys_list[1] == 'duration'):
         images.image_set_duration(id, int(vals_list[1]))
     elif (keys_list[1] == 'start_date'):
-        images.image_set_start_date(id, datetime(vals_list[1]))
+        date = format_date(vals_list[1])
+        images.image_set_start_date(id, date)
     elif (keys_list[1] == 'end_date'):
-        images.image_set_end_date(id, datetime(vals_list[1]))
+        date = format_date(vals_list[1])
+        images.image_set_end_date(id, date)
     elif (keys_list[1] == 'description'):
         images.image_set_description(id, str(vals_list[1]))
     elif (keys_list[1] == 'name'):
