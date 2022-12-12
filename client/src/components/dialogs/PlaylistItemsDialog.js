@@ -102,12 +102,19 @@ export default function PlaylistItemsDialog(props) {
           item['image'] = 'data:image/png;base64,' + res.data.img_dat[0];
         });
         setMedia(m);
+        
+        var objlist = [];
+
+        for (let i = 0; i < selectionModel.length; i++) {
+          for (let j = 0; j < m.length; j++) {
+            if (selectionModel[i] === m[j].id) {
+              objlist.push(m[j]);
+            }
+          }
+        }
+        
+        setSelectedMedia(objlist);
         // Sets the currently selected media
-        setSelectedMedia(
-          m.filter((item) => {
-            return selectionModel.includes(item.id);
-          })
-        );
       });
     } catch (error) {
       this.handleSubmitError(error);
@@ -206,11 +213,17 @@ export default function PlaylistItemsDialog(props) {
             keepNonExistentRowsSelected
             onSelectionModelChange={(selectionModel) => {
               setSelectionModel(selectionModel);
-              setSelectedMedia(
-                media.filter((item) => {
-                  return selectionModel.includes(item.id);
-                })
-              );
+              var objlist = [];
+      
+              for (let i = 0; i < selectionModel.length; i++) {
+                for (let j = 0; j < media.length; j++) {
+                  if (selectionModel[i] === media[j].id) {
+                    objlist.push(media[j]);
+                  }
+                }
+              }
+              
+              setSelectedMedia(objlist);
             }}
             selectionModel={selectionModel}
           />

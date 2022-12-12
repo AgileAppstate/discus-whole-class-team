@@ -29,11 +29,11 @@ def image_insert(path, duration=5, desc="", start_date=None, end_date=None, img_
     
     start_date_only = None
     if isinstance(start_date, datetime):
-        start_date_only = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        start_date_only = start_date.replace(hour=5, minute=0, second=0, microsecond=0)
 
     end_date_only = None
     if isinstance(end_date, datetime):
-        end_date_only = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date_only = end_date.replace(hour=5, minute=0, second=0, microsecond=0)
 
     # Define what the image document will look like.
     img = {
