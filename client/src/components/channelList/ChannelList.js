@@ -38,7 +38,7 @@ class ChannelList extends Component {
    */
   loadChannels = () => {
     // Implement after we have the MangoDB API endpoint
-    axios.get('http://152.10.212.58:8000/get_collection_channels')
+    axios.get('http://localhost:8000/get_collection_channels')
     .then(res => {
       const raw = res.data;
       const channels = [];
@@ -46,11 +46,11 @@ class ChannelList extends Component {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          playlist: item.playlist.$oid,
+          playlist: item.playlist ? item.playlist.$oid : "",
           mode: item.mode,
           date_created: item.date_created.$date,
           start_date: item.start_date.$date,
-          end_date: item.end_date.$date,
+          end_date: item.end_date ? item.end_date.$date : "",
           recurring_info: item.recurring_info,
           time_occurances: item.time_occurances,
         };
@@ -180,11 +180,10 @@ class ChannelList extends Component {
           </LocalizationProvider>
         ) // renderCell will render the component
       },
-      { field: 'date_created', headerName: 'Date Created', width: 180, editable: false },
+      { field: 'date_created', headerName: 'Date Created', width: 180, editable: false, valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')},
       { field: 'playlist', headerName: 'Playlist', width: 250, editable: false },
       { field: 'mode', headerName: 'Mode', width: 150, editable: false },
       { field: 'recurring_info', headerName: 'Recurring', width: 150, editable: false },
-      { field: 'time_occurances', headerName: 'Time Occurances', width: 150, editable: false },
     ];
     this.setState({ columns });
   }
