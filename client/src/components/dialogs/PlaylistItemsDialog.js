@@ -8,9 +8,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
-import tempMedia from '../mediaList/tempMedia';
+//import tempMedia from '../mediaList/tempMedia';
 import { List } from '@mui/material';
-
+import axios from 'axios';
 import { Container, Draggable } from 'react-smooth-dnd';
 import {arrayMoveImmutable} from 'array-move';
 import ListItem from '@mui/material/ListItem';
@@ -23,11 +23,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function PlaylistItemsDialog() {
+export default function PlaylistItemsDialog(props) {
+  const [parentPlaylist] = React.useState(props.parentPlaylist);
   const [open, setOpen] = React.useState(false);
-  const [selectionModel, setSelectionModel] = React.useState([]);
-  const [selectedMedia, setSelectedMedia] = React.useState(tempMedia);
-  const [media] = React.useState(tempMedia);
+  const [selectionModel, setSelectionModel] = React.useState(parentPlaylist.items.map((item) => item.id));
+  const [selectedMedia, setSelectedMedia] = React.useState([])
+  const [media, setMedia] = React.useState([]);
   const columns = [{
     field: 'image',
     headerName: 'Thumbnail',
@@ -64,7 +65,49 @@ export default function PlaylistItemsDialog() {
   }
 ]
 
+  const loadMedia = () => {
+    try {
+      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+        const raw = res.data;
+        const media = [];
+        raw.forEach(async (item) => {
+          const item_json = {
+            id: item._id.$oid,
+            name: item.display_name,
+            description: item.description,
+            duration: item.duration,
+            date_added: item.date_added.$date,
+            start_date: item.start_date.$date,
+            end_date: item.end_date.$data,
+            image_id: item.file_id.$oid,
+            filename: item.filename
+          };
+          media.push(item_json);
+        });
+        media.forEach(async (item) => {
+          const res = await axios.post('http://localhost:8000/api/get_image_file', [{'id': item.id}], {
+            headers: {
+              'content-type': '*/json'
+            }
+          });
+          // Adds the encoded image to the media
+          item['image'] = "data:image/png;base64," + res.data.img_dat[0];
+        });
+        setMedia({ media });
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+      return []
+    }
+  };
+
   const handleClickOpen = () => {
+    loadMedia();
     setOpen(true);
   };
 
