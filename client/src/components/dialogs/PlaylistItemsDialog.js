@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import { List } from '@mui/material';
 import axios from 'axios';
 import { Container, Draggable } from 'react-smooth-dnd';
-import {arrayMoveImmutable} from 'array-move';
+import { arrayMoveImmutable } from 'array-move';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -26,50 +26,53 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function PlaylistItemsDialog(props) {
   const [parentPlaylist] = React.useState(props.parentPlaylist);
   const [open, setOpen] = React.useState(false);
-  const [selectionModel, setSelectionModel] = React.useState(parentPlaylist.items.map((item) => item.id));
-  const [selectedMedia, setSelectedMedia] = React.useState([])
+  const [selectionModel, setSelectionModel] = React.useState(() => parentPlaylist.items.map((item) => item.id));
+  const [selectedMedia, setSelectedMedia] = React.useState([]);
   const [media, setMedia] = React.useState([]);
-  const columns = [{
-    field: 'image',
-    headerName: 'Thumbnail',
-    width: 300,
-    renderCell: (params) => (
-      <img style={{ height: '100%', width: '50%', objectFit: 'contain'}} className="my-2 mx-16" src={params.value} />
-    ) // renderCell will render the component
-  },
-  {
-    field: 'duration',
-    headerName: 'Duration',
-    width: 80,
-    valueFormatter: (params) =>
-      params?.value < 60
-        ? dayjs.duration({ seconds: params?.value }).asSeconds() + ' secs'
-        : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
-  },
-  { field: 'name', headerName: 'Name', width: 250 },
-  { field: 'description', headerName: 'Description', width: 380 },
-  {
-    field: 'start_date',
-    headerName: 'Start Date',
-    width: 180,
-    editable: false,
-    valueFormatter: (params) =>
-    dayjs(params?.value).format("MM/DD/YYYY")
-  },
-  {
-    field: 'end_date',
-    headerName: 'End Date',
-    width: 180,
-    valueFormatter: (params) =>
-    dayjs(params?.value).format("MM/DD/YYYY")
-  }
-]
+  const columns = [
+    {
+      field: 'image',
+      headerName: 'Thumbnail',
+      width: 300,
+      renderCell: (params) => (
+        <img
+          style={{ height: '100%', width: '50%', objectFit: 'contain' }}
+          className="my-2 mx-16"
+          src={params.value}
+        />
+      ) // renderCell will render the component
+    },
+    {
+      field: 'duration',
+      headerName: 'Duration',
+      width: 80,
+      valueFormatter: (params) =>
+        params?.value < 60
+          ? dayjs.duration({ seconds: params?.value }).asSeconds() + ' secs'
+          : dayjs.duration({ seconds: params?.value }).asMinutes() + ' mins'
+    },
+    { field: 'name', headerName: 'Name', width: 250 },
+    { field: 'description', headerName: 'Description', width: 380 },
+    {
+      field: 'start_date',
+      headerName: 'Start Date',
+      width: 180,
+      editable: false,
+      valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+    },
+    {
+      field: 'end_date',
+      headerName: 'End Date',
+      width: 180,
+      valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+    }
+  ];
 
   const loadMedia = () => {
     try {
       axios.get('http://localhost:8000/get_collection_images').then((res) => {
         const raw = res.data;
-        const media = [];
+        const m = [];
         raw.forEach(async (item) => {
           const item_json = {
             id: item._id.$oid,
@@ -78,22 +81,26 @@ export default function PlaylistItemsDialog(props) {
             duration: item.duration,
             date_added: item.date_added.$date,
             start_date: item.start_date.$date,
-            end_date: item.end_date.$data,
+            end_date: item.end_date.$date,
             image_id: item.file_id.$oid,
             filename: item.filename
           };
-          media.push(item_json);
+          m.push(item_json);
         });
-        media.forEach(async (item) => {
-          const res = await axios.post('http://localhost:8000/api/get_image_file', [{'id': item.id}], {
-            headers: {
-              'content-type': '*/json'
+        m.forEach(async (item) => {
+          const res = await axios.post(
+            'http://localhost:8000/api/get_image_file',
+            [{ id: item.id }],
+            {
+              headers: {
+                'content-type': '*/json'
+              }
             }
-          });
+          );
           // Adds the encoded image to the media
-          item['image'] = "data:image/png;base64," + res.data.img_dat[0];
+          item['image'] = 'data:image/png;base64,' + res.data.img_dat[0];
         });
-        setMedia({ media });
+        setMedia(m);
       });
     } catch (error) {
       this.handleSubmitError(error);
@@ -102,7 +109,6 @@ export default function PlaylistItemsDialog(props) {
       } else {
         console.log(error.message);
       }
-      return []
     }
   };
 
@@ -123,62 +129,68 @@ export default function PlaylistItemsDialog(props) {
     handleClose();
   };
 
-    const onDrop = ({ removedIndex, addedIndex }) => {
-      console.log({ removedIndex, addedIndex });
-      setSelectedMedia(selectedMedia => arrayMoveImmutable(selectedMedia, removedIndex, addedIndex));
-    };
-  
+  const onDrop = ({ removedIndex, addedIndex }) => {
+    console.log({ removedIndex, addedIndex });
+    setSelectedMedia((selectedMedia) =>
+      arrayMoveImmutable(selectedMedia, removedIndex, addedIndex)
+    );
+  };
+
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen} color="primary">
         Open Items
       </Button>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition} maxWidth={'lg'} fullWidth={true}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+        maxWidth={'lg'}
+        fullWidth={true}
+      >
         <DialogTitle>All Media</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select any media that you want to be in the playlist.
           </DialogContentText>
           <DataGrid
-              autoHeight {...media}
-              rows={media}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              getRowHeight={() => 'auto'}
-              checkboxSelection
-              disableSelectionOnClick
-              onSelectionModelChange={(selectionModel) => {
-                setSelectionModel(selectionModel);
-              }}
-              selectionModel={selectionModel}
-            />
-        <DialogTitle>Current Media</DialogTitle>
-          <DialogContentText>
-            Drag and drop to reorder the media in the playlist.
-          </DialogContentText>
+            autoHeight
+            {...media}
+            rows={media}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            getRowHeight={() => 'auto'}
+            checkboxSelection
+            disableSelectionOnClick
+            keepNonExistentRowsSelected
+            onSelectionModelChange={setSelectionModel}
+            selectionModel={selectionModel}
+          />
+          <DialogTitle>Current Media</DialogTitle>
+          <DialogContentText>Drag and drop to reorder the media in the playlist.</DialogContentText>
           <List>
-      <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
-        {selectedMedia.map(({ index, name }) => (
-          <Draggable key={index}>
-            <ListItem>
-              <ListItemText primary={name} />
-              <ListItemSecondaryAction>
-                <ListItemIcon className="drag-handle">
-                  <DragHandleIcon />
-                </ListItemIcon>
-              </ListItemSecondaryAction>
-            </ListItem>
-          </Draggable>
-        ))}
-      </Container>
-    </List>
+            <Container dragHandleSelector=".drag-handle" lockAxis="y" onDrop={onDrop}>
+              {selectedMedia.map(({ index, name }) => (
+                <Draggable key={index}>
+                  <ListItem>
+                    <ListItemText primary={name} />
+                    <ListItemSecondaryAction>
+                      <ListItemIcon className="drag-handle">
+                        <DragHandleIcon />
+                      </ListItemIcon>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </Draggable>
+              ))}
+            </Container>
+          </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
         </DialogActions>
-        </Dialog>
+      </Dialog>
     </div>
   );
-            }
+}
