@@ -119,7 +119,7 @@ def insert_channel():
     return jsonify(fields=fields_str)
 
 # json expected {id: "1234", "asdf"}
-@app.route('/api/edit_playlist', methods=["POST"])
+@app.route('/api/edit_channel', methods=["POST"])
 def edit_channel():
     record = request.get_data()
     json_data = json.loads(record)
@@ -147,7 +147,7 @@ def edit_channel():
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
-@app.route('/api/delete_playlist', methods=["POST"])
+@app.route('/api/delete_channel', methods=["POST"])
 def delete_channel():
     record = request.get_data()
     ret_str = ''
