@@ -115,8 +115,13 @@ def channel_get_live():
                     {"end_date" : {'$eq' : dt_date}}
                 ]}
             ]},
-            {"time_occurances.start_time": {'$lte' : t_now}},
-            {"time_occurances.end_time": {'$gte' : t_now}},
+            {"$or": [
+                {"time_occurances": []},
+                {"and": [
+                    {"time_occurances.start_time": {'$lte' : t_now}},
+                    {"time_occurances.end_time": {'$gte' : t_now}},
+                ]}
+            ]},
             {"$or": [
                 {"mode": "Daily"},
                 {"$and": [
