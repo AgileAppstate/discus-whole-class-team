@@ -138,7 +138,7 @@ export default function PlaylistItemsDialog(props) {
         'type': selectedMediaType[i],
       })
     }
-    const body = {'items': arr};
+    const body = {'id': parentPlaylist.id, 'items': arr};
 
     console.log(body);
     try {
@@ -147,9 +147,9 @@ export default function PlaylistItemsDialog(props) {
           'content-type': '*/json'
         }
       });
-      //props.onItemsChange(body);
+      props.onItemsChange({'body': body, 'id': parentPlaylist.id});
     } catch (error) {
-      //props.onError(error);
+      props.onError(error);
       if (error.response) {
         console.log(error.response.status);
       } else {
