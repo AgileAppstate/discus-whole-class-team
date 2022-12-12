@@ -54,7 +54,7 @@ class ChannelList extends Component {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          playlist: item.playlist ? item.playlist.$oid : "",
+          playlist_id: item.playlist ? item.playlist.$oid : "",
           mode: item.mode,
           date_created: item.date_created.$date,
           start_date: item.start_date.$date,
@@ -63,6 +63,20 @@ class ChannelList extends Component {
           time_occurances: item.time_occurances,
         };
         channels.push(item_json);
+      });
+      channels.forEach(async (item) => {
+        const res = await axios.post(
+          'http://localhost:8000/api/get_playlist_name',
+          [{ id: item.playlist_id }],
+          {
+            headers: {
+              'content-type': '*/json'
+            }
+          }
+        );
+
+        // Grabs the playlist name
+        item['playlist'] = res.data;
       });
       console.log(channels);
       this.setState({ channels });

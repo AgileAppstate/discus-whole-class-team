@@ -29,7 +29,7 @@ export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
   //const [selectedPlaylist, setSelectedPlaylist] = React.useState("");
-  const [mode, setMode] = React.useState("");
+  const [mode, setMode] = React.useState("Daily");
   const [recurring_info, setRecurringInfo] = React.useState([]);
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs());
@@ -132,7 +132,7 @@ export default function FormDialog(props) {
     setRecurringInfo([]);
     setPlaylists([]);
     setSelectionModel([]);
-    setMode("");
+    setMode("Daily");
     //setSelectedPlaylist("");
     setDateCreated(dayjs());
   };
