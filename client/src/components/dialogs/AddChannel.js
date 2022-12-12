@@ -18,7 +18,6 @@ import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { CircularProgress, Fade, FormControl, InputLabel, MenuItem } from '@mui/material';
-import cuid from 'cuid';
 //import tempMedia from '../mediaList/tempMedia';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -173,20 +172,19 @@ export default function FormDialog(props) {
         }
       });
 
-      channel['id'] = cuid();
-      //const ids = [];
-      // // Terrible, terrible way to do this, but god do I not have time to fix it much further.
-      // // TODO: Get CLI team to return IDs better
-      // res.data.ids.split("'").forEach((val) => {
-      //   if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
-      //     ids.push(val);
-      //   }
-      // });
+      const ids = [];
+      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // TODO: Get CLI team to return IDs better
+      res.data.ids.split("'").forEach((val) => {
+        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
+          ids.push(val);
+        }
+      });
 
-      // // Adds each ID to its item
-      // for (let i = 0; i < channel.length; i++) {
-      //   channel['id'] = ids[i];
-      // }
+      // Adds each ID to its item
+      for (let i = 0; i < ids.length; i++) {
+        channel['id'] = ids[i];
+      }
 
       console.log(res);
       props.onChange(channel);
