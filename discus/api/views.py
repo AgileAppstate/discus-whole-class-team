@@ -133,12 +133,12 @@ def insert_channel():
     #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
     new_start = format_date(json_data['start_date'])
     new_end = format_date(json_data['end_date'])
-    with open('channel.txt', 'w') as f:
-        f.write(str(json_data))
-        f.write('\n')
-        f.write(str(new_start))
-        f.write('\n')
-        f.write(str(new_end))
+    #with open('channel.txt', 'w') as f:
+    #    f.write(str(json_data))
+    #    f.write('\n')
+    #    f.write(str(new_start))
+    #    f.write('\n')
+    #    f.write(str(new_end))
     
     #Ocurrences!!!! two 'r's!
     ret = channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], new_start, new_end, json_data['time_occurances'])
@@ -153,22 +153,20 @@ def edit_channel():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    with open('kvps.txt', 'w') as f:
-        f.write(str(keys_list[1]))
-        f.write("\n")
-        f.write(str(vals_list[1]))
+    #with open('kvps.txt', 'w') as f:
+    #    f.write(str(keys_list[1]))
+    #    f.write("\n")
+    #    f.write(str(vals_list[1]))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    if (keys_list[1] == 'duration'):
-        images.image_set_duration(id, int(vals_list[1]))
-    elif (keys_list[1] == 'start_date'):
-        images.image_set_start_date(id, datetime(vals_list[1]))
+    if (keys_list[1] == 'start_date'):
+        new_start = format_date(vals_list[1])
+        channels.channel_set_start_date(id, new_start)
     elif (keys_list[1] == 'end_date'):
-        images.image_set_end_date(id, datetime(vals_list[1]))
-    elif (keys_list[1] == 'description'):
-        images.image_set_description(id, str(vals_list[1]))
+        new_end = format_date(vals_list[1])
+        channels.channel_set_end_date(id, new_end)
     elif (keys_list[1] == 'name'):
-        images.image_set_display_name(id, str(vals_list[1]))
+        channels.channel_set_name(id, str(vals_list[1]))
     
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
