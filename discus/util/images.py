@@ -1,7 +1,7 @@
 # --- IMPORTS --- #
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from discus.util import db
 
@@ -104,14 +104,14 @@ def image_set_duration(id, duration):
 def image_set_start_date(id, start_date):
     start_date_only = None
     if isinstance(start_date, datetime):
-        start_date_only = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        start_date_only = start_date.replace(hour=5, minute=0, second=0, microsecond=0) - timedelta(days=1)
     db.images.update_one({ "_id": id }, { "$set": { "start_date": start_date_only } }) # set start date for image
 
 # Set the end date for an image.
 def image_set_end_date(id, end_date):
     end_date_only = None
     if isinstance(end_date, datetime):
-        end_date_only = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date_only = end_date.replace(hour=5, minute=0, second=0, microsecond=0)
     db.images.update_one({ "_id": id }, { "$set": { "end_date": end_date_only } }) # set end date for image
 
 # Set the description for an image.

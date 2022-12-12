@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import About from '../../../components/about/About';
 
-class About extends Component {
+class AboutPg extends Component {
   render() {
-    return <div>About</div>;
+    return (
+      <div>
+      <About />
+    </div>
+    );
   }
 }
 
-export default About;
+export default AboutPg;
