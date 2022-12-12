@@ -50,4 +50,4 @@ while 1:
         screen.draw_img(bin_img)
 
         # Sleep until the next image needs to be displayed.
-        screen.sleep(img["duration"])
+        screen.sleep(int(img["duration"]))
