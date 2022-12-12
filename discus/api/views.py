@@ -72,18 +72,23 @@ def edit_playlist():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    # with open('body.txt', 'w') as f:
-    #    f.write(str(keys_list))
-    #    f.write("\n")
-    #    f.write(str(vals_list))
+    with open('body.txt', 'w') as f:
+       f.write(str(keys_list))
+       f.write("\n")
+       f.write(str(vals_list))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
     if (keys_list[1] == 'name'):
         playlists.playlist_set_name(id,vals_list[1])
     elif (keys_list[1] == 'shuffle'):
         playlists.playlist_set_shuffle(id,vals_list[1])
-    # elif (keys_list[1] == 'items'):
-    #     playlists.playlist_reorder()
+    elif (keys_list[1] == 'items'):
+        itemArray = []
+        for item in vals_list[1]:
+            itemId = ObjectId(str(item['id']))
+            #{'type': "image", 'id': itemID}
+            itemArray.append({'type': 'image','objectID': itemId})
+        playlists.playlist_reorder(ObjectId(vals_list[0]),itemArray)
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
