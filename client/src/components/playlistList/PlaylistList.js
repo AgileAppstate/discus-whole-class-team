@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CloseIcon from '@mui/icons-material/Close';
-import ItemDialog from '../dialogs/PlaylistItemsDialog'
+import ItemsDialog from '../dialogs/PlaylistItemsDialog';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Alert, AlertTitle, Collapse } from '@mui/material';
@@ -30,21 +30,20 @@ class PlaylistList extends Component {
    */
   loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
-    axios.get('http://localhost:8000/get_collection_playlists')
-    .then(res => {
+    axios.get('http://localhost:8000/get_collection_playlists').then((res) => {
       const raw = res.data;
       const playlists = [];
       raw.forEach((item) => {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          items: item.items.map((item) => item.objectID.$oid),
+          items: item.items.map((i) => (i?.objectID ? { id: i.objectID.$oid, type: i.type } : '')),
           shuffle: item.shuffle,
-          date_created: item.date_created.$date,
+          date_created: item.date_created.$date
         };
         playlists.push(item_json);
       });
-      console.log(playlists);
+      //console.log(playlists);
       this.setState({ playlists });
       const loading = false;
       this.setState({ loading });
@@ -59,24 +58,48 @@ class PlaylistList extends Component {
    * Handles sending off an edited entry to the API
    * @param {*} params
    */
-     handleEditCommit = (params) => {
-      console.log(params);
-      var { id, field, value } = params;
+  handleEditCommit = (params) => {
+    console.log(params);
+    var { id, field, value } = params;
 
-      // Will need to be replaced with sending an UPDATE to the API
-      console.log({ id, [field]: value });
-    };
+    const body = { id, [field]: value };
 
-    /**
-     * Handles double-clicking a cell so we can popup the media dialog for the items list
-     * @param {*} params 
-     */
-    handleDoubleClick = (params) => {
-      if (params.field === "items")
-      {
-        console.log(params)
+    try {
+      axios.post('http://localhost:8000/api/edit_playlist', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
       }
-    };
+    }
+  };
+
+  /**
+   * Changes the selection of items on the playlist locally.
+   * 
+   * @param {*} params 
+   */
+  handleItemChange = (params) => {
+    const playlists = this.state.playlists.filter((playlist) => playlist.id !== params.id);
+    playlists.push(params)
+    this.setState({ playlists });
+  }
+
+  /**
+   * Handles double-clicking a cell so we can popup the media dialog for the items list
+   * @param {*} params
+   */
+  handleDoubleClick = (params) => {
+    if (params.field === 'items') {
+      console.log(params);
+    }
+  };
 
   /**
    * Adds added media to the local media array
@@ -102,8 +125,10 @@ class PlaylistList extends Component {
    */
   handleSetAlertError = (error) => {
     const alertSeverity = 'error';
-    const alertTitle = "Error: " + (error.code ? error.code : "GENERIC_ERROR");
-    const alertMessage = error.message ? error.message : 'An error has occurred. Please try again later.';
+    const alertTitle = 'Error: ' + (error.code ? error.code : 'GENERIC_ERROR');
+    const alertMessage = error.message
+      ? error.message
+      : 'An error has occurred. Please try again later.';
     this.setState({ alertSeverity, alertTitle, alertMessage });
   };
 
@@ -137,20 +162,45 @@ class PlaylistList extends Component {
       // Will need to send the ID to the API to delete
       //console.log(item.id);
     });
+    const body = { ids: this.state.selectionModel };
+    //console.log(body);
+    try {
+      axios.post('http://localhost:8000/api/delete_playlist', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+      this.setState({ playlists });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
     this.setState({ playlists });
   };
 
   componentDidMount() {
     this.loadPlaylists();
-    
+
     // Sets the columns for the DataGrid
     const columns = [
       { field: 'name', headerName: 'Name', width: 250, editable: true },
-      { field: 'items', headerName: 'Items', width: 250, renderCell: () => <ItemDialog /> },
-      { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
-      { field: 'date_created', headerName: 'Date Created', width: 200, valueFormatter: (params) =>
-      dayjs(params?.value).format("MM/DD/YYYY")
-    },
+      {
+        field: 'items',
+        headerName: 'Items',
+        width: 250,
+        renderCell: (params) => <ItemsDialog parentPlaylist={params.row} onItemsChange={this.handleItemChange} onError={this.handleSubmitError}/>
+      },
+      { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true },
+      {
+        field: 'date_created',
+        headerName: 'Date Created',
+        width: 200,
+        valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+      }
     ];
 
     this.setState({ columns });

@@ -49,7 +49,7 @@ class MediaList extends Component {
    */
   loadMedia = () => {
     try {
-      axios.get('http://152.10.212.58:8000/get_collection_images').then((res) => {
+      axios.get('http://localhost:8000/get_collection_images').then((res) => {
         const raw = res.data;
         const media = [];
         raw.forEach(async (item) => {
@@ -60,20 +60,24 @@ class MediaList extends Component {
             duration: item.duration,
             date_added: item.date_added.$date,
             start_date: item.start_date.$date,
-            end_date: item.end_date.$data,
+            end_date: item.end_date.$date,
             image_id: item.file_id.$oid,
             filename: item.filename
           };
           media.push(item_json);
         });
         media.forEach(async (item) => {
-          const res = await axios.post('http://152.10.212.58:8000/api/get_image_file', [{'id': item.id}], {
-            headers: {
-              'content-type': '*/json'
+          const res = await axios.post(
+            'http://localhost:8000/api/get_image_file',
+            [{ id: item.id }],
+            {
+              headers: {
+                'content-type': '*/json'
+              }
             }
-          });
+          );
           // Adds the encoded image to the media
-          item['image'] = "data:image/png;base64," + res.data.img_dat[0];
+          item['image'] = 'data:image/png;base64,' + res.data.img_dat[0];
         });
         //console.log(media);
         this.setState({ media });
@@ -108,7 +112,7 @@ class MediaList extends Component {
     const body = { id, [field]: value };
     //console.log(body);
     try {
-      axios.post('http://152.10.212.58:8000/api/edit_image', body, {
+      axios.post('http://localhost:8000/api/edit_image', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -148,8 +152,10 @@ class MediaList extends Component {
    */
   handleSetAlertError = (error) => {
     const alertSeverity = 'error';
-    const alertTitle = "Error: " + (error.code ? error.code : "GENERIC_ERROR");
-    const alertMessage = error.message ? error.message : 'An error has occurred. Please try again later.';
+    const alertTitle = 'Error: ' + (error.code ? error.code : 'GENERIC_ERROR');
+    const alertMessage = error.message
+      ? error.message
+      : 'An error has occurred. Please try again later.';
     this.setState({ alertSeverity, alertTitle, alertMessage });
   };
 
@@ -182,10 +188,10 @@ class MediaList extends Component {
       return !this.state.selectionModel.includes(item.id);
       //console.log(item.id);
     });
-    const body = {'ids': this.state.selectionModel};
+    const body = { ids: this.state.selectionModel };
     //console.log(body);
     try {
-      axios.post('http://152.10.212.58:8000/api/delete_image', body, {
+      axios.post('http://localhost:8000/api/delete_image', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -344,7 +350,7 @@ class MediaList extends Component {
 
 MediaList.propTypes = {
   children: PropTypes.any,
-  onError: PropTypes.func,
+  onError: PropTypes.func
 };
 
 export default MediaList;

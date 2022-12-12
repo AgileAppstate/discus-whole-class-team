@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import 'reactjs-popup/dist/index.css';
 
 class CreatePlaylist extends React.Component {
-
   handleItemAdd = (event) => {
     this.props.onChange(event);
   };
@@ -21,7 +20,7 @@ class CreatePlaylist extends React.Component {
 CreatePlaylist.propTypes = {
   children: PropTypes.any,
   onChange: PropTypes.func,
-  onError: PropTypes.func,
+  onError: PropTypes.func
 };
 
 export default CreatePlaylist;

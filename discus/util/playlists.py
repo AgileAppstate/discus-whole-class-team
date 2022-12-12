@@ -34,6 +34,14 @@ def playlist_get_by_id(id):
 def playlist_get_all():
     return db.playlists.find()
 
+# get playlist name by id
+def playlist_get_name(id):
+    file = db.playlists.find_one({"_id": id })
+    if file is None:
+        return None
+    else:
+        return file["name"]
+
 # reorders the playlist
 def playlist_reorder(id, newOrder):
     return db.playlists.update_one({"_id": id }, { "$set": { "items": newOrder } }) # set new order for playlist

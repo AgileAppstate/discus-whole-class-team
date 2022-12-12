@@ -132,11 +132,11 @@ export default function FormDialog(props) {
           'content-type': '*/json'
         }
       });
-      const ids = []
+      const ids = [];
       // Terrible, terrible way to do this, but god do I not have time to fix it much further.
       // TODO: Get CLI team to return IDs better
-      res.data.ids.split('\'').forEach((val) => {
-        if (val != "[ObjectId(" && val != ")" && val != "), ObjectId(" && val != ")]") {
+      res.data.ids.split("'").forEach((val) => {
+        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
           ids.push(val);
         }
       });
@@ -144,7 +144,7 @@ export default function FormDialog(props) {
       // Adds each ID to its item
       for (let i = 0; i < items.length; i++) {
         items[i]['id'] = ids[i];
-      } 
+      }
 
       props.onChange(items);
     } catch (error) {
