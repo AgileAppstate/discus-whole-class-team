@@ -74,7 +74,7 @@ def insert_playlist():
     #    f.write(str(item_list))
     
     ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],item_list)
-    return jsonify(id=str(ret))
+    return jsonify(ids=str([ret]))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_playlist', methods=["POST"])

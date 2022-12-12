@@ -168,6 +168,7 @@ export default function FormDialog(props) {
     event.preventDefault();
     handleLoading();
 
+
     const playlist = {
       ['name']: name,
       ['items']: selectionModel,
@@ -193,9 +194,19 @@ export default function FormDialog(props) {
       });
 
       // Adds each ID to its item
-      for (let i = 0; i < playlist.length; i++) {
-        playlist[i]['id'] = ids[i];
+      for (let i = 0; i < ids.length; i++) {
+        playlist['id'] = ids[i];
       }
+
+      const arr = [];
+      for (let i = 0; i < selectionModel.length; i++) {
+        arr.push({
+          'id': selectionModel[i],
+          'type': "image",
+        })
+      }
+
+      playlist['items'] = arr;
 
       console.log(res);
       props.onChange(playlist);
