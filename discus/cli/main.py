@@ -31,6 +31,7 @@ import discus.api.views as views
 ###
 
 def _on_finished(ctx):
+    db.close()
     click.echo(f'Exiting DISCUS.')
 
 @shell(prompt='discus > ', 
