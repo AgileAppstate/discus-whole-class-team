@@ -108,7 +108,7 @@ export default function PlaylistItemsDialog(props) {
         for (let i = 0; i < selectionModel.length; i++) {
           for (let j = 0; j < m.length; j++) {
             if (selectionModel[i] === m[j].id) {
-              objlist.push(m[j])
+              objlist.push(m[j]);
             }
           }
         }
@@ -218,7 +218,7 @@ export default function PlaylistItemsDialog(props) {
               for (let i = 0; i < selectionModel.length; i++) {
                 for (let j = 0; j < media.length; j++) {
                   if (selectionModel[i] === media[j].id) {
-                    objlist.push(media[j])
+                    objlist.push(media[j]);
                   }
                 }
               }
