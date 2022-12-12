@@ -51,6 +51,11 @@ def channel_delete(id):
     # Delete the channel document.
     return db.channels.delete_one({"_id" : id})
 
+# sets the name for the channel
+def channel_set_name(chanID, name):
+    return db.channels.update_one({ "_id": chanID }, { "$set": { "name": name } }) # set playlist for channel
+
+
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):
     return db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel

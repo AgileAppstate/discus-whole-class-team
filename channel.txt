@@ -1,1 +1,0 @@
-{'name': 'new channel', 'playlist': '637031138ba68c60d49ed70d', 'mode': 'Daily', 'date_created': '2022-12-12T05:01:02.535Z', 'start_date': '2022-12-12T05:01:02.535Z', 'end_date': '2022-12-12T05:01:02.535Z', 'recurring_info': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], 'time_occurances': []}

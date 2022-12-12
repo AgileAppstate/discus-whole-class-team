@@ -193,8 +193,8 @@ export default function FormDialog(props) {
       });
 
       // Adds each ID to its item
-      for (let i = 0; i < playlist.length; i++) {
-        playlist[i]['id'] = ids[i];
+      for (let i = 0; i < ids.length; i++) {
+        playlist['id'] = ids[i];
       }
 
       console.log(res);
