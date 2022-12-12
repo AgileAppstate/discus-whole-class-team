@@ -34,6 +34,10 @@ def playlist_get_by_id(id):
 def playlist_get_all():
     return db.playlists.find()
 
+# reorders the playlist
+def playlist_reorder(id, newOrder):
+    return db.playlists.update_one({"_id": id }, { "$set": { "items": newOrder } }) # set new order for playlist
+
 # adds image or playlist to playlist
 def playlist_insert_item(playlistID, itemID, itemType):
     if itemID == playlistID:
@@ -52,15 +56,15 @@ def playlist_delete(id):
         playlist_remove_item(plst["_id"], id)
 
     # Delete the playlist document.
-    db.playlists.delete(id)
+    return db.playlists.delete_one({"_id" : id})
 
 # sets the shuffle mode for the playlist
 def playlist_set_shuffle(id, shuffle):
-    db.playlists.update_one({ "_id": id }, { "$set": { "shuffle": shuffle } }) # set shuffle for playlist
+    return db.playlists.update_one({ "_id": id }, { "$set": { "shuffle": shuffle } }) # set shuffle for playlist
 
 # sets the name for the playlist
 def playlist_set_name(id, name):
-    db.playlists.update_one({ "_id": id }, { "$set": { "name": name } }) # set name for playlist
+    return db.playlists.update_one({ "_id": id }, { "$set": { "name": name } }) # set name for playlist
 
 # get all images in a playlist
 def playlist_get_images(playlistID):
@@ -80,7 +84,7 @@ def playlist_get_images(playlistID):
             imgs.extend(playlist_get_images(i['objectID']))
         elif i['type'] == 'image':
             imgOBJ = db.images.find_one({"_id" : i['objectID']})
-            if imgOBJ["start_date"] < datetime.now() and imgOBJ["end_date"] > datetime.now():
+            if imgOBJ["start_date"] < datetime.now() and (imgOBJ["end_date"] > datetime.now() or imgOBJ["end_date"] == None):
                 imgs.append(imgOBJ)
 
     return imgs

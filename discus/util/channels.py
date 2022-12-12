@@ -11,8 +11,13 @@ from discus.util import db
 # Creates a new channel, inserts it into the database, and returns the inserted
 # channel's ID.
 def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
-    start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date_only = None
+    end_date_only = None
+    if isinstance(startDate, datetime):
+        start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    if isinstance(endDate, datetime):
+        end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    
     # Define what the channel document will look like.
     chan = {
         "name" : chanName,
@@ -44,37 +49,41 @@ def channel_get_all():
 # deletes the channel
 def channel_delete(id):
     # Delete the channel document.
-    db.channels.delete(id)
+    return db.channels.delete_one({"_id" : id})
 
 # sets the playlist for the channel
 def channel_set_playlist(chanID, playlistID):
-    db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
+    return db.channels.update_one({ "_id": chanID }, { "$set": { "playlist": playlistID } }) # set playlist for channel
 
 # sets the mode for the channel
 def channel_set_mode(chanID, mode, recurringInfo=None):
-    db.channels.update_one({ "_id": chanID }, { "$set": { "mode": mode, "recurring_info": recurringInfo } }) # set mode for channel
+    return db.channels.update_one({ "_id": chanID }, { "$set": { "mode": mode, "recurring_info": recurringInfo } }) # set mode for channel
 
 # sets the start time for the channel
 def channel_set_start_date(chanID, startDate):
-    start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date_only = None
+    if isinstance(startDate, datetime):
+        start_date_only = startDate.replace(hour=0, minute=0, second=0, microsecond=0)
     db.channels.update_one({ "_id": chanID }, { "$set": { "start_date": start_date_only } }) # set start time for channel
 
 # sets the end time for the channel
 def channel_set_end_date(chanID, endDate):
-    end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date_only = None
+    if isinstance(endDate, datetime):
+        end_date_only = endDate.replace(hour=0, minute=0, second=0, microsecond=0)
     db.channels.update_one({ "_id": chanID }, { "$set": { "end_date": end_date_only } }) # set end time for channel
 
 # adds a time occurances to the channel
 def channel_add_time_occurance(chanID, startTime, endTime):
     start_int = startTime.hour * 60 + startTime.minute
     end_int = endTime.hour * 60 + endTime.minute
-    db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # add time occurances to channel
+    return db.channels.update_one({ "_id": chanID }, { "$push": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # add time occurances to channel
 
 # removes a time occurances from the channel
 def channel_remove_time_occurance(chanID, startTime, endTime):
     start_int = startTime.hour * 60 + startTime.minute
     end_int = endTime.hour * 60 + endTime.minute
-    db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # remove time occurances from channel
+    return db.channels.update_one({ "_id": chanID }, { "$pull": { "time_occurances": {"start_time" : start_int, "end_time" : end_int } } }) # remove time occurances from channel
 
 # Get a channel that is valid to be played right now. If multiple are valid,
 # pick a random one.
