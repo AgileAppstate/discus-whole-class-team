@@ -72,8 +72,22 @@ class ChannelList extends Component {
     if (dayjs.isDayjs(value)) {
       value = value.toDate();
     }
-    // Will need to be replaced with sending an UPDATE to the API
-    console.log({ id, [field]: value });
+    const body = { id, [field]: value };
+    
+    try {
+      axios.post('http://localhost:8000/api/edit_channel', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
   };
 
   /**
@@ -81,12 +95,28 @@ class ChannelList extends Component {
    */
   deleteSelectedFile = () => {
     const channels = this.state.channels.filter((item) => {
-      // Removes the media from the local list
+      // Removes the channel from the local list
       !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
       console.log(item.id);
     });
-    this.setState({ channels });
+    const body = { ids: this.state.selectionModel };
+    //console.log(body);
+    try {
+      axios.post('http://localhost:8000/api/delete_channel', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+      this.setState({ channels });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
   };
 
   componentDidMount() {
