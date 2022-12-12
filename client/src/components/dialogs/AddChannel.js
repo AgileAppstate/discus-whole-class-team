@@ -6,106 +6,49 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
-import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import Dropzone from '../dropzone/ImageDrop';
-import ImageGrid from '../dropzone/ImageGrid';
-import cuid from 'cuid';
-import { useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
-
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder'
-];
-
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium
-  };
-}
+import { DataGrid } from '@mui/x-data-grid';
+import Slide from '@mui/material/Slide';
+import dayjs from 'dayjs';
+import axios from 'axios';
+import { CircularProgress, Fade } from '@mui/material';
+//import tempMedia from '../mediaList/tempMedia';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FormDialog() {
-  const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
-
-  const handleChange = (event) => {
-    const {
-      target: { value }
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value
-    );
-  };
-
+export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
-  const [images, setImages] = React.useState([]);
   const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  const [selectedPlaylist, setSelectedPlaylist] = React.useState("");
+  const [mode, setMode] = React.useState("");
+  const [recurring_info, setRecurringInfo] = React.useState([]);
   const [start_date, setStartDate] = React.useState(dayjs());
-  const [end_date, setEndDate] = React.useState(dayjs(''));
-  const [start_time, setStartTime] = React.useState();
-  const [end_time, setEndTime] = React.useState();
-  const [newMedia, setNewMedia] = React.useState([]);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    // Sets values back to default
-    setName('');
-    setDescription('');
-    setStartDate(dayjs());
-    setEndDate(dayjs(''));
-    setStartTime();
-    setEndTime();
-    setImages([]);
-  };
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-
-  const handleDescChange = (event) => {
-    setDescription(event.target.value);
-  };
+  const [end_date, setEndDate] = React.useState(dayjs());
+  const [time_occurances, setTimeOccurances] = React.useState([]);
+  const [date_created, setDateCreated] = React.useState(dayjs());
+  const [loading, setLoading] = React.useState(false);
+  const [selectionModel, setSelectionModel] = React.useState([]);
+  const [playlists, setPlaylists] = React.useState([]);
+  const columns = [
+    { field: 'name', headerName: 'Name', width: 250, editable: true },
+    {
+      field: 'items',
+      headerName: 'Items',
+      width: 250,
+      renderCell: (params) => params.row.items.length + " Items"
+    },
+    { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true },
+    {
+      field: 'date_created',
+      headerName: 'Date Created',
+      width: 200,
+      valueFormatter: (params) => dayjs(params?.value).format('MM/DD/YYYY')
+    }
+  ];
 
   const handleStartDate = (newDate) => {
     if (newDate > end_date && end_date != '') {
@@ -124,90 +67,131 @@ export default function FormDialog() {
     }
   };
 
-  const handleSave = () => {
-    event.preventDefault();
-    const items = [];
-
-    // If the user somehow submits media without an image, it will add the backup image
-    if (images.length) {
-      images.map((image) => {
-        setNewMedia((prevState) => [
-          ...prevState,
-          {
-            ['name']: name,
-            ['description']: description,
-            ['start_date']: start_date.toDate(),
-            ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-            ['image']: {
-              src: image.src,
-              filename: image.path
-            }
-          }
-        ]);
-        items.push({
-          ['name']: name,
-          ['description']: description,
-          ['start_date']: start_date.toDate(),
-          ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-          ['image']: {
-            src: image.src,
-            filename: image.path
-          }
-        });
-      });
-    } else {
-      items.push({
-        ['name']: name,
-        ['description']: description,
-        ['start_date']: start_date.toDate(),
-        ['end_date']: end_date.isValid() ? end_date.toDate() : '',
-        ['image']: {
-          src: '/home/discus/default.png',
-          filename: 'default.png'
-        }
-      });
-    }
-    // For testing purposes
-    console.log(items);
-    // Will return an empty array, but needs to be here to compile
-    console.log(newMedia);
-    handleClose();
+  const handleLoading = () => {
+    setLoading((prevLoading) => !prevLoading);
   };
 
-  const onDrop = React.useCallback((acceptedFiles) => {
-    acceptedFiles.map((file) => {
-      const reader = new FileReader();
+  const loadPlaylists = () => {
+    try {
+      axios.get('http://localhost:8000/get_collection_playlists').then((res) => {
+        const raw = res.data;
+        const m = [];
+        raw.forEach(async (item) => {
+          const item_json = {
+            id: item._id.$oid,
+            name: item.name,
+            items: item.items.map((i) => (i?.objectID ? { id: i.objectID.$oid, type: i.type } : '')),
+            shuffle: item.shuffle,
+            date_created: item.date_created.$date
+          };
+          m.push(item_json);
+        });
+        setPlaylists(m);
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
+  };
 
-      reader.onload = function (e) {
-        setImages((prevState) => [
-          ...prevState,
-          { id: cuid(), src: e.target.result, path: file.path }
-        ]);
-      };
+  const handleClickOpen = () => {
+    loadPlaylists();
+    setOpen(true);
+  };
 
-      reader.readAsDataURL(file);
+  const handleClose = () => {
+    setOpen(false);
+    // Sets values back to default
+    setName('');
+    setDateCreated(dayjs());
+    setEndDate(dayjs());
+    setTimeOccurances([]);
+    setStartDate(dayjs());
+    setRecurringInfo([]);
+    setPlaylists([]);
+    setSelectionModel([]);
+    setMode("");
+    setSelectedPlaylist("");
+    setDateCreated(dayjs());
+  };
 
-      return file;
-    });
-  }, []);
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
 
-  const [value, setValue] = React.useState<dayjs | null>(
-    dayjs('2018-01-01T00:00:00.000Z')
-  );
+  const handleSave = async () => {
+    event.preventDefault();
+    handleLoading();
+
+    const channel = {
+      ['name']: name,
+      ['playlist']: selectedPlaylist,
+      ['mode']: mode,
+      ['date_created']: date_created.toDate(),
+      ['start_date']: start_date.toDate(),
+      ['end_date']: end_date.toDate(),
+      ['recurring_info']: recurring_info,
+      ['time_occurances']: time_occurances,
+    };
+    // For testing purposes
+    console.log(channel);
+    try {
+      const res = await axios.post('http://localhost:8000/api/insert_channel', channel, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+
+      const ids = [];
+      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // TODO: Get CLI team to return IDs better
+      res.data.ids.split("'").forEach((val) => {
+        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
+          ids.push(val);
+        }
+      });
+
+      // Adds each ID to its item
+      for (let i = 0; i < channel.length; i++) {
+        channel['id'] = ids[i];
+      }
+
+      console.log(res);
+      props.onChange(channel);
+    } catch (error) {
+      props.onError(error);
+      if (error.response) {
+        console.log(error.reponse.status);
+      } else {
+        console.log(error.message);
+      }
+    }
+    handleLoading();
+    handleClose();
+  };
 
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen} color="primary">
-        Add Channel
+        Create Channel
       </Button>
-      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <DialogTitle>Create a Channel</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+        maxWidth={'lg'}
+        fullWidth={true}
+      >
+        <DialogTitle>Create Channel</DialogTitle>
         <DialogContent>
-          <Dropzone onDrop={onDrop} accept={'image/*'} required />
-          <ImageGrid images={images} />
+          <DialogContentText>Create a channel!</DialogContentText>
           <TextField
             id="name"
-            label="Channel Name"
+            label="Name"
             variant="outlined"
             margin="normal"
             required
@@ -216,7 +200,6 @@ export default function FormDialog() {
             value={name}
             onChange={handleNameChange}
           />
-          <br />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               id="start_date"
@@ -237,55 +220,43 @@ export default function FormDialog() {
               onChange={handleEndDate}
               renderInput={(params) => <TextField {...params} />}
               disablePast
+              //disabled={checked}
             />
           </LocalizationProvider>
           <br />
-          <TimePicker
-            value={value}
-            onChange={setStartTime}
-            renderInput={(params) => <TextField {...params} />}
+          <DataGrid
+            autoHeight
+            {...playlists}
+            rows={playlists}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            getRowHeight={() => 'auto'}
+            checkboxSelection
+            disableSelectionOnClick
+            onSelectionModelChange={(selectionModel) => {
+              setSelectionModel(selectionModel);
+              setSelectedPlaylist(
+                selectedPlaylist.filter((item) => {
+                  return selectionModel.includes(item.id);
+                })
+              );
+            }}
+            selectionModel={selectionModel}
           />
-          <TimePicker
-            value={value}
-            onChange={setEndTime}
-            renderInput={(params) => <TextField {...params} />}
-          />
-          <br />
-          <TextField
-            id="description"
-            label="Description"
-            minRows={4}
-            variant="outlined"
-            margin="normal"
-            multiline
-            fullWidth
-            required
-            value={description}
-            onChange={handleDescChange}
-          />
-          <FormControl sx={{ m: 1, width: 300 }}>
-            <InputLabel id="demo-multiple-name-label">Playlist</InputLabel>
-            <Select
-              labelId="demo-multiple-name-label"
-              id="demo-multiple-name"
-              multiple
-              value={personName}
-              onChange={handleChange}
-              input={<OutlinedInput label="Name" />}
-              MenuProps={MenuProps}
-            >
-              {names.map((name) => (
-                <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save</Button>
+          <Fade
+            in={loading}
+            style={{
+              transitionDelay: loading ? '800ms' : '0ms'
+            }}
+            unmountOnExit
+          >
+            <CircularProgress color="primary" />
+          </Fade>
         </DialogActions>
       </Dialog>
     </div>

@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 
 class ChannelList extends Component {
   state = {
-    media: [],
+    channels: [],
     columns: [],
     selectionModel: []
   };
@@ -36,12 +36,12 @@ class ChannelList extends Component {
   /**
    * Loads the media locally
    */
-  loadMedia = () => {
+  loadChannels = () => {
     // Implement after we have the MangoDB API endpoint
     axios.get('http://152.10.212.58:8000/get_collection_channels')
     .then(res => {
       const raw = res.data;
-      const media = [];
+      const channels = [];
       raw.forEach((item) => {
         const item_json = {
           id: item._id.$oid,
@@ -50,17 +50,15 @@ class ChannelList extends Component {
           mode: item.mode,
           date_created: item.date_created.$date,
           start_date: item.start_date.$date,
-          end_date: item.end_date,
+          end_date: item.end_date.$date,
           recurring_info: item.recurring_info,
           time_occurances: item.time_occurances,
         };
-        media.push(item_json);
+        channels.push(item_json);
       });
-      console.log(media);
-      this.setState({ media });
+      console.log(channels);
+      this.setState({ channels });
     });
-    // const media = tempMedia;
-    // this.setState({ media });
   };
 
   /**
@@ -82,17 +80,17 @@ class ChannelList extends Component {
    * Handles deleting any selected items
    */
   deleteSelectedFile = () => {
-    const media = this.state.media.filter((item) => {
+    const channels = this.state.channels.filter((item) => {
       // Removes the media from the local list
       !this.state.selectionModel.includes(item.id);
       // Will need to send the ID to the API to delete
       console.log(item.id);
     });
-    this.setState({ media });
+    this.setState({ channels });
   };
 
   componentDidMount() {
-    this.loadMedia();
+    this.loadChannels();
     // Generates the columns for the list
     const columns = [
       { field: 'name', headerName: 'Name', width: 250, editable: true },
@@ -163,7 +161,7 @@ class ChannelList extends Component {
           <DeleteOutlinedIcon></DeleteOutlinedIcon>
         </IconButton>
         <DataGrid
-          rows={this.state.media}
+          rows={this.state.channels}
           columns={this.state.columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
