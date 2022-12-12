@@ -36,7 +36,7 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
     
     - name: Updates package-lock if necessary
-      run: npm --prefix client install
+      run: npm --prefix client install --force
       
     - name: Does a clean install of dependencies
     # This should not be forced in the future, as it could break a lot of things, but it works for now
