@@ -216,7 +216,7 @@ export default function FormDialog(props) {
       >
         <DialogTitle>Create Channel</DialogTitle>
         <DialogContent>
-          <DialogContentText>Create a channel!</DialogContentText>
+          <DialogContentText>Customize playlist display parameters. </DialogContentText>
           <TextField
             id="name"
             label="Name"
@@ -251,8 +251,8 @@ export default function FormDialog(props) {
               //disabled={checked}
             />
           </LocalizationProvider>
-          <br />
-          <FormControl float sx={{ m: 1, minWidth: 80 }}>
+          {/* <br /> */}
+          <FormControl float sx={{ marginLeft: 1, marginRight: 1, marginBottom: 1, minWidth: 250 }}>
           <InputLabel id="mode-label">Mode</InputLabel>
           <Select labelId="mode" id="mode" value={mode} label="Mode" onChange={handleModeChange}>
           <MenuItem value={"Daily"}>Daily</MenuItem>
@@ -260,7 +260,7 @@ export default function FormDialog(props) {
             <MenuItem value={"Monthly"}>Monthly</MenuItem>
           </Select>
           </FormControl>
-          <FormControl float sx={{ m: 1, minWidth: 80 }}>
+          <FormControl float sx={{ marginLeft: 0, marginRight: 1, marginBottom: 1, minWidth: 250 }}>
           <InputLabel id="recurring-info-label">Recurring Info</InputLabel>
           <Select labelId="recurring" id="recurring" multiple value={recurring_info} label="Recurring Info" onChange={handleRecurringChange} renderValue={(selected) => selected.join(", ")}>
         {options.map((option) => (
