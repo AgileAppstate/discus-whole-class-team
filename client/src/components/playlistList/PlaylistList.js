@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CloseIcon from '@mui/icons-material/Close';
-import ItemDialog from '../dialogs/PlaylistItemsDialog'
+import ItemsDialog from '../dialogs/PlaylistItemsDialog'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Alert, AlertTitle, Collapse } from '@mui/material';
@@ -38,7 +38,7 @@ class PlaylistList extends Component {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          items: item.items.map((i) => i?.objectID ? i.objectID.$oid : ""),
+          items: item.items.map((i) => i?.objectID ? {'id': i.objectID.$oid, 'type': i.type} : ""),
           shuffle: item.shuffle,
           date_created: item.date_created.$date,
         };
@@ -177,7 +177,7 @@ class PlaylistList extends Component {
     // Sets the columns for the DataGrid
     const columns = [
       { field: 'name', headerName: 'Name', width: 250, editable: true },
-      { field: 'items', headerName: 'Items', width: 250, renderCell: () => <ItemDialog /> },
+      { field: 'items', headerName: 'Items', width: 250, renderCell: (params) => <ItemsDialog parentPlaylist={params.row} /> },
       { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true},
       { field: 'date_created', headerName: 'Date Created', width: 200, valueFormatter: (params) =>
       dayjs(params?.value).format("MM/DD/YYYY")
