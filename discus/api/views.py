@@ -153,10 +153,10 @@ def edit_channel():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    #with open('kvps.txt', 'w') as f:
-    #    f.write(str(keys_list[1]))
-    #    f.write("\n")
-    #    f.write(str(vals_list[1]))
+    with open('kvps.txt', 'w') as f:
+        f.write(str(keys_list[1]))
+        f.write("\n")
+        f.write(str(vals_list[1]))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
     if (keys_list[1] == 'duration'):
