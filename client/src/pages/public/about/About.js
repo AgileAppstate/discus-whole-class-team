@@ -5,8 +5,8 @@ class AboutPg extends Component {
   render() {
     return (
       <div>
-      <About />
-    </div>
+        <About />
+      </div>
     );
   }
 }
