@@ -103,7 +103,7 @@ export default function PlaylistItemsDialog(props) {
         });
         setMedia(m);
         
-        var objlist = []
+        var objlist = [];
 
         for (let i = 0; i < selectionModel.length; i++) {
           for (let j = 0; j < m.length; j++) {
@@ -213,7 +213,7 @@ export default function PlaylistItemsDialog(props) {
             keepNonExistentRowsSelected
             onSelectionModelChange={(selectionModel) => {
               setSelectionModel(selectionModel);
-              var objlist = []
+              var objlist = [];
       
               for (let i = 0; i < selectionModel.length; i++) {
                 for (let j = 0; j < media.length; j++) {
