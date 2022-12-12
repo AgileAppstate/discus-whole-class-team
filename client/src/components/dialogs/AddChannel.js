@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Dropzone from '../dropzone/ImageDrop';
 import ImageGrid from '../dropzone/ImageGrid';
 import cuid from 'cuid';
@@ -78,6 +79,8 @@ export default function FormDialog() {
   const [description, setDescription] = React.useState('');
   const [start_date, setStartDate] = React.useState(dayjs());
   const [end_date, setEndDate] = React.useState(dayjs(''));
+  const [start_time, setStartTime] = React.useState();
+  const [end_time, setEndTime] = React.useState();
   const [newMedia, setNewMedia] = React.useState([]);
 
   const handleClickOpen = () => {
@@ -91,6 +94,8 @@ export default function FormDialog() {
     setDescription('');
     setStartDate(dayjs());
     setEndDate(dayjs(''));
+    setStartTime();
+    setEndTime();
     setImages([]);
   };
 
@@ -186,13 +191,17 @@ export default function FormDialog() {
     });
   }, []);
 
+  const [value, setValue] = React.useState<dayjs | null>(
+    dayjs('2018-01-01T00:00:00.000Z')
+  );
+
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen} color="primary">
-        Add Channels
+        Add Channel
       </Button>
       <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <DialogTitle>Create a Channels</DialogTitle>
+        <DialogTitle>Create a Channel</DialogTitle>
         <DialogContent>
           <Dropzone onDrop={onDrop} accept={'image/*'} required />
           <ImageGrid images={images} />
@@ -230,6 +239,17 @@ export default function FormDialog() {
               disablePast
             />
           </LocalizationProvider>
+          <br />
+          <TimePicker
+            value={value}
+            onChange={setStartTime}
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <TimePicker
+            value={value}
+            onChange={setEndTime}
+            renderInput={(params) => <TextField {...params} />}
+          />
           <br />
           <TextField
             id="description"
