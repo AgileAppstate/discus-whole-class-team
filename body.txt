@@ -1,1 +1,0 @@
-['name', 'items', 'shuffle', 'date_created']['sdfa', [1, 2, 3], True, '2022-12-12T04:18:38.296Z']

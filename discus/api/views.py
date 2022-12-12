@@ -55,28 +55,26 @@ def insert_playlist():
     #def playlist_insert(playlistname, shuffle=False, itemList=[]):
     record = request.get_data()
     json_data = json.loads(record)
-
     
+    
+    keys_list = list(json_data.keys())
+    vals_list = list(json_data.values())
+    
+    #with open('items.txt', 'w') as f:
+    #    f.write(str(keys_list))
+    #    f.write('\n')
+    #    f.write(str(vals_list))
+    
+    item_list = []
+    for item in vals_list[1]:
+        item_list.append({'type': 'image','objectID': ObjectId(item)})
 
-    fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
     # !!!! We need to formate the Items lists at some point !!!!
-    format_items = []
-    list_keys = list(json_data.keys())
-    list_vals = list(json_data['items'].values())
-    with open('body.txt', 'w') as f:
-        f.write(str(list_keys))
-        f.write(str(list_vals))
+    #with open('after.txt', 'w') as f:
+    #    f.write(str(item_list))
     
-    for item in list_vals:
-        with open('item.txt', 'w') as f:
-            f.write(str(item))
-        better_item = dict({"type": "image", "objectID": ObjectId(str(item))})
-        format_items.append(better_item)
-        with open('better.txt', 'w') as ft:
-            f.write(str(better_item))
-    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],format_items)
-    
-    return jsonify(id=ret)
+    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],item_list)
+    return jsonify(id=str(ret))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_playlist', methods=["POST"])
@@ -86,10 +84,10 @@ def edit_playlist():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    #with open('body.txt', 'w') as f:
-    #   f.write(str(keys_list))
-    #   f.write("\n")
-    #   f.write(str(vals_list))
+    with open('body.txt', 'w') as f:
+       f.write(str(keys_list))
+       f.write("\n")
+       f.write(str(vals_list))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
     if (keys_list[1] == 'name'):
@@ -102,8 +100,8 @@ def edit_playlist():
             itemId = ObjectId(str(item['id']))
             #{'type': "image", 'id': itemID}
             itemArray.append({'type': 'image','objectID': itemId})
-            
-    ret_str = 'successfully edited item list: ' + keys_list[1]
+        playlists.playlist_reorder(ObjectId(vals_list[0]),itemArray)
+    ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
@@ -122,11 +120,6 @@ def delete_playlist():
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
-
-#NOT IDEAL
-@app.route('api/get_playlist_name', methods=["POST"])
-def get_playlist_name():
-    pass
 
 #Channel Routes-------------------------------------------------------------
 
@@ -181,9 +174,6 @@ def delete_channel():
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
-
-
-    
 
 #Image Routes-----------------------------------------------------------------
 
