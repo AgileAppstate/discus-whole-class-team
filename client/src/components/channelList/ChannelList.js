@@ -46,7 +46,7 @@ class ChannelList extends Component {
    */
   loadChannels = () => {
     // Implement after we have the MangoDB API endpoint
-    axios.get('http://localhost:8000/get_collection_channels')
+    axios.get('http://152.10.212.58:8000/get_collection_channels')
     .then(res => {
       const raw = res.data;
       const channels = [];
@@ -67,7 +67,7 @@ class ChannelList extends Component {
       channels.forEach(async (item) => {
         const body = { 'id': item.playlist_id };
         const res = await axios.post(
-          'http://localhost:8000/api/get_playlist_name',
+          'http://152.10.212.58:8000/api/get_playlist_name',
           body,
           {
             headers: {
@@ -137,7 +137,7 @@ class ChannelList extends Component {
     const body = { id, [field]: value };
     
     try {
-      axios.post('http://localhost:8000/api/edit_channel', body, {
+      axios.post('http://152.10.212.58:8000/api/edit_channel', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -174,7 +174,7 @@ class ChannelList extends Component {
     const body = { ids: this.state.selectionModel };
     //console.log(body);
     try {
-      axios.post('http://localhost:8000/api/delete_channel', body, {
+      axios.post('http://152.10.212.58:8000/api/delete_channel', body, {
         headers: {
           'content-type': '*/json'
         }

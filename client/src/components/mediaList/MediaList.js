@@ -49,7 +49,7 @@ class MediaList extends Component {
    */
   loadMedia = () => {
     try {
-      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+      axios.get('http://152.10.212.58:8000/get_collection_images').then((res) => {
         const raw = res.data;
         const media = [];
         raw.forEach(async (item) => {
@@ -68,7 +68,7 @@ class MediaList extends Component {
         });
         media.forEach(async (item) => {
           const res = await axios.post(
-            'http://localhost:8000/api/get_image_file',
+            'http://152.10.212.58:8000/api/get_image_file',
             [{ id: item.id }],
             {
               headers: {
@@ -112,7 +112,7 @@ class MediaList extends Component {
     const body = { id, [field]: value };
     //console.log(body);
     try {
-      axios.post('http://localhost:8000/api/edit_image', body, {
+      axios.post('http://152.10.212.58:8000/api/edit_image', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -191,7 +191,7 @@ class MediaList extends Component {
     const body = { ids: this.state.selectionModel };
     //console.log(body);
     try {
-      axios.post('http://localhost:8000/api/delete_image', body, {
+      axios.post('http://152.10.212.58:8000/api/delete_image', body, {
         headers: {
           'content-type': '*/json'
         }

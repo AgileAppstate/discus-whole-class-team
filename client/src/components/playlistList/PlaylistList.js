@@ -30,7 +30,7 @@ class PlaylistList extends Component {
    */
   loadPlaylists = () => {
     // Implement after we have the MangoDB API endpoint
-    axios.get('http://localhost:8000/get_collection_playlists').then((res) => {
+    axios.get('http://152.10.212.58:8000/get_collection_playlists').then((res) => {
       const raw = res.data;
       const playlists = [];
       raw.forEach((item) => {
@@ -65,7 +65,7 @@ class PlaylistList extends Component {
     const body = { id, [field]: value };
 
     try {
-      axios.post('http://localhost:8000/api/edit_playlist', body, {
+      axios.post('http://152.10.212.58:8000/api/edit_playlist', body, {
         headers: {
           'content-type': '*/json'
         }
@@ -165,7 +165,7 @@ class PlaylistList extends Component {
     const body = { ids: this.state.selectionModel };
     //console.log(body);
     try {
-      axios.post('http://localhost:8000/api/delete_playlist', body, {
+      axios.post('http://152.10.212.58:8000/api/delete_playlist', body, {
         headers: {
           'content-type': '*/json'
         }
