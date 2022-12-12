@@ -55,14 +55,26 @@ def insert_playlist():
     #def playlist_insert(playlistname, shuffle=False, itemList=[]):
     record = request.get_data()
     json_data = json.loads(record)
+    
+    
+    keys_list = list(json_data.keys())
+    vals_list = list(json_data.values())
+    
+    #with open('items.txt', 'w') as f:
+    #    f.write(str(keys_list))
+    #    f.write('\n')
+    #    f.write(str(vals_list))
+    
+    item_list = []
+    for item in vals_list[1]:
+        item_list.append({'type': 'image','objectID': ObjectId(item)})
 
-    # with open('body.txt', 'w') as f:
-    #     f.write(str(json_data))
-
-    fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
     # !!!! We need to formate the Items lists at some point !!!!
-    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],json_data['items'])
-    return jsonify(id=ret)
+    #with open('after.txt', 'w') as f:
+    #    f.write(str(item_list))
+    
+    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],item_list)
+    return jsonify(ids=str([ret]))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_playlist', methods=["POST"])
@@ -73,17 +85,22 @@ def edit_playlist():
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
     with open('body.txt', 'w') as f:
-       f.write(str(keys_list[1]))
+       f.write(str(keys_list))
        f.write("\n")
-       f.write(str(vals_list[1]))
-    #id = ObjectId(vals_list[0])
+       f.write(str(vals_list))
+    id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    # if (keys_list[1] == 'name'):
-    #     playlists.playlist_set_name()
-    # elif (keys_list[1] == 'shuffle'):
-    #     playlists.playlist_set_shuffle()
-    # elif (keys_list[1] == 'items'):
-    #     playlists.playlist_reorder()
+    if (keys_list[1] == 'name'):
+        playlists.playlist_set_name(id,vals_list[1])
+    elif (keys_list[1] == 'shuffle'):
+        playlists.playlist_set_shuffle(id,vals_list[1])
+    elif (keys_list[1] == 'items'):
+        itemArray = []
+        for item in vals_list[1]:
+            itemId = ObjectId(str(item['id']))
+            #{'type': "image", 'id': itemID}
+            itemArray.append({'type': 'image','objectID': itemId})
+        playlists.playlist_reorder(ObjectId(vals_list[0]),itemArray)
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
@@ -97,24 +114,51 @@ def delete_playlist():
     vals_list = list(data.values())
     
     for id_val in vals_list[0]:
-        with open('delete.txt', 'w+') as f:
-            f.write(str(id_val))
-            f.write('\n')
+        # with open('body.txt', 'w+') as f:
+        #     f.write(str(id_val))
+        #     f.write('\n')
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
 
+
+#json -- {id: "1234number"}
+@app.route('/api/get_playlist_name', methods=["POST"])
+def get_playlist_name():
+    record = request.get_data()
+    data = json.loads(record)
+    
+    #with open('get_name.txt', 'w') as f:
+    #    f.write(str(type(data)))
+    #    f.write('\n')
+    ret = playlists.playlist_get_name(ObjectId(str(data['id'])))
+    #with open('get_name.txt', 'w') as f:
+    #    f.write(str(ret))
+    #    f.write('\n')
+    return jsonify(data=str(ret))
 #Channel Routes-------------------------------------------------------------
 
 @app.route('/api/insert_channel', methods=["POST"])    
 def insert_channel():
+    record = request.get_data()
+    json_data = json.loads(record)
     #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
-    fields_str = 'def channel_insert(chanName, playlistID=None,'
-    fields_str += 'mode=\"Daily\", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[])'
-    return jsonify(fields=fields_str)
+    new_start = format_date(json_data['start_date'])
+    new_end = format_date(json_data['end_date'])
+    #with open('channel.txt', 'w') as f:
+    #    f.write(str(json_data))
+    #    f.write('\n')
+    #    f.write(str(new_start))
+    #    f.write('\n')
+    #    f.write(str(new_end))
+    
+    #Ocurrences!!!! two 'r's!
+    ret = channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], new_start, new_end, json_data['time_occurances'])
+
+    return jsonify(ids=str([ret]))
 
 # json expected {id: "1234", "asdf"}
-@app.route('/api/edit_playlist', methods=["POST"])
+@app.route('/api/edit_channel', methods=["POST"])
 def edit_channel():
     record = request.get_data()
     json_data = json.loads(record)
@@ -127,22 +171,20 @@ def edit_channel():
     #    f.write(str(vals_list[1]))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    if (keys_list[1] == 'duration'):
-        images.image_set_duration(id, int(vals_list[1]))
-    elif (keys_list[1] == 'start_date'):
-        images.image_set_start_date(id, datetime(vals_list[1]))
+    if (keys_list[1] == 'start_date'):
+        new_start = format_date(vals_list[1])
+        channels.channel_set_start_date(id, new_start)
     elif (keys_list[1] == 'end_date'):
-        images.image_set_end_date(id, datetime(vals_list[1]))
-    elif (keys_list[1] == 'description'):
-        images.image_set_description(id, str(vals_list[1]))
+        new_end = format_date(vals_list[1])
+        channels.channel_set_end_date(id, new_end)
     elif (keys_list[1] == 'name'):
-        images.image_set_display_name(id, str(vals_list[1]))
+        channels.channel_set_name(id, str(vals_list[1]))
     
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
-@app.route('/api/delete_playlist', methods=["POST"])
+@app.route('/api/delete_channel', methods=["POST"])
 def delete_channel():
     record = request.get_data()
     ret_str = ''
@@ -151,10 +193,11 @@ def delete_channel():
     vals_list = list(data.values())
     
     for id_val in vals_list[0]:
-        with open('delete.txt', 'w+') as f:
-            f.write(str(id_val))
-            f.write('\n')
-        ret = playlists.playlist_delete(ObjectId(str(id_val)))
+        #with open('delete.txt', 'w+') as f:
+        #    f.write(str(id_val))
+        #    f.write('\n')
+        ret = channels.channel_delete(ObjectId(str(id_val)))
+        #ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
 

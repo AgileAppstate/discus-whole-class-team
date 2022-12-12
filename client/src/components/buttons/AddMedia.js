@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import 'reactjs-popup/dist/index.css';
 
 class AddMedia extends React.Component {
-
   handleItemAdd = (event) => {
     this.props.onChange(event);
   };
@@ -20,7 +19,7 @@ class AddMedia extends React.Component {
 
 AddMedia.propTypes = {
   children: PropTypes.any,
-  onChange: PropTypes.func,
+  onChange: PropTypes.func
 };
 
 export default AddMedia;
