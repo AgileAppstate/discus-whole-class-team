@@ -10,10 +10,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { DataGrid } from '@mui/x-data-grid';
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
+import Select from '@mui/material/Select'
 import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
 import axios from 'axios';
-import { CircularProgress, Fade } from '@mui/material';
+import { CircularProgress, Fade, FormControl, InputLabel, MenuItem } from '@mui/material';
 //import tempMedia from '../mediaList/tempMedia';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -33,15 +37,24 @@ export default function FormDialog(props) {
   const [loading, setLoading] = React.useState(false);
   const [selectionModel, setSelectionModel] = React.useState([]);
   const [playlists, setPlaylists] = React.useState([]);
+  const options = [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+  ];
   const columns = [
-    { field: 'name', headerName: 'Name', width: 250, editable: true },
+    { field: 'name', headerName: 'Name', width: 250 },
     {
       field: 'items',
       headerName: 'Items',
       width: 250,
       renderCell: (params) => params.row.items.length + " Items"
     },
-    { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true },
+    { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200 },
     {
       field: 'date_created',
       headerName: 'Date Created',
@@ -69,6 +82,11 @@ export default function FormDialog(props) {
 
   const handleLoading = () => {
     setLoading((prevLoading) => !prevLoading);
+  };
+
+  const handleModeChange = (event) => {
+    console.log(event);
+    setMode(event.target.value);
   };
 
   const loadPlaylists = () => {
@@ -121,6 +139,15 @@ export default function FormDialog(props) {
 
   const handleNameChange = (event) => {
     setName(event.target.value);
+  };
+
+  const handleRecurringChange = (event) => {
+    const value = event.target.value;
+    if (value[value.length - 1] === "all") {
+      setRecurringInfo(recurring_info.length === options.length ? [] : options);
+      return;
+    }
+    setRecurringInfo(value);
   };
 
   const handleSave = async () => {
@@ -224,6 +251,27 @@ export default function FormDialog(props) {
             />
           </LocalizationProvider>
           <br />
+          <FormControl float sx={{ m: 1, minWidth: 80 }}>
+          <InputLabel id="mode-label">Mode</InputLabel>
+          <Select labelId="mode" id="mode" value={mode} label="Mode" onChange={handleModeChange}>
+          <MenuItem value={"Daily"}>Daily</MenuItem>
+            <MenuItem value={"Weekly"}>Weekly</MenuItem>
+            <MenuItem value={"Monthly"}>Monthly</MenuItem>
+          </Select>
+          </FormControl>
+          <FormControl float sx={{ m: 1, minWidth: 80 }}>
+          <InputLabel id="recurring-info-label">Recurring Info</InputLabel>
+          <Select labelId="recurring" id="recurring" multiple value={recurring_info} label="Recurring Info" onChange={handleRecurringChange} renderValue={(selected) => selected.join(", ")}>
+        {options.map((option) => (
+          <MenuItem key={option} value={option}>
+            <ListItemIcon>
+              <Checkbox checked={recurring_info.indexOf(option) > -1} />
+            </ListItemIcon>
+            <ListItemText primary={option} />
+          </MenuItem>
+        ))}
+          </Select>
+          </FormControl>
           <DataGrid
             autoHeight
             {...playlists}
