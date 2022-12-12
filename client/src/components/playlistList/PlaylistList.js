@@ -80,9 +80,15 @@ class PlaylistList extends Component {
     }
   };
 
-  // handleItemChange = (params) => {
-
-  // }
+  /**
+   * Changes the selection of items on the playlist locally.
+   * @param {*} params 
+   */
+  handleItemChange = (params) => {
+    //const playlists = this.state.playlists;
+    console.log(params)
+    //this.setState({ playlists });
+  }
 
   /**
    * Handles double-clicking a cell so we can popup the media dialog for the items list
@@ -185,7 +191,7 @@ class PlaylistList extends Component {
         field: 'items',
         headerName: 'Items',
         width: 250,
-        renderCell: (params) => <ItemsDialog parentPlaylist={params.row} />
+        renderCell: (params) => <ItemsDialog parentPlaylist={params.row} onItemsChange={this.handleItemChange} onError={this.handleSubmitError}/>
       },
       { field: 'shuffle', headerName: 'Shuffle', type: 'boolean', width: 200, editable: true },
       {
