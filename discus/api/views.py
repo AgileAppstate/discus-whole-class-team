@@ -55,14 +55,26 @@ def insert_playlist():
     #def playlist_insert(playlistname, shuffle=False, itemList=[]):
     record = request.get_data()
     json_data = json.loads(record)
+    
+    
+    keys_list = list(json_data.keys())
+    vals_list = list(json_data.values())
+    
+    #with open('items.txt', 'w') as f:
+    #    f.write(str(keys_list))
+    #    f.write('\n')
+    #    f.write(str(vals_list))
+    
+    item_list = []
+    for item in vals_list[1]:
+        item_list.append({'type': 'image','objectID': ObjectId(item)})
 
-    # with open('body.txt', 'w') as f:
-    #     f.write(str(json_data))
-
-    fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
     # !!!! We need to formate the Items lists at some point !!!!
-    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],json_data['items'])
-    return jsonify(id=ret)
+    #with open('after.txt', 'w') as f:
+    #    f.write(str(item_list))
+    
+    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],item_list)
+    return jsonify(id=str(ret))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_playlist', methods=["POST"])
@@ -88,8 +100,8 @@ def edit_playlist():
             itemId = ObjectId(str(item['id']))
             #{'type': "image", 'id': itemID}
             itemArray.append({'type': 'image','objectID': itemId})
-            
-    ret_str = 'successfully edited item list: ' + keys_list[1]
+        playlists.playlist_reorder(ObjectId(vals_list[0]),itemArray)
+    ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
@@ -119,7 +131,7 @@ def insert_channel():
     return jsonify(fields=fields_str)
 
 # json expected {id: "1234", "asdf"}
-@app.route('/api/edit_playlist', methods=["POST"])
+@app.route('/api/edit_channel', methods=["POST"])
 def edit_channel():
     record = request.get_data()
     json_data = json.loads(record)
@@ -147,7 +159,7 @@ def edit_channel():
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
-@app.route('/api/delete_playlist', methods=["POST"])
+@app.route('/api/delete_channel', methods=["POST"])
 def delete_channel():
     record = request.get_data()
     ret_str = ''
