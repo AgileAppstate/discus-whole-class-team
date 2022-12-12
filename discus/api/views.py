@@ -121,9 +121,14 @@ def delete_playlist():
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
 
+
+#json -- {id: "1234number"}
 @app.route('/api/get_playlist_name', methods=["POST"])
 def get_playlist_name():
-    return 'nac'
+    record = request.get_data()
+    data = json.loads(record)
+    ret = playlists.playlist_get_name(ObjectId(data['id']))
+    return jsonify(data=str(ret))
 #Channel Routes-------------------------------------------------------------
 
 @app.route('/api/insert_channel', methods=["POST"])    
