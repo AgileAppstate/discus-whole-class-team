@@ -82,12 +82,13 @@ class PlaylistList extends Component {
 
   /**
    * Changes the selection of items on the playlist locally.
+   * 
    * @param {*} params 
    */
   handleItemChange = (params) => {
-    //const playlists = this.state.playlists;
-    console.log(params)
-    //this.setState({ playlists });
+    const playlists = this.state.playlists.filter((playlist) => playlist.id !== params.id);
+    playlists.push(params)
+    this.setState({ playlists });
   }
 
   /**
