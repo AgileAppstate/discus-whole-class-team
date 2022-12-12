@@ -131,14 +131,19 @@ def insert_channel():
     record = request.get_data()
     json_data = json.loads(record)
     #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
+    new_start = format_date(json_data['start_date'])
+    new_end = format_date(json_data['end_date'])
     with open('channel.txt', 'w') as f:
         f.write(str(json_data))
-    #json_data['start_date']
-    #json_data
-    #channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], )
-    fields_str = 'def channel_insert(chanName, playlistID=None,'
-    fields_str += 'mode=\"Daily\", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[])'
-    return jsonify(fields=fields_str)
+        f.write('\n')
+        f.write(str(new_start))
+        f.write('\n')
+        f.write(str(new_end))
+    
+    #Ocurrences!!!! two 'r's!
+    ret = channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], new_start, new_end, json_data['time_occurances'])
+
+    return jsonify(id=str(ret))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_channel', methods=["POST"])
