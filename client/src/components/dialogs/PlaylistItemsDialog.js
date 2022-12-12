@@ -71,7 +71,7 @@ export default function PlaylistItemsDialog(props) {
 
   const loadMedia = () => {
     try {
-      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+      axios.get('http://152.10.212.58:8000/get_collection_images').then((res) => {
         const raw = res.data;
         const m = [];
         raw.forEach(async (item) => {
@@ -90,7 +90,7 @@ export default function PlaylistItemsDialog(props) {
         });
         m.forEach(async (item) => {
           const res = await axios.post(
-            'http://localhost:8000/api/get_image_file',
+            'http://152.10.212.58:8000/api/get_image_file',
             [{ id: item.id }],
             {
               headers: {
@@ -149,7 +149,7 @@ export default function PlaylistItemsDialog(props) {
 
     console.log(body);
     try {
-      axios.post('http://localhost:8000/api/edit_playlist', body, {
+      axios.post('http://152.10.212.58:8000/api/edit_playlist', body, {
         headers: {
           'content-type': '*/json'
         }

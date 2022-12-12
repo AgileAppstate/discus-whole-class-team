@@ -79,7 +79,7 @@ export default function FormDialog(props) {
 
   const loadMedia = () => {
     try {
-      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+      axios.get('http://152.10.212.58:8000/get_collection_images').then((res) => {
         const raw = res.data;
         const m = [];
         raw.forEach(async (item) => {
@@ -98,7 +98,7 @@ export default function FormDialog(props) {
         });
         m.forEach(async (item) => {
           const res = await axios.post(
-            'http://localhost:8000/api/get_image_file',
+            'http://152.10.212.58:8000/api/get_image_file',
             [{ id: item.id }],
             {
               headers: {
@@ -178,7 +178,7 @@ export default function FormDialog(props) {
     // For testing purposes
     console.log(playlist);
     try {
-      const res = await axios.post('http://localhost:8000/api/insert_playlist', playlist, {
+      const res = await axios.post('http://152.10.212.58:8000/api/insert_playlist', playlist, {
         headers: {
           'content-type': '*/json'
         }

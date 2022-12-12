@@ -90,7 +90,7 @@ export default function FormDialog(props) {
 
   const loadPlaylists = () => {
     try {
-      axios.get('http://localhost:8000/get_collection_playlists').then((res) => {
+      axios.get('http://152.10.212.58:8000/get_collection_playlists').then((res) => {
         const raw = res.data;
         const m = [];
         raw.forEach(async (item) => {
@@ -166,7 +166,7 @@ export default function FormDialog(props) {
     // For testing purposes
     console.log(channel);
     try {
-      const res = await axios.post('http://localhost:8000/api/insert_channel', channel, {
+      const res = await axios.post('http://152.10.212.58:8000/api/insert_channel', channel, {
         headers: {
           'content-type': '*/json'
         }
