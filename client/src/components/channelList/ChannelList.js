@@ -179,7 +179,12 @@ class ChannelList extends Component {
             />
           </LocalizationProvider>
         ) // renderCell will render the component
-      }
+      },
+      { field: 'date_created', headerName: 'Date Created', width: 180, editable: false },
+      { field: 'playlist', headerName: 'Playlist', width: 250, editable: false },
+      { field: 'mode', headerName: 'Mode', width: 150, editable: false },
+      { field: 'recurring_info', headerName: 'Recurring', width: 150, editable: false },
+      { field: 'time_occurances', headerName: 'Time Occurances', width: 150, editable: false },
     ];
     this.setState({ columns });
   }
