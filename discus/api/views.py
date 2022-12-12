@@ -181,10 +181,11 @@ def delete_channel():
     vals_list = list(data.values())
     
     for id_val in vals_list[0]:
-        with open('delete.txt', 'w+') as f:
-            f.write(str(id_val))
-            f.write('\n')
-        ret = playlists.playlist_delete(ObjectId(str(id_val)))
+        #with open('delete.txt', 'w+') as f:
+        #    f.write(str(id_val))
+        #    f.write('\n')
+        ret = channels.channel_delete(ObjectId(str(id_val)))
+        #ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
 
