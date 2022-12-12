@@ -27,6 +27,7 @@ export default function PlaylistItemsDialog(props) {
   const [parentPlaylist] = React.useState(props.parentPlaylist);
   const [open, setOpen] = React.useState(false);
   const [selectionModel, setSelectionModel] = React.useState(() => parentPlaylist.items.map((item) => item.id));
+  const [selectedMediaType, setSelectedMediaType] = React.useState(() => parentPlaylist.items.map((item) => item.type));
   const [selectedMedia, setSelectedMedia] = React.useState([]);
   const [media, setMedia] = React.useState([]);
   const columns = [
@@ -123,17 +124,47 @@ export default function PlaylistItemsDialog(props) {
 
   const handleSave = () => {
     event.preventDefault();
-    console.log(selectionModel);
+
+    const arr = [];
+    for (let i = 0; i < selectedMediaType.length; i++) {
+      arr.push({
+        'id': selectionModel[i],
+        'type': selectedMediaType[i],
+      })
+    }
+    const body = {'items': arr};
+
+    try {
+      axios.post('http://localhost:8000/api/edit_playlist', body, {
+        headers: {
+          'content-type': '*/json'
+        }
+      });
+      props.onItemsChange(body);
+    } catch (error) {
+      props.onError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
     // TODO: Update media with new list
     // TODO: Update selected media with new IDs
     handleClose();
   };
 
   const onDrop = ({ removedIndex, addedIndex }) => {
-    console.log({ removedIndex, addedIndex });
-    setSelectedMedia((selectedMedia) =>
-      arrayMoveImmutable(selectedMedia, removedIndex, addedIndex)
-    );
+    //console.log({ removedIndex, addedIndex });
+    setSelectedMedia((selectedMedia) => {
+      // Creates new array in the new order they should appear
+      const newArray = arrayMoveImmutable(selectedMedia, removedIndex, addedIndex);
+      // Reorders the ID's in the selection model
+      setSelectionModel(newArray.map((item) => item.id));
+      // Returns the new array to modify selectionMedia
+      return newArray;
+    });
+    setSelectedMediaType((selectedType) => arrayMoveImmutable(selectedType, removedIndex, addedIndex));
   };
 
   return (
