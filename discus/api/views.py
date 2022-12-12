@@ -127,7 +127,7 @@ def delete_playlist():
 def get_playlist_name():
     record = request.get_data()
     data = json.loads(record)
-    ret = playlists.playlist_get_name(ObjectId(data['id']))
+    ret = playlists.playlist_get_name(ObjectId(str(data['id'])))
     return jsonify(data=str(ret))
 #Channel Routes-------------------------------------------------------------
 
