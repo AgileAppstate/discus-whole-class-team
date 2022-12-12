@@ -66,7 +66,6 @@ class ChannelList extends Component {
       });
       channels.forEach(async (item) => {
         const body = { 'id': item.playlist_id };
-        console.log(body);
         const res = await axios.post(
           'http://localhost:8000/api/get_playlist_name',
           body,
@@ -76,7 +75,6 @@ class ChannelList extends Component {
             }
           }
         );
-        console.log(res);
         // Grabs the playlist name
         item['playlist'] = res.data.data;
       });
