@@ -80,6 +80,10 @@ class PlaylistList extends Component {
     }
   };
 
+  // handleItemChange = (params) => {
+
+  // }
+
   /**
    * Handles double-clicking a cell so we can popup the media dialog for the items list
    * @param {*} params

@@ -102,6 +102,12 @@ export default function PlaylistItemsDialog(props) {
           item['image'] = 'data:image/png;base64,' + res.data.img_dat[0];
         });
         setMedia(m);
+        // Sets the currently selected media
+        setSelectedMedia(
+          m.filter((item) => {
+            return selectionModel.includes(item.id);
+          })
+        );
       });
     } catch (error) {
       this.handleSubmitError(error);
@@ -126,7 +132,7 @@ export default function PlaylistItemsDialog(props) {
     event.preventDefault();
 
     const arr = [];
-    for (let i = 0; i < selectedMediaType.length; i++) {
+    for (let i = 0; i < selectionModel.length; i++) {
       arr.push({
         'id': selectionModel[i],
         'type': selectedMediaType[i],
@@ -134,15 +140,16 @@ export default function PlaylistItemsDialog(props) {
     }
     const body = {'items': arr};
 
+    console.log(body);
     try {
       axios.post('http://localhost:8000/api/edit_playlist', body, {
         headers: {
           'content-type': '*/json'
         }
       });
-      props.onItemsChange(body);
+      //props.onItemsChange(body);
     } catch (error) {
-      props.onError(error);
+      //props.onError(error);
       if (error.response) {
         console.log(error.response.status);
       } else {
@@ -155,7 +162,6 @@ export default function PlaylistItemsDialog(props) {
   };
 
   const onDrop = ({ removedIndex, addedIndex }) => {
-    //console.log({ removedIndex, addedIndex });
     setSelectedMedia((selectedMedia) => {
       // Creates new array in the new order they should appear
       const newArray = arrayMoveImmutable(selectedMedia, removedIndex, addedIndex);
@@ -164,7 +170,10 @@ export default function PlaylistItemsDialog(props) {
       // Returns the new array to modify selectionMedia
       return newArray;
     });
-    setSelectedMediaType((selectedType) => arrayMoveImmutable(selectedType, removedIndex, addedIndex));
+    setSelectedMediaType((selectedType) => {
+      const newArray = arrayMoveImmutable(selectedType, removedIndex, addedIndex);
+      return newArray;
+    });
   };
 
   return (
@@ -195,7 +204,14 @@ export default function PlaylistItemsDialog(props) {
             checkboxSelection
             disableSelectionOnClick
             keepNonExistentRowsSelected
-            onSelectionModelChange={setSelectionModel}
+            onSelectionModelChange={(selectionModel) => {
+              setSelectionModel(selectionModel);
+              setSelectedMedia(
+                media.filter((item) => {
+                  return selectionModel.includes(item.id);
+                })
+              );
+            }}
             selectionModel={selectionModel}
           />
           <DialogTitle>Current Media</DialogTitle>
