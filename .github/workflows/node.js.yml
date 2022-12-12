@@ -7,6 +7,7 @@ on:
   push:
     paths: 
       - 'client/**'
+      - 'discus/**'
       - '.github/workflows/**'
     branches: [ "main" ]
 
@@ -51,3 +52,6 @@ jobs:
       
     - name: Re-runs server
       run: pm2 restart discus-web
+      
+    - name: Re-runs the api
+      run: pm2 restart discus-api
