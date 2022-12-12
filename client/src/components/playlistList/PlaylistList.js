@@ -38,7 +38,7 @@ class PlaylistList extends Component {
         const item_json = {
           id: item._id.$oid,
           name: item.name,
-          items: item.items.map((item) => item.objectID.$oid),
+          items: item.items.map((i) => i?.objectID ? i.objectID.$oid : ""),
           shuffle: item.shuffle,
           date_created: item.date_created.$date,
         };
