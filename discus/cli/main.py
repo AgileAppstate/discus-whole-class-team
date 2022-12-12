@@ -31,7 +31,6 @@ import discus.api.views as views
 ###
 
 def _on_finished(ctx):
-    db.close()
     click.echo(f'Exiting DISCUS.')
 
 @shell(prompt='discus > ', 
@@ -302,7 +301,6 @@ def resolve(hint: str, collection: str) -> int | None:
 def resolve_and_do(hint: str | int, 
                    do: Callable, 
                    **params) -> None:
-    print(params)
     id = resolve(hint, params['collection'])
     if id or not params['strict']:
         do(id, params)
@@ -399,7 +397,6 @@ _delete_collection_dispatch_map = {
 }
 
 def _delete(id: int, params: dict, collection: str) -> None:
-    print('_delete', _delete_collection_dispatch_map[collection])
     result = _delete_collection_dispatch_map[collection](id)
 
     if result.deleted_count == 0:
