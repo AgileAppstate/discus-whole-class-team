@@ -72,16 +72,16 @@ def edit_playlist():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    with open('body.txt', 'w') as f:
-       f.write(str(keys_list[1]))
-       f.write("\n")
-       f.write(str(vals_list[1]))
-    #id = ObjectId(vals_list[0])
+    # with open('body.txt', 'w') as f:
+    #    f.write(str(keys_list))
+    #    f.write("\n")
+    #    f.write(str(vals_list))
+    id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
-    # if (keys_list[1] == 'name'):
-    #     playlists.playlist_set_name()
-    # elif (keys_list[1] == 'shuffle'):
-    #     playlists.playlist_set_shuffle()
+    if (keys_list[1] == 'name'):
+        playlists.playlist_set_name(id,vals_list[1])
+    elif (keys_list[1] == 'shuffle'):
+        playlists.playlist_set_shuffle(id,vals_list[1])
     # elif (keys_list[1] == 'items'):
     #     playlists.playlist_reorder()
     ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
@@ -97,9 +97,9 @@ def delete_playlist():
     vals_list = list(data.values())
     
     for id_val in vals_list[0]:
-        with open('delete.txt', 'w+') as f:
-            f.write(str(id_val))
-            f.write('\n')
+        # with open('body.txt', 'w+') as f:
+        #     f.write(str(id_val))
+        #     f.write('\n')
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
