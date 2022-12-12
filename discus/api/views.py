@@ -121,11 +121,21 @@ def delete_playlist():
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
 
+@app.route('/api/get_playlist_name', methods=["POST"])
+def get_playlist_name():
+    return 'nac'
 #Channel Routes-------------------------------------------------------------
 
 @app.route('/api/insert_channel', methods=["POST"])    
 def insert_channel():
+    record = request.get_data()
+    json_data = json.loads(record)
     #def channel_insert(chanName, playlistID=None, mode="Daily", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[]):
+    with open('channel.txt', 'w') as f:
+        f.write(str(json_data))
+    #json_data['start_date']
+    #json_data
+    #channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], )
     fields_str = 'def channel_insert(chanName, playlistID=None,'
     fields_str += 'mode=\"Daily\", recurringInfo=None,startDate=None, endDate=None, timeOccurances=[])'
     return jsonify(fields=fields_str)
