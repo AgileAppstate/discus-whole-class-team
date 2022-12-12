@@ -155,7 +155,7 @@ def insert_channel():
     #Ocurrences!!!! two 'r's!
     ret = channels.channel_insert(json_data['name'], ObjectId(json_data['playlist']), json_data['mode'], json_data['recurring_info'], new_start, new_end, json_data['time_occurances'])
 
-    return jsonify(id=str(ret))
+    return jsonify(ids=str([ret]))
 
 # json expected {id: "1234", "asdf"}
 @app.route('/api/edit_channel', methods=["POST"])
