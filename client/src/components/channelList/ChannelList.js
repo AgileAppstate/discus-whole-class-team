@@ -78,7 +78,7 @@ class ChannelList extends Component {
         );
         console.log(res);
         // Grabs the playlist name
-        //item['playlist'] = res.data;
+        item['playlist'] = res.data.data;
       });
       console.log(channels);
       this.setState({ channels });
