@@ -14,7 +14,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
-import cuid from 'cuid';
 import { CircularProgress, Fade } from '@mui/material';
 //import tempMedia from '../mediaList/tempMedia';
 
@@ -178,8 +177,19 @@ export default function FormDialog(props) {
         }
       });
 
-      // Adds ID to item, which will eventually be replaced with ID received from API
-      playlist['id'] = cuid();
+      const ids = [];
+      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // TODO: Get CLI team to return IDs better
+      res.data.ids.split("'").forEach((val) => {
+        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
+          ids.push(val);
+        }
+      });
+
+      // Adds each ID to its item
+      for (let i = 0; i < playlist.length; i++) {
+        playlist[i]['id'] = ids[i];
+      }
 
       console.log(res);
       props.onChange(playlist);
