@@ -60,7 +60,7 @@ class MediaList extends Component {
             duration: item.duration,
             date_added: item.date_added.$date,
             start_date: item.start_date.$date,
-            end_date: item.end_date.$data,
+            end_date: item.end_date.$date,
             image_id: item.file_id.$oid,
             filename: item.filename
           };
