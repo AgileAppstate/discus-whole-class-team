@@ -18,6 +18,7 @@ import Slide from '@mui/material/Slide';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { CircularProgress, Fade, FormControl, InputLabel, MenuItem } from '@mui/material';
+import cuid from 'cuid';
 //import tempMedia from '../mediaList/tempMedia';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -27,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState('');
-  const [selectedPlaylist, setSelectedPlaylist] = React.useState("");
+  //const [selectedPlaylist, setSelectedPlaylist] = React.useState("");
   const [mode, setMode] = React.useState("");
   const [recurring_info, setRecurringInfo] = React.useState([]);
   const [start_date, setStartDate] = React.useState(dayjs());
@@ -85,7 +86,6 @@ export default function FormDialog(props) {
   };
 
   const handleModeChange = (event) => {
-    console.log(event);
     setMode(event.target.value);
   };
 
@@ -107,7 +107,7 @@ export default function FormDialog(props) {
         setPlaylists(m);
       });
     } catch (error) {
-      this.handleSubmitError(error);
+      props.onError(error);
       if (error.response) {
         console.log(error.response.status);
       } else {
@@ -133,7 +133,7 @@ export default function FormDialog(props) {
     setPlaylists([]);
     setSelectionModel([]);
     setMode("");
-    setSelectedPlaylist("");
+    //setSelectedPlaylist("");
     setDateCreated(dayjs());
   };
 
@@ -156,7 +156,7 @@ export default function FormDialog(props) {
 
     const channel = {
       ['name']: name,
-      ['playlist']: selectedPlaylist,
+      ['playlist']: selectionModel[0],
       ['mode']: mode,
       ['date_created']: date_created.toDate(),
       ['start_date']: start_date.toDate(),
@@ -173,19 +173,20 @@ export default function FormDialog(props) {
         }
       });
 
-      const ids = [];
-      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
-      // TODO: Get CLI team to return IDs better
-      res.data.ids.split("'").forEach((val) => {
-        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
-          ids.push(val);
-        }
-      });
+      channel['id'] = cuid();
+      //const ids = [];
+      // // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // // TODO: Get CLI team to return IDs better
+      // res.data.ids.split("'").forEach((val) => {
+      //   if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
+      //     ids.push(val);
+      //   }
+      // });
 
-      // Adds each ID to its item
-      for (let i = 0; i < channel.length; i++) {
-        channel['id'] = ids[i];
-      }
+      // // Adds each ID to its item
+      // for (let i = 0; i < channel.length; i++) {
+      //   channel['id'] = ids[i];
+      // }
 
       console.log(res);
       props.onChange(channel);
@@ -284,11 +285,6 @@ export default function FormDialog(props) {
             disableSelectionOnClick
             onSelectionModelChange={(selectionModel) => {
               setSelectionModel(selectionModel);
-              setSelectedPlaylist(
-                selectedPlaylist.filter((item) => {
-                  return selectionModel.includes(item.id);
-                })
-              );
             }}
             selectionModel={selectionModel}
           />

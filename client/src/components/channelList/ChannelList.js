@@ -9,6 +9,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
+import ChannelButton from '../buttons/CreateChannel';
+import CloseIcon from '@mui/icons-material/Close';
+import { Alert, AlertTitle, Collapse } from '@mui/material';
 
 import styled from '@emotion/styled';
 
@@ -16,7 +19,12 @@ class ChannelList extends Component {
   state = {
     channels: [],
     columns: [],
-    selectionModel: []
+    selectionModel: [],
+    loading: true,
+    alert: false,
+    alertSeverity: 'error',
+    alertTitle: 'Error',
+    alertMessage: 'An error has occurred. Please try again.'
   };
 
   CssTextField = styled(TextField)({
@@ -62,6 +70,46 @@ class ChannelList extends Component {
   };
 
   /**
+   * Handles changing the alert variable
+   * @param {*} alert
+   */
+   handleAlert = (alert) => {
+    this.setState({ alert });
+  };
+
+  /**
+   * Sets alert information to be an error
+   */
+  handleSetAlertError = (error) => {
+    const alertSeverity = 'error';
+    const alertTitle = 'Error: ' + (error.code ? error.code : 'GENERIC_ERROR');
+    const alertMessage = error.message
+      ? error.message
+      : 'An error has occurred. Please try again later.';
+    this.setState({ alertSeverity, alertTitle, alertMessage });
+  };
+
+  /**
+   * Sets alert information to be a success
+   */
+  handleSetAlertSuccess = () => {
+    const alertSeverity = 'success';
+    const alertTitle = 'Success';
+    const alertMessage = 'Item has been submitted!';
+    this.setState({ alertSeverity, alertTitle, alertMessage });
+  };
+
+  /**
+   * Causes error to popup on page
+   * @param {*} error
+   */
+   handleSubmitError = (error) => {
+    this.handleSetAlertError(error);
+    console.log(error);
+    this.setState({ alert: true });
+  };
+
+  /**
    * Handles sending off an edited entry to the API
    * @param {*} params
    */
@@ -91,14 +139,23 @@ class ChannelList extends Component {
   };
 
   /**
+   * Adds added media to the local media array
+   * @param {*} params
+   */
+   handleChannelChange = (items) => {
+    this.handleSetAlertSuccess();
+    this.setState({ alert: true });
+    const channels = this.state.channels.concat(items);
+    this.setState({ channels });
+  };
+
+  /**
    * Handles deleting any selected items
    */
   deleteSelectedFile = () => {
     const channels = this.state.channels.filter((item) => {
       // Removes the channel from the local list
-      !this.state.selectionModel.includes(item.id);
-      // Will need to send the ID to the API to delete
-      console.log(item.id);
+      return !this.state.selectionModel.includes(item.id);
     });
     const body = { ids: this.state.selectionModel };
     //console.log(body);
@@ -191,6 +248,32 @@ class ChannelList extends Component {
   render() {
     return (
       <div style={{ height: 600, width: '100%' }}>
+        <Collapse
+          in={this.state.alert}
+          style={{
+            transitionDelay: this.state.alert ? '800ms' : '0ms'
+          }}
+          unmountOnExit
+        >
+          <Alert
+            severity={this.state.alertSeverity}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  this.handleAlert(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit"></CloseIcon>
+              </IconButton>
+            }
+          >
+            <AlertTitle>{this.state.alertTitle}</AlertTitle>
+            {this.state.alertMessage}
+          </Alert>
+        </Collapse>
         <IconButton variant="contained" onClick={this.deleteSelectedFile} color="primary">
           <DeleteOutlinedIcon></DeleteOutlinedIcon>
         </IconButton>
@@ -208,6 +291,7 @@ class ChannelList extends Component {
           }}
           selectionModel={this.state.selectionModel}
         />
+        <ChannelButton onChange={this.handleChannelChange} onError={this.handleSubmitError} />
       </div>
     );
   }
