@@ -56,12 +56,26 @@ def insert_playlist():
     record = request.get_data()
     json_data = json.loads(record)
 
-    # with open('body.txt', 'w') as f:
-    #     f.write(str(json_data))
+    
 
     fields_str = 'def playlist_insert(playlistname, shuffle=False, itemList=[])'
     # !!!! We need to formate the Items lists at some point !!!!
-    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],json_data['items'])
+    format_items = []
+    list_keys = list(json_data.keys())
+    list_vals = list(json_data['items'].values())
+    with open('body.txt', 'w') as f:
+        f.write(str(list_keys))
+        f.write(str(list_vals))
+    
+    for item in list_vals:
+        with open('item.txt', 'w') as f:
+            f.write(str(item))
+        better_item = dict({"type": "image", "objectID": ObjectId(str(item))})
+        format_items.append(better_item)
+        with open('better.txt', 'w') as ft:
+            f.write(str(better_item))
+    ret = playlists.playlist_insert(json_data['name'],json_data['shuffle'],format_items)
+    
     return jsonify(id=ret)
 
 # json expected {id: "1234", "asdf"}
@@ -72,10 +86,10 @@ def edit_playlist():
     
     keys_list = list(json_data.keys())
     vals_list = list(json_data.values())
-    with open('body.txt', 'w') as f:
-       f.write(str(keys_list))
-       f.write("\n")
-       f.write(str(vals_list))
+    #with open('body.txt', 'w') as f:
+    #   f.write(str(keys_list))
+    #   f.write("\n")
+    #   f.write(str(vals_list))
     id = ObjectId(vals_list[0])
     #find the key and select what is gonna change.
     if (keys_list[1] == 'name'):
@@ -108,6 +122,11 @@ def delete_playlist():
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
+
+#NOT IDEAL
+@app.route('api/get_playlist_name', methods=["POST"])
+def get_playlist_name():
+    pass
 
 #Channel Routes-------------------------------------------------------------
 
@@ -147,7 +166,7 @@ def edit_channel():
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
-@app.route('/api/delete_playlist', methods=["POST"])
+@app.route('/api/delete_channel', methods=["POST"])
 def delete_channel():
     record = request.get_data()
     ret_str = ''
@@ -162,6 +181,9 @@ def delete_channel():
         ret = playlists.playlist_delete(ObjectId(str(id_val)))
         ret_str += 'successfully deleted: ' + id_val + '\n'
     return jsonify(status=ret_str)
+
+
+    
 
 #Image Routes-----------------------------------------------------------------
 

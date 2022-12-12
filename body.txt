@@ -1,2 +1,1 @@
-['id', 'items']
-['639683498401efb8f7fa8597', [{'id': '636ff99df79d9f60de9d05a4'}, {'id': '6370043946075e0c5cd0773b'}, {'id': '63702d985e92f5015bcfafa3'}]]
+['name', 'items', 'shuffle', 'date_created']['sdfa', [1, 2, 3], True, '2022-12-12T04:18:38.296Z']
