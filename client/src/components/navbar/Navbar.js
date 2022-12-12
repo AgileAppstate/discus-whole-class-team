@@ -19,6 +19,9 @@ class Navbar extends Component {
               <a href="/Playlists" className="mr-5 hover:text-gray-900">
                 Playlists
               </a>
+              <a href="/Channels" className="mr-5 hover:text-gray-900">
+                Channels
+              </a>
               <a href="/LiveFeed" className="mr-5 hover:text-gray-900">
                 Live Feed
               </a>

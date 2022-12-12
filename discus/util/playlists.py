@@ -34,6 +34,10 @@ def playlist_get_by_id(id):
 def playlist_get_all():
     return db.playlists.find()
 
+# reorders the playlist
+def playlist_reorder(id, newOrder):
+    return db.playlists.update_one({"_id": id }, { "$set": { "items": newOrder } }) # set new order for playlist
+
 # adds image or playlist to playlist
 def playlist_insert_item(playlistID, itemID, itemType):
     if itemID == playlistID:
@@ -52,7 +56,7 @@ def playlist_delete(id):
         playlist_remove_item(plst["_id"], id)
 
     # Delete the playlist document.
-    db.playlists.delete(id)
+    return db.playlists.delete_one({"_id" : id})
 
 # sets the shuffle mode for the playlist
 def playlist_set_shuffle(id, shuffle):

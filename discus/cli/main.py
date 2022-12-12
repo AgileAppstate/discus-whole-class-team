@@ -1,4 +1,5 @@
 ### STL imports ###
+
 import sys
 import os
 import json
@@ -22,9 +23,8 @@ import pymongo
 import discus.util.playlists as playlists
 import discus.util.channels as channels
 import discus.util.images as images
-import discus.util.db as db 
+import discus.util.db as db
 import discus.api.views as views
-
 
 ### Global shell 
 ###
@@ -74,7 +74,7 @@ def get(ctx, hint: str = None) -> None:
 def set(hint: str | int, field: str, value: Any) -> None:
     resolve_and_do(hint, 
                    _set_channel, 
-                   collction='channels',
+                   collection='channels',
                    value=value, 
                    field=field, 
                    strict=True)
@@ -95,6 +95,18 @@ def _channel_set_start_date(id, start_date):
 
 def _channel_set_end_date(id, end_date):
     return channels.channel_set_end_date(id, end_date)
+
+@channel.command()
+@click.argument("hint", required=True, type=str)
+def delete(hint: str | int) -> None:
+    resolve_and_do(hint,
+                   _delete_channel,
+                   strict=True)
+
+def _delete_channel(id, _):
+    _delete(id,
+            _,
+            collection='channels')
 
 ### Playlist commands
 ### 
@@ -167,9 +179,9 @@ def set(hint: str | int, field: str, value: Any) -> None:
                    strict=True)
 
 def _delete_playlist(id, _) -> None:
-    result: pymongo.results.DeleteResult = playlists.playlist_delete(id)
-    if result.deleted_count == 0:
-        click.echo(f"No documents matching {id} found to delete.")
+    _delete(id,
+            _,
+            collection='playlists')
 
 @playlist.command()
 @click.argument('hint', required=True)
@@ -226,9 +238,9 @@ def get(hint: str | None = None) -> None:
                    strict=False)
 
 def _delete_image(id, _) -> None:
-    result: pymongo.results.DeleteResult = image.image_delete(id)
-    if result.deleted_count == 0:
-        click.echo(f"No documents matching {id} found to delete.")
+    _delete(id,
+            _,
+            collection='images')
 
 @image.command()
 @click.argument('hint', required=True)
@@ -290,6 +302,7 @@ def resolve(hint: str, collection: str) -> int | None:
 def resolve_and_do(hint: str | int, 
                    do: Callable, 
                    **params) -> None:
+    print(params)
     id = resolve(hint, params['collection'])
     if id or not params['strict']:
         do(id, params)
@@ -326,6 +339,7 @@ def _get(
 
     if not fetched and id:
         click.echo(f"No {collection} with or name {id}. Better luck next time.")
+        sys.exit()
     elif not fetched:
         click.echo(f"No {collection} found in database")
         sys.exit()    
@@ -372,6 +386,23 @@ def _set(id: int, params: dict, collection: str) -> None:
 
     result = _set_collection_dispatch_map_map[collection][field](id, params['value'])    
     if result.matched_count == 0:
+        click.echo(f"No {collection} with id {id}. No changes made.") 
+
+### Delete abstraction functions
+###
+###
+
+_delete_collection_dispatch_map = {
+    'channels': channels.channel_delete,
+    'images': images.image_delete,
+    'playlists': playlists.playlist_delete
+}
+
+def _delete(id: int, params: dict, collection: str) -> None:
+    print('_delete', _delete_collection_dispatch_map[collection])
+    result = _delete_collection_dispatch_map[collection](id)
+
+    if result.deleted_count == 0:
         click.echo(f"No {collection} with id {id}. No changes made.") 
 
 ### Quitting
