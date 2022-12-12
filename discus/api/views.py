@@ -138,7 +138,7 @@ def insert_channel():
     return jsonify(fields=fields_str)
 
 # json expected {id: "1234", "asdf"}
-@app.route('/api/edit_playlist', methods=["POST"])
+@app.route('/api/edit_channel', methods=["POST"])
 def edit_channel():
     record = request.get_data()
     json_data = json.loads(record)

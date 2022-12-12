@@ -14,9 +14,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
-import cuid from 'cuid';
 import { CircularProgress, Fade } from '@mui/material';
-import tempMedia from '../mediaList/tempMedia';
+//import tempMedia from '../mediaList/tempMedia';
 
 import { Container, Draggable } from 'react-smooth-dnd';
 import { arrayMoveImmutable } from 'array-move';
@@ -32,15 +31,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function FormDialog(props) {
   const [open, setOpen] = React.useState(false);
-  // New fields to use
   const [name, setName] = React.useState('');
-  //const [items, setItems] = React.useState([]);
   const [shuffle, setShuffle] = React.useState(false);
   const [date_created, setDateCreated] = React.useState(dayjs());
   const [loading, setLoading] = React.useState(false);
   const [selectionModel, setSelectionModel] = React.useState([]);
   const [selectedMedia, setSelectedMedia] = React.useState([]);
-  const [media] = React.useState(tempMedia);
+  const [media, setMedia] = React.useState([]);
   const columns = [
     {
       field: 'image',
@@ -80,7 +77,58 @@ export default function FormDialog(props) {
     }
   ];
 
+  const loadMedia = () => {
+    try {
+      axios.get('http://localhost:8000/get_collection_images').then((res) => {
+        const raw = res.data;
+        const m = [];
+        raw.forEach(async (item) => {
+          const item_json = {
+            id: item._id.$oid,
+            name: item.display_name,
+            description: item.description,
+            duration: item.duration,
+            date_added: item.date_added.$date,
+            start_date: item.start_date.$date,
+            end_date: item.end_date.$date,
+            image_id: item.file_id.$oid,
+            filename: item.filename
+          };
+          m.push(item_json);
+        });
+        m.forEach(async (item) => {
+          const res = await axios.post(
+            'http://localhost:8000/api/get_image_file',
+            [{ id: item.id }],
+            {
+              headers: {
+                'content-type': '*/json'
+              }
+            }
+          );
+          // Adds the encoded image to the media
+          item['image'] = 'data:image/png;base64,' + res.data.img_dat[0];
+        });
+        setMedia(m);
+        // Sets the currently selected media
+        setSelectedMedia(
+          m.filter((item) => {
+            return selectionModel.includes(item.id);
+          })
+        );
+      });
+    } catch (error) {
+      this.handleSubmitError(error);
+      if (error.response) {
+        console.log(error.response.status);
+      } else {
+        console.log(error.message);
+      }
+    }
+  };
+
   const handleClickOpen = () => {
+    loadMedia();
     setOpen(true);
   };
 
@@ -129,8 +177,19 @@ export default function FormDialog(props) {
         }
       });
 
-      // Adds ID to item, which will eventually be replaced with ID received from API
-      playlist['id'] = cuid();
+      const ids = [];
+      // Terrible, terrible way to do this, but god do I not have time to fix it much further.
+      // TODO: Get CLI team to return IDs better
+      res.data.ids.split("'").forEach((val) => {
+        if (val != '[ObjectId(' && val != ')' && val != '), ObjectId(' && val != ')]') {
+          ids.push(val);
+        }
+      });
+
+      // Adds each ID to its item
+      for (let i = 0; i < playlist.length; i++) {
+        playlist[i]['id'] = ids[i];
+      }
 
       console.log(res);
       props.onChange(playlist);

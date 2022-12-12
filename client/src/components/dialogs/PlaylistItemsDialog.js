@@ -154,7 +154,11 @@ export default function PlaylistItemsDialog(props) {
           'content-type': '*/json'
         }
       });
-      props.onItemsChange({'body': body, 'id': parentPlaylist.id});
+      // Adds rest of fields
+      body['name'] = parentPlaylist.name
+      body['shuffle'] = parentPlaylist.shuffle
+      body['date_created'] = parentPlaylist.date_created
+      props.onItemsChange(body);
     } catch (error) {
       props.onError(error);
       if (error.response) {
