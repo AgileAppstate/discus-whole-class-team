@@ -88,8 +88,8 @@ def edit_playlist():
             itemId = ObjectId(str(item['id']))
             #{'type': "image", 'id': itemID}
             itemArray.append({'type': 'image','objectID': itemId})
-        playlists.playlist_reorder(ObjectId(vals_list[0]),itemArray)
-    ret_str = 'successfully edited: ' + keys_list[1] + ' to ' + vals_list[1]
+            
+    ret_str = 'successfully edited item list: ' + keys_list[1]
     return jsonify(status=ret_str)
 
 # json expected [{ids: "1234", "asdf"}]
